@@ -48,7 +48,7 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6).
       for ($i = 0; $i < sqlsrv_num_rows($result_dt); $i++)
       {
         $r1 = sqlsrv_fetch_array($result_dt, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
-        $r1['DoanhThuT1'];
+        $r1['DoanhThuT1'];var_dump($r1['DoanhThuT1']);
         $r1['DoanhThuT2'];
         $r1['DoanhThuT3'];
         $r1['DoanhThuT4'];
@@ -74,7 +74,7 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6).
       $doanhthu_t10 = $r1['DoanhThuT10'];settype($doanhthu_t10, "integer");
       $doanhthu_t11 = $r1['DoanhThuT11'];settype($doanhthu_t11, "integer");
       $doanhthu_t12 = $r1['DoanhThuT12'];settype($doanhthu_t12, "integer");
-    }
+    } else echo "ERROR"; 
   }
   catch (PDOException $e) {
     echo $e->getMessage();
