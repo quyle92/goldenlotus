@@ -1,4 +1,4 @@
-<title>Giải pháp quản lý Spa, Clinic - ZinSpa</title>
+=<title>Giải pháp quản lý Spa, Clinic - ZinSpa</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Phần mềm quản lý Spa ZinSpa" />
@@ -9,15 +9,19 @@
 <link href="css/style1.css" rel='stylesheet' type='text/css' />
 <link href="css/custom.css" rel="stylesheet">
 <link href="css/font-awesome.css" rel="stylesheet"> 
+
 <!-- jQuery -->
-<script src="js/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<!-- Boostrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- Boostrap Datetimepicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
 <!----webfonts--->
 <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
 
 <!-- Metis Menu Plugin JavaScript -->
 <script src="js/metisMenu.min.js"></script>
 <script src="js/custom.js"></script>
-<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 <link href="js/jquery-ui-1.12.1.custom/jquery-ui.min.css" rel="stylesheet" />
 <!--  ChartJS   -->
@@ -35,10 +39,11 @@ $('.navbar-toggle').on('click', function() {
    
 });
 </script>
-<!---//webfonts--->  
-<!-- Bootstrap Core JavaScript -->
-<script src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!---//webfonts---> 
+
+
+
+
 <style>
 /*--new menu 19042020 ---*/
 .li-level1

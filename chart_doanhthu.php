@@ -45,6 +45,7 @@ if($denngay == "")
 <script src="js/custom.js"></script>
 <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script> 
 <link href="js/jquery-ui-1.12.1.custom/jquery-ui.min.css" rel="stylesheet" />
  <script>
 	$('#tungay').datepicker({
@@ -90,12 +91,12 @@ $('.navbar-toggle').on('click', function() {
 	try
 	{
 		//lay ket qua query tong gia tri the
-		$result_tt = $dbCon->query($sql);
+		$result_tt = sqlsrv_query( $conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 		if($result_tt != false)
 		{
 			//show the results
-			foreach ($result_tt as $r)
-			{
+			for ($i = 0; $i < sqlsrv_num_rows($result_dt); $i++)
+			{$r = sqlsrv_fetch_array($result_dt, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
 ?>
 			<?php if($matrungtam == $r['MaTrungTam'])
 				{
@@ -151,7 +152,8 @@ $('.navbar-toggle').on('click', function() {
 	$doanhthu_t12 = 0;
 	//
 	//---thang
-	//
+	//substring(Convert(varchar,GioVao,111),0,8) => 2020/01
+	//substr($tungay,6)."/01' =>2020/01
 	$sql="SELECT SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '".substr($tungay,6)."/01' Then TongTien Else 0 END) as DoanhThuT1, 
 SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/02' Then TongTien Else 0 END) as DoanhThuT2, 
 	SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/03' Then TongTien Else 0 END) as DoanhThuT3, 
@@ -168,11 +170,12 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6).
 		where a.DangNgoi = 0 and a.PhieuHuy = 0 and a.DaTinhTien = 1";
 	try
 	{
-		$result_dt = $dbCon->query($sql);
+		$result_dt = sqlsrv_query( $conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 		if($result_dt != false)
 		{
-			foreach ($result_dt as $r1)
+			for ($i = 0; $i < sqlsrv_num_rows($result_dt); $i++)
 			{
+				$r1 = sqlsrv_fetch_array($result_dt, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
 				$r1['DoanhThuT1'];
 				$r1['DoanhThuT2'];
 				$r1['DoanhThuT3'];

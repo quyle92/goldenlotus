@@ -26,7 +26,7 @@ if($denngay == "")
 <head>
 <?php include ('head/head-revenue.month.php');?>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script> 
- <script>
+<script>
 
 
 </script>  

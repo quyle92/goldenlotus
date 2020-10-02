@@ -11,143 +11,119 @@
 
 <!------ Include the above in your HEAD tag ---------->
 <script>
-  $(document).ready(function() {
-   $('[id^=detail-]').hide();
-    $('.toggle').click(function() {
-        $input = $( this );
-        $target = $('#'+$input.attr('data-toggle'));
-        $target.slideToggle();
+var config = {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'APAC RE Index',
+                backgroundColor: window.chartColors.red,
+                borderColor: window.chartColors.red,
+                fill: false,
+                data: [
+                    10,
+                    20,
+                    30,
+                    40,
+                    100,
+                    50,
+                    150
+                    /*randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor()*/
+                ],
+            }, {
+                label: 'APAC PME',
+                backgroundColor: window.chartColors.blue,
+                borderColor: window.chartColors.blue,
+                fill: false,
+                data: [
+                    50,
+                    300,
+                    100,
+                    450,
+                    150,
+                    200,
+                    300
+                ],
+        
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Chart.js Line Chart - Logarithmic'
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Date'
+          },
+            
+                }],
+                yAxes: [{
+                    display: true,
+                    //type: 'logarithmic',
+          scaleLabel: {
+                            display: true,
+                            labelString: 'Index Returns'
+                        },
+                        ticks: {
+                            min: 0,
+                            max: 500,
+
+                            // forces step size to be 5 units
+                            stepSize: 100
+                        }
+                }]
+            }
+        }
+    };
+
+    window.onload = function() {
+        var ctx = document.getElementById('canvas').getContext('2d');
+        window.myLine = new Chart(ctx, config);
+    };
+
+    document.getElementById('randomizeData').addEventListener('click', function() {
+        config.data.datasets.forEach(function(dataset) {
+            dataset.data = dataset.data.map(function() {
+                return randomScalingFactor();
+            });
+
+        });
+
+        window.myLine.update();
     });
-});
 </script>
+
+<style>
+@keyframes chartjs-render-animation{from{opacity:.99}to{opacity:1}}
+    .chartjs-render-monitor{animation:chartjs-render-animation 1ms}
+    .chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{position:absolute;direction:ltr;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1}
+    .chartjs-size-monitor-expand>div{position:absolute;width:1000000px;height:1000000px;left:0;top:0}
+    .chartjs-size-monitor-shrink>div{position:absolute;width:200%;height:200%;left:0;top:0}
+</style>
   </head>
   <body>
-     <div class="container">
-  <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Panel List Group with Expandable Setail Section</h3>
-        </div>   
-        <ul class="list-group">
-            <li class="list-group-item">
-                <div class="row toggle" id="dropdown-detail-1" data-toggle="detail-1">
-                    <div class="col-xs-10">
-                        Item 1
-                    </div>
-                    <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
-                </div>
-                <data></data><div id="detail-1">
-                    <hr></hr>
-                    <div class="container">
-                        <div class="fluid-row">
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="row toggle" id="dropdown-detail-2" data-toggle="detail-2">
-                    <div class="col-xs-10">
-                        Item 2
-                    </div>
-                    <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
-                </div>
-                <div id="detail-2">
-                    <hr></hr>
-                    <div class="container">
-                        <div class="fluid-row">
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="list-group-item">
-                <div class="row toggle" id="dropdown-detail-3" data-toggle="detail-3">
-                    <div class="col-xs-10">
-                        Item 3
-                    </div>
-                    <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
-                </div>
-                <div id="detail-3">
-                    <hr></hr>
-                    <div class="container">
-                        <div class="fluid-row">
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                            <div class="col-xs-1">
-                                Detail:
-                            </div>
-                            <div class="col-xs-5">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-  </div>
-</div>
+<div style="width:75%;">
+        <div class="chartjs-size-monitor">
+            <div class="chartjs-size-monitor-expand">
+                <div class=""></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink">
+                <div class=""></div>
+            </div>
+        </div>
+        <canvas id="canvas" style="display: block; width: 1379px; height: 689px;" width="1379" height="689" class="chartjs-render-monitor"></canvas>
+    </div>
 
   </body>
 </html>
