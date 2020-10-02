@@ -1,5 +1,5 @@
 <?php 
-$this_month = date('Y/m',strtotime("-1 month")); substr($this_month,0)."/01";
+$this_month = date('Y/m'); substr($this_month,0)."/01";
   //
   //----loc doanh thu tung thang-----//
   //
@@ -126,7 +126,7 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,11) = '".substr($this_mont
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12" >
-          <canvas id="thisyear" ></canvas>
+          <canvas id="thismonth" ></canvas>
         </div>
       </div>
 
@@ -138,7 +138,7 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,11) = '".substr($this_mont
 
 <script>
 //var ctx = document.getElementById('myChart').getContext('2d');
-var salesThisYear = document.getElementById('thisyear');
+var salesThisMonth = document.getElementById('thismonth');
 var data = {
   labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11,", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25","26", "27", "28", "29", "30", "31"],
   datasets: [{
@@ -197,13 +197,13 @@ var options = {
    }
 };
 
-var lineChart = new Chart(salesThisYear, {
+var lineChart = new Chart(salesThisMonth, {
     type: 'line',
     data: data,
     options: options
 });
 
-salesThisYear.onclick = function(e) {
+salesThisMonth.onclick = function(e) {
   var point = lineChart.getElementAtEvent(e);
    var label = lineChart.data.labels[point[0]._index];//console.log(point[0]);
    var value = lineChart.data.datasets[0].data[point[0]._index];console.log(label);
