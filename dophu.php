@@ -7,8 +7,6 @@ $ten=$_SESSION['TenNV'];
 $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
 
-$tungay=@$_POST['tungay'];
-$denngay=@$_POST['denngay'];
 ?>
 
 <!DOCTYPE HTML>
@@ -77,8 +75,9 @@ $denngay=@$_POST['denngay'];
      <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li><a href="#tab1primary" data-toggle="tab">Tháng này</a></li>
-                            <li><a href="#tab2primary" data-toggle="tab">Tháng trước</a></li>
+                            <li><a href="#tab1primary" data-toggle="tab">Bây giờ</a></li>
+                            <li><a href="#tab2primary" data-toggle="tab">Tháng này</a></li>
+                            <li><a href="#tab3primary" data-toggle="tab">Tháng trước</a></li>
                             <li><a href="#tab3primary" data-toggle="tab">Khác</a></li>
                         </ul>
                 </div>
@@ -86,20 +85,24 @@ $denngay=@$_POST['denngay'];
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="tab1primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                          	<?php require('bieudo-doanhthu/doanhthu-thangnay.php'); ?>
+                          	<?php require('bieudo-dophu/baygio.php'); ?>
                            </div>
-                      </div>
+                        </div>
                         <div class="tab-pane fade" id="tab2primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                          	<?php require('bieudo-doanhthu/doanhthu-thangtruoc.php'); ?>
+                          	<?php require('bieudo-dophu/thangnay.php'); ?>
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab3primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                          	<?php require('bieudo-doanhthu/doanhthu-thangkhac.php');  ?>
+                          	<?php require('bieudo-dophu/thangtruoc.php');  ?>
                           </div>
                         </div>
-                                
+                        <div class="tab-pane fade" id="tab3primary">
+                          <div class="col-xs-12 col-sm-12 table-responsive">
+                            <?php require('bieudo-dophu/khac.php');  ?>
+                          </div>
+                        </div>
                         
                     </div>
                 </div>

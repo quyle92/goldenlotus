@@ -1,22 +1,5 @@
 <?php 
-if($tungay == "")
-{
-  $tungay = "01-01-".date("Y",strtotime("-1 year"));
-}
 
-if($denngay == "")
-{
-  $denngay = date("Y",strtotime("-1 year"));
-}
-  //
-  //---------chuyển sang chuỗi tháng -> để query sql
-  //
-  $tuthang_converted = "";
-  $denthang_converted = "";
-  if($tungay != "")
-  {
-    $tuthang_converted = substr($tungay,6) . "/" . substr($tungay,3,2);
-  }
   //
   //----loc doanh thu tung thang-----//
   //
@@ -26,19 +9,24 @@ if($denngay == "")
   //
   //---thang
   //
-  $sql="SELECT SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '".substr($tungay,6)."/01' Then TongTien Else 0 END) as DoanhThuT1, 
-SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/02' Then TongTien Else 0 END) as DoanhThuT2, 
-  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/03' Then TongTien Else 0 END) as DoanhThuT3, 
-SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/04' Then TongTien Else 0 END) as DoanhThuT4, 
-  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".  substr($tungay,6)."/05' Then TongTien Else 0 END) as DoanhThuT5, 
-SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/06' Then TongTien Else 0 END) as DoanhThuT6, 
-  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/07' Then TongTien Else 0 END) as DoanhThuT7, 
-SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/08' Then TongTien Else 0 END) as DoanhThuT8, 
-  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/09' Then TongTien Else 0 END) as DoanhThuT9, 
-SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/10' Then TongTien Else 0 END) as DoanhThuT10, 
-  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/11' Then TongTien Else 0 END) as DoanhThuT11, 
-SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/12' Then TongTien Else 0 END) as DoanhThuT12 
-    FROM tblLichSuPhieu a 
+   $tungay = "01-01-".date("Y",strtotime("-1 year")) ;
+  $sql="SELECT SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '".substr($tungay,6)."/01' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT1, 
+SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/02' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT2, 
+  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/03' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT3, 
+SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/04' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT4, 
+  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".  substr($tungay,6)."/05' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT5, 
+SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/06' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT6, 
+  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/07' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT7, 
+SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/08' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT8, 
+  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/09' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT9, 
+SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/10' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT10, 
+  SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/11' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT11, 
+SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/12' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT12 
+    FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a 
+ Join [NH_STEAK_PIZZA].[dbo].[tblOrder] b 
+ ON a.[MaLichSuPhieu] = b.[MaLichSuPhieu]
+ join [NH_STEAK_PIZZA].[dbo].[tblOrderChiTiet] c 
+ ON b.[OrderID] = c.[OrderID] 
     where a.DangNgoi = 0 and a.PhieuHuy = 0 and a.DaTinhTien = 1";
   try
   {
@@ -48,7 +36,7 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6).
       for ($i = 0; $i < sqlsrv_num_rows($result_dt); $i++)
       {
         $r1 = sqlsrv_fetch_array($result_dt, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
-        $r1['DoanhThuT1'];var_dump($r1['DoanhThuT1']);
+        $r1['DoanhThuT1'];
         $r1['DoanhThuT2'];
         $r1['DoanhThuT3'];
         $r1['DoanhThuT4'];

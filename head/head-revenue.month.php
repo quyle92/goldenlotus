@@ -5,6 +5,7 @@
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
  <!-- Bootstrap Core CSS -->
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+ 
 <!-- Custom CSS -->
 <link href="css/style1.css" rel='stylesheet' type='text/css' />
 <link href="css/custom.css" rel="stylesheet">
@@ -14,8 +15,10 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 <!-- Boostrap JS -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 <!-- Boostrap Datetimepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+
 <!----webfonts--->
 <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
 
@@ -24,15 +27,18 @@
 <script src="js/custom.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 <link href="js/jquery-ui-1.12.1.custom/jquery-ui.min.css" rel="stylesheet" />
+
 <!--  ChartJS   -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-<!--  End ChartJS --> 
 
 <!--  Datepicker -->   
 <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
 <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-<!-- End Datepicker   -->   
+
+<!-- DataLabels plugin --> 
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script> 
+
 <script>
 $('.navbar-toggle').on('click', function() {
   $('.sidebar-nav').toggleClass('block');  
