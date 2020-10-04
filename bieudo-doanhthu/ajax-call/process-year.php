@@ -4,7 +4,7 @@ require('../../lib/db.php');
 if($_POST['year'] != "") $year = $_POST['year'];
 if( isset($_POST['year']) ){ 
   $year = $_POST['year'];
-  $tungay = "01-01-".$year;
+  $tungay = "01-".$year;
 }
 
   //
