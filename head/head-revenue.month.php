@@ -1,4 +1,4 @@
-=<title>Giải pháp quản lý Spa, Clinic - ZinSpa</title>
+<title>Giải pháp quản lý Spa, Clinic - ZinSpa</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Phần mềm quản lý Spa ZinSpa" />
@@ -189,6 +189,279 @@ $('.navbar-toggle').on('click', function() {
 #page-wrapper  .panel .panel-heading {
     height: initial!important;
   }
+}
+
+/*
+*** Sign up page
+ */
+#wrap{
+background-image: -ms-linear-gradient(top, #FFFFFF 0%, #D3D8E8 100%);
+/* Mozilla Firefox */ 
+background-image: -moz-linear-gradient(top, #FFFFFF 0%, #D3D8E8 100%);
+/* Opera */ 
+background-image: -o-linear-gradient(top, #FFFFFF 0%, #D3D8E8 100%);
+/* Webkit (Safari/Chrome 10) */ 
+background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #D3D8E8));
+/* Webkit (Chrome 11+) */ 
+background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #D3D8E8 100%);
+/* W3C Markup, IE10 Release Preview */ 
+background-image: linear-gradient(to bottom, #FFFFFF 0%, #D3D8E8 100%);
+background-repeat: no-repeat;
+background-attachment: fixed;
+}
+legend{
+  color:#141823;
+  font-size:25px;
+  font-weight:bold;
+}
+.signup-btn {
+  background: #79bc64;
+  background-image: -webkit-linear-gradient(top, #79bc64, #578843);
+  background-image: -moz-linear-gradient(top, #79bc64, #578843);
+  background-image: -ms-linear-gradient(top, #79bc64, #578843);
+  background-image: -o-linear-gradient(top, #79bc64, #578843);
+  background-image: linear-gradient(to bottom, #79bc64, #578843);
+  -webkit-border-radius: 4;
+  -moz-border-radius: 4;
+  border-radius: 4px;
+  text-shadow: 0px 1px 0px #898a88;
+  -webkit-box-shadow: 0px 0px 0px #a4e388;
+  -moz-box-shadow: 0px 0px 0px #a4e388;
+  box-shadow: 0px 0px 0px #a4e388;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  border: solid #3b6e22  1px;
+  text-decoration: none;
+}
+
+.signup-btn:hover {
+  background: #79bc64;
+  background-image: -webkit-linear-gradient(top, #79bc64, #5e7056);
+  background-image: -moz-linear-gradient(top, #79bc64, #5e7056);
+  background-image: -ms-linear-gradient(top, #79bc64, #5e7056);
+  background-image: -o-linear-gradient(top, #79bc64, #5e7056);
+  background-image: linear-gradient(to bottom, #79bc64, #5e7056);
+  text-decoration: none;
+}
+.navbar-default .navbar-brand{
+    color:#fff;
+    font-size:30px;
+    font-weight:bold;
+  }
+.form .form-control { margin-bottom: 10px; }
+@media (min-width:768px) {
+  #home{
+    margin-top:50px;
+  }
+  #home .slogan{
+    color: #0e385f;
+    line-height: 29px;
+    font-weight:bold;
+  }
+}
+
+/*
+****iOS toggle checkbox
+ *
+
+.checkbox-slider--b-flat {
+  position: relative;
+}
+.checkbox-slider--b-flat input {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 0%;
+  margin: 0 0;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+.checkbox-slider--b-flat input + span {
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.checkbox-slider--b-flat input + span:before {
+  position: absolute;
+  left: 0px;
+  display: inline-block;
+}
+.checkbox-slider--b-flat input + span > h4 {
+  display: inline;
+}
+.checkbox-slider--b-flat input + span {
+  padding-left: 40px;
+}
+.checkbox-slider--b-flat input + span:before {
+  content: "";
+  height: 20px;
+  width: 40px;
+  background: rgba(100, 100, 100, 0.2);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+  transition: background 0.2s ease-out;
+}
+.checkbox-slider--b-flat input + span:after {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 0;
+  display: block;
+  background: #ffffff;
+  transition: margin-left 0.1s ease-in-out;
+  text-align: center;
+  font-weight: bold;
+  content: "";
+}
+.checkbox-slider--b-flat input:checked + span:after {
+  margin-left: 20px;
+  content: "";
+}
+.checkbox-slider--b-flat input:checked + span:before {
+  transition: background 0.2s ease-in;
+}
+.checkbox-slider--b-flat input + span {
+  padding-left: 40px;
+}
+.checkbox-slider--b-flat input + span:before {
+  border-radius: 20px;
+  width: 40px;
+}
+.checkbox-slider--b-flat input + span:after {
+  background: #ffffff;
+  content: "";
+  width: 20px;
+  border: solid transparent 2px;
+  background-clip: padding-box;
+  border-radius: 20px;
+}
+.checkbox-slider--b-flat input:not(:checked) + span:after {
+  -webkit-animation: popOut ease-in 0.3s normal;
+          animation: popOut ease-in 0.3s normal;
+}
+.checkbox-slider--b-flat input:checked + span:after {
+  content: "";
+  margin-left: 20px;
+  border: solid transparent 2px;
+  background-clip: padding-box;
+  -webkit-animation: popIn ease-in 0.3s normal;
+          animation: popIn ease-in 0.3s normal;
+}
+.checkbox-slider--b-flat input:checked + span:before {
+  background: #5cb85c;
+}
+.checkbox-slider--b-flat.checkbox-slider-md input + span:before {
+  border-radius: 30px;
+}
+.checkbox-slider--b-flat.checkbox-slider-md input + span:after {
+  border-radius: 30px;
+}
+.checkbox-slider--b-flat.checkbox-slider-lg input + span:before {
+  border-radius: 40px;
+}
+.checkbox-slider--b-flat.checkbox-slider-lg input + span:after {
+  border-radius: 40px;
+}
+.checkbox-slider--b-flat input + span:before {
+  box-shadow: none;
+}
+
+/*#####*/
+.checkbox-slider-info.checkbox-slider--b input:checked + span:before,
+.checkbox-slider-info.checkbox-slider--b-flat input:checked + span:before,
+.checkbox-slider-info.checkbox-slider--c input:checked + span:before,
+.checkbox-slider-info.checkbox-slider--c-weight input:checked + span:before {
+  background: #5bc0de;
+}
+
+.checkbox-slider-warning.checkbox-slider--b input:checked + span:before,
+.checkbox-slider-warning.checkbox-slider--b-flat input:checked + span:before,
+.checkbox-slider-warning.checkbox-slider--c input:checked + span:before,
+.checkbox-slider-warning.checkbox-slider--c-weight input:checked + span:before {
+  background: #f0ad4e;
+}
+
+.checkbox-slider-danger.checkbox-slider--b input:checked + span:before,
+.checkbox-slider-danger.checkbox-slider--b-flat input:checked + span:before,
+.checkbox-slider-danger.checkbox-slider--c input:checked + span:before,
+.checkbox-slider-danger.checkbox-slider--c-weight input:checked + span:before {
+  background: #d9534f;
+}
+
+/*******************************************************
+Sizes
+*******************************************************/
+.checkbox-slider-sm {
+  line-height: 10px;
+}
+.checkbox-slider-sm input + span {
+  padding-left: 20px;
+}
+.checkbox-slider-sm input + span:before {
+  width: 20px;
+}
+.checkbox-slider-sm input + span:after,
+.checkbox-slider-sm input + span:before {
+  height: 10px;
+  line-height: 10px;
+}
+.checkbox-slider-sm input + span:after {
+  width: 10px;
+  vertical-align: middle;
+}
+.checkbox-slider-sm input:checked + span:after {
+  margin-left: 10px;
+}
+.checkbox-slider-md {
+  line-height: 30px;
+}
+.checkbox-slider-md input + span {
+  padding-left: 60px;
+}
+.checkbox-slider-md input + span:before {
+  width: 60px;
+}
+.checkbox-slider-md input + span:after,
+.checkbox-slider-md input + span:before {
+  height: 30px;
+  line-height: 30px;
+}
+.checkbox-slider-md input + span:after {
+  width: 30px;
+  vertical-align: middle;
+}
+.checkbox-slider-md input:checked + span:after {
+  margin-left: 30px;
+}
+.checkbox-slider-lg {
+  line-height: 40px;
+}
+.checkbox-slider-lg input + span {
+  padding-left: 80px;
+}
+.checkbox-slider-lg input + span:before {
+  width: 80px;
+}
+.checkbox-slider-lg input + span:after,
+.checkbox-slider-lg input + span:before {
+  height: 40px;
+  line-height: 40px;
+}
+.checkbox-slider-lg input + span:after {
+  width: 40px;
+  vertical-align: middle;
+}
+.checkbox-slider-lg input:checked + span:after {
+  margin-left: 40px;
 }
 </style>
 
