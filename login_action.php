@@ -2,10 +2,10 @@
 require('lib/db.php');
 session_start();
 	$user=$_POST['username'];
-	$pass=$_POST['password'];
-	
+	$password=$_POST['password'];
+
 	//Truy van DB de kiem tra
-	 $sql="select PWDCOMPARE('$pass',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, b.NhomNhanVien, c.TenTrungTam, a.[BaoCaoDuocXem]  
+	 $sql="select PWDCOMPARE('$password',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, b.NhomNhanVien, c.TenTrungTam, a.[BaoCaoDuocXem]  
 from [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a, [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b, 
 [NH_STEAK_PIZZA].[dbo].[tblDMTrungTam] c 
  where a.MaNhanVien = b.MaNV and b.MaTrungTam = c.MaTrungTam and a.TenSD like '$user'";

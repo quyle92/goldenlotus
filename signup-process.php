@@ -4,11 +4,20 @@ require('lib/db.php');
 
 $username =  $_POST['username'];
 $password = $_POST['password'];
+$confirm_password = $_POST['confirm_password'];
+$maNV = $_POST['maNV'];
+
+if( $password !== $confirm_password ){
+	$_SESSION['password_mismatch'] = 1;
+	header('Location:signup.php');
+	exit();
+}
+
 $report_arr = serialize( $_POST['report_arr'] );
 
-if ( $username != "" && $password != "" & $report_arr != "" ){
+if ( $username != "" && $password != "" && $report_arr != "" ){
 	$sql="INSERT INTO [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] ( [TenSD], [MaNhanVien],
-	   [MatKhau],[KiemTraSD],[DangSD],[TamNgung],[KhongDoi],[SuDungDacBiet], [BaoCaoDuocXem]) VALUES ( '$username', 'NH02', PWDENCRYPT('$password'), 0,0,0,0,0, '$report_arr' )"; 
+	   [MatKhau],[KiemTraSD],[DangSD],[TamNgung],[KhongDoi],[SuDungDacBiet], [BaoCaoDuocXem]) VALUES ( '$username', '$maNV', PWDENCRYPT('$password'), 0,0,0,0,0, '$report_arr' )"; 
 
 	 try{
 	 		$rs = sqlsrv_query($conn,$sql);

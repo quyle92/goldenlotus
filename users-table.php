@@ -21,7 +21,22 @@ $denngay=@$_POST['denngay'];
 <head>
 <?php include ('head/head-revenue.month.php');?>
 <style>
+.graphs {
+    background-image: linear-gradient(to bottom, #FFFFFF 0%, #D3D8E8 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+   
+}
 
+.btn-primary:hover{
+    background-color :rgb(13, 155, 109) !important;
+    border-color: rgb(13, 155, 109) !important;
+    color:#fff !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+    background-color: #f7efef;
+}
 </style>
 <!-- Bootstrap iOS toggle https://www.bootstraptoggle.com/ -->
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -37,7 +52,7 @@ $denngay=@$_POST['denngay'];
         <form action="" method="post">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6 col-md-offset-1">
+                    <div class="col-md-12">
                         <div class="" style="margin-bottom:5px"> 
                             <?php 
                             if(  isset($_SESSION['signup_success']) && $_SESSION['signup_success'] == 1 )
@@ -113,68 +128,54 @@ $denngay=@$_POST['denngay'];
             </div>
         </form>
 
-         <div class="container" id="wrap">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-1">
-                    <form action="signup-process.php" method="post" accept-charset="utf-8" class="form" role="form">   
-                            <legend>Sign Up</legend>
-                            <input type="text" name="username" value="" class="form-control input-lg" placeholder="ID"  />
-                            <input type="password" name="password" value="" class="form-control input-lg" placeholder="Password"  /><input type="password" name="confirm_password" value="" class="form-control input-lg" placeholder="Confirm Password"  />
-                            <select name="MaNV" id="MaNV" class="form-control input-lg" required="required" >
-                                <option value="" disabled selected> Tên NV</option>
-                                <?php
-                                $list_NV_arr = $goldenlotus->layMaNV(); 
-                                while( $r=sqlsrv_fetch_array($list_NV_arr) ){
-                                     echo '<option value="' . $r["MaNV"] . '">' . $r['TenNV'] . '</option>';
-                                }
+         <div class="container" id="wrap"> <div class="row"> 
+            <div class="btn-toolbar" style="margin-bottom:10px"> <button class="btn btn-primary">New User</button> 
+            </div>
+
+                <div class="well col-md-11" style="background:#fff; font-size: 1.2em;">
+                    <table class="table table-striped table-hover">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>ID</th>
+                          <th>Tên</th>
+                          <th>Báo cáo được xem</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                         <?php
+                                $i = 1;
+                                $users_list = $goldenlotus->layDanhSachUsers(); 
+                                while( $r=sqlsrv_fetch_array($users_list) ){ ?>
+                                                          
+                        <tr>
+                          <td><?=$i?></td>
+                          <td><?=$r['TenSD']?></td>
+                          <td><?=$r['TenNV']?></td>
+                          <td><ul style="padding-left:0px"><?php 
+                                $bao_cao_duoc_xem_arr = ( !empty( $r['BaoCaoDuocXem'] )   ? unserialize($r['BaoCaoDuocXem']) :"" );
+                                //$bao_cao_duoc_xem = (  !empty ( $bao_cao_duoc_xem_arr ) ? implode( $bao_cao_duoc_xem_arr ) : "" ) ;
+                                if ( !empty($bao_cao_duoc_xem_arr ) )
+                                foreach ($bao_cao_duoc_xem_arr as $bao_cao_duoc_xem)
+                                    echo " <li>
+                                                $bao_cao_duoc_xem
+                                           </li>
+                                        ";
                                 ?>
+                          </ul></td>
+                          <td>
+                              <a href="signup.html"><i class="material-icons">&#xE8B8;</i></a>
+                              <a href="#myModal" role="button" data-toggle="modal"><i class="material-icons" style="color:#F44336">&#xE5C9;</i></a>
+                          </td>
 
-                            </select>
+                        </tr>
 
-                            <!-- <div class="container">
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <h5>Default</h5>
-                                                <div class="checkbox checkbox-slider--b-flat checkbox-slider-md">
-                                                    <label>
-                                                        <input type="checkbox"><span>medium</span>
-                                                    </label>
-                                                </div>
-                                                <div class="checkbox checkbox-slider--b-flat checkbox-slider-md">
-                                                    <label>
-                                                        <input type="checkbox" checked=""><span>checked</span>
-                                                    </label>
-                                                </div>
-                                    </div>
-                                </div>
-                            </div> -->
-                            <h4><strong>Lựa chọn menu:</strong></h4>
-                            <div class="">
-                              <label>
-                                <input type="checkbox" data-toggle="toggle" name="report_arr[]" value="bieuDoDoanhThu">
-                                 Biểu đồ doanh thu
-                              </label>
-                            </div>
-
-                            <div class="">
-                              <label>
-                                <input type="checkbox" data-toggle="toggle" name="report_arr[]" value="baoCaoBanHang">
-                                 Báo cáo bán hàng
-                              </label>
-                            </div>
-
-                            <div class="">
-                              <label>
-                                <input type="checkbox" data-toggle="toggle" name="report_arr[]" value="baoCaoNhapHang">
-                                 Báo cáo nhập hàng
-                              </label>
-                            </div>
-
-                            <button class="btn btn-lg btn-primary btn-block signup-btn" type="submit">
-                                Create account</button>
-                    </form>          
-                </div>
-            </div>            
+                         <?php $i++; } ?>
+                      </tbody>
+                    </table>
+                </div>  
+            </div>          
         </div>
         
     </div>

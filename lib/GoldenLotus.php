@@ -11,8 +11,23 @@ class DbConnection {
 }
 
 class GoldenLotus extends DbConnection{
+
 	public function layMaNV() {
-		echo $sql = "SELECT *  FROM [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien]";
+		 $sql = "SELECT *  FROM [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien]";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);;
+			//$r=sqlsrv_fetch_array($rs); 
+			if(sqlsrv_has_rows($rs) != false) 
+				return $rs;
+			else throw new \Exception('Sth wrong. Please try again.');;
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function layDanhSachUsers() {
+		 $sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a,  [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV 		";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);;
 			//$r=sqlsrv_fetch_array($rs); 
