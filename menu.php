@@ -14,7 +14,7 @@
             <li style="list-style-type: none;" class="li-level1">
                 <a class="menu-level1" href="home.php"><i class="fa fa-home nav_icon"></i>Home</a>
             </li>
-            <button class="dropdown-btn"  data-report="bieuDoDoanhThu"><i class="fa fa-money nav_icon"></i>Biểu đồ doanh thu/ độ phủ
+            <button class="dropdown-btn"  data-report="BieuDoDoanhThu"><i class="fa fa-money nav_icon"></i>Biểu đồ doanh thu/ độ phủ
                 <span class="fa fa-caret-down"></span>
             </button> 
             <div class="dropdown-container">
@@ -74,9 +74,13 @@
                 <a class="menu-level1" href="account.php"><i class="fa fa-user nav_icon"></i>Đổi mật khẩu</a>
             </li>
             <?php 
+            $maNV = (isset($_SESSION['MaNV'])?$_SESSION['MaNV']:"");
             if($_SESSION['MaNV'] == 'HDQT')
              echo '<li style="list-style-type: none;" class="li-level1">
                 <a class="menu-level1" href="signup.php"><i class="fa fa-sign-out nav_icon"></i>Signup</a>
+            </li>
+            <li style="list-style-type: none;" class="li-level1">
+                <a class="menu-level1" href="users.php"><i class="fa fa-users nav_icon"></i>Users</a>
             </li>';
             ?>
             <li style="list-style-type: none;" class="li-level1">
@@ -93,10 +97,11 @@ $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuo
 <script>
    // var baoCaoDuocXem ="";
     var baoCaoDuocXem= <?=json_encode($bao_cao_duoc_xem);?>;
-    var bieuDoDoanhThu = $('button[data-report="bieuDoDoanhThu"]').attr('data-report');
-    console.log(baoCaoDuocXem);
-    if( jQuery.inArray( bieuDoDoanhThu, baoCaoDuocXem ) == -1){
-        $('button[data-report="bieuDoDoanhThu"]').css({display:'none'});
-        $('button[data-report="bieuDoDoanhThu"] + div.dropdown-container').html('');
+    var bieuDoDoanhThu = $('button[data-report="BieuDoDoanhThu"]').attr('data-report');
+    var admin = '<?=$_SESSION['MaNV']?>';
+    //console.log(baoCaoDuocXem);console.log(bieuDoDoanhThu);console.log(admin);
+    if( admin != 'HDQT' && jQuery.inArray( bieuDoDoanhThu, baoCaoDuocXem ) == -1){
+        $('button[data-report="BieuDoDoanhThu"]').css({display:'none'});
+        $('button[data-report="BieuDoDoanhThu"] + div.dropdown-container').html('');
     }
 </script>

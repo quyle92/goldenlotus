@@ -3,6 +3,11 @@ require('lib/db.php');
 require('lib/goldenlotus.php');
 @session_start();
 $goldenlotus = new GoldenLotus;
+$maNV = isset($_GET['maNV']) ? $_GET['maNV'] : "";
+if( !empty($maNV) ){
+$user = $goldenlotus->layTenUser($maNV);
+$user = sqlsrv_fetch_array($user);
+}
 
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
@@ -118,14 +123,23 @@ $denngay=@$_POST['denngay'];
                 <div class="col-md-6 col-md-offset-1">
                     <form action="signup-process.php" method="post" accept-charset="utf-8" class="form" role="form">   
                             <legend>Sign Up</legend>
-                            <input type="text" name="username" value="" class="form-control input-lg" placeholder="ID"  />
-                            <input type="password" name="password" value="" class="form-control input-lg" placeholder="Password"  /><input type="password" name="confirm_password" value="" class="form-control input-lg" placeholder="Confirm Password"  />
-                            <select name="MaNV" id="MaNV" class="form-control input-lg" required="required" >
+                            <input type="text" name="username" value="<?=isset($user['TenSD'])?:""?>" class="form-control input-lg" placeholder="ID"  />
+                            <?php
+                            if( empty($user) )
+                            echo '<input type="password" name="password" value="" class="form-control input-lg" placeholder="Password"  /><input type="password" name="confirm_password" value="" class="form-control input-lg" placeholder="Confirm Password"  />';
+                            ?>
+                            <select name="maNV" id="maNV" class="form-control input-lg" required="required" >
                                 <option value="" disabled selected> Tên NV</option>
                                 <?php
                                 $list_NV_arr = $goldenlotus->layMaNV(); 
                                 while( $r=sqlsrv_fetch_array($list_NV_arr) ){
-                                     echo '<option value="' . $r["MaNV"] . '">' . $r['TenNV'] . '</option>';
+                                    if($r["MaNV"] == $user['MaNV']){
+                                        echo '<option value="' . $r["MaNV"] . '" selected="selected">' . $r['TenNV'] . '</option>';
+                                    }
+                                    else
+                                    {
+                                        echo '<option value="' . $r["MaNV"] . '">' . $r['TenNV'] . '</option>';
+                                    }
                                 }
                                 ?>
 
@@ -149,26 +163,30 @@ $denngay=@$_POST['denngay'];
                                 </div>
                             </div> -->
                             <h4><strong>Lựa chọn menu:</strong></h4>
-                            <div class="">
-                              <label>
-                                <input type="checkbox" data-toggle="toggle" name="report_arr[]" value="bieuDoDoanhThu">
-                                 Biểu đồ doanh thu
-                              </label>
-                            </div>
+                            <?php
+                            $danh_sach_bao_cao = $goldenlotus->layTatCaBaoCao();
+                            $bao_cao_duoc_xem_arr = ( !empty( $user['BaoCaoDuocXem'] )   ? unserialize($user['BaoCaoDuocXem']) :array() );
+                           
+                            while ( $r = sqlsrv_fetch_array( $danh_sach_bao_cao ) ){
+                                if(  in_array( $r['MaBaoCao'], $bao_cao_duoc_xem_arr ) ){
+                                echo '<div class="">
+                                  <label>
+                                    <input type="checkbox" checked data-toggle="toggle" name="report_arr[]" value="' . $r['MaBaoCao'] . '">
+                                     ' . $r['TenBaoCao']  . '
+                                  </label>
+                                </div>';
+                                }
+                                else{
+                                    echo '<div class="">
+                                  <label>
+                                    <input type="checkbox" data-toggle="toggle" name="report_arr[]" value="' . $r['MaBaoCao'] . '">
+                                     ' . $r['TenBaoCao']  . '
+                                  </label>
+                                </div>';
+                                }
 
-                            <div class="">
-                              <label>
-                                <input type="checkbox" data-toggle="toggle" name="report_arr[]" value="baoCaoBanHang">
-                                 Báo cáo bán hàng
-                              </label>
-                            </div>
+                            } ?>
 
-                            <div class="">
-                              <label>
-                                <input type="checkbox" data-toggle="toggle" name="report_arr[]" value="baoCaoNhapHang">
-                                 Báo cáo nhập hàng
-                              </label>
-                            </div>
 
                             <button class="btn btn-lg btn-primary btn-block signup-btn" type="submit">
                                 Create account</button>

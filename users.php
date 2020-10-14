@@ -129,7 +129,7 @@ $denngay=@$_POST['denngay'];
         </form>
 
          <div class="container" id="wrap"> <div class="row"> 
-            <div class="btn-toolbar" style="margin-bottom:10px"> <button class="btn btn-primary">New User</button> 
+            <div class="btn-toolbar" style="margin-bottom:10px"> <button class="btn btn-primary"><a href="signup.php" style="text-decoration: none; color:#fff">Thêm User</a></button> 
             </div>
 
                 <div class="well col-md-11" style="background:#fff; font-size: 1.2em;">
@@ -153,19 +153,24 @@ $denngay=@$_POST['denngay'];
                           <td><?=$i?></td>
                           <td><?=$r['TenSD']?></td>
                           <td><?=$r['TenNV']?></td>
-                          <td><ul style="padding-left:0px"><?php 
+                          <td><ul style="padding-left:0px">
+                            <?php 
                                 $bao_cao_duoc_xem_arr = ( !empty( $r['BaoCaoDuocXem'] )   ? unserialize($r['BaoCaoDuocXem']) :"" );
-                                //$bao_cao_duoc_xem = (  !empty ( $bao_cao_duoc_xem_arr ) ? implode( $bao_cao_duoc_xem_arr ) : "" ) ;
+                                $ten_bao_cao = "";
+                                 $report_name = "";
                                 if ( !empty($bao_cao_duoc_xem_arr ) )
-                                foreach ($bao_cao_duoc_xem_arr as $bao_cao_duoc_xem)
-                                    echo " <li>
-                                                $bao_cao_duoc_xem
-                                           </li>
-                                        ";
-                                ?>
+                                foreach ($bao_cao_duoc_xem_arr as $bao_cao_duoc_xem) {
+                                        $ten_bao_cao = $goldenlotus->layBaoCao($bao_cao_duoc_xem);
+                                        $report_name .=  '<li>' .
+                                                    $ten_bao_cao . 
+                                                 '</li>'
+                                            ;
+                                }
+                                echo $report_name;
+                            ?>
                           </ul></td>
                           <td>
-                              <a href="signup.html"><i class="material-icons">&#xE8B8;</i></a>
+                              <a href="signup.php?maNV=<?=$r['MaNV']?>"><i class="material-icons">&#xE8B8;</i></a>
                               <a href="#myModal" role="button" data-toggle="modal"><i class="material-icons" style="color:#F44336">&#xE5C9;</i></a>
                           </td>
 

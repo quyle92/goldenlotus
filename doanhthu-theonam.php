@@ -1,7 +1,7 @@
 <?php
 require('lib/db.php');
 @session_start();
-$goldenlotus = new GoldenLotus;
+
 
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
@@ -13,7 +13,7 @@ $tungay=@$_POST['tungay'];
 $denngay=@$_POST['denngay'];
 
 $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
-$page_name = "bieuDoDoanhThu";
+$page_name = "BieuDoDoanhThu";
 if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
     die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
 ?>
