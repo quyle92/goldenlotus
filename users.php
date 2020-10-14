@@ -171,7 +171,7 @@ $denngay=@$_POST['denngay'];
                           </ul></td>
                           <td>
                               <a href="signup.php?maNV=<?=$r['MaNV']?>"><i class="material-icons">&#xE8B8;</i></a>
-                              <a href="#myModal" role="button" data-toggle="modal"><i class="material-icons" style="color:#F44336">&#xE5C9;</i></a>
+                              <a href="user-delete.php?maNV=<?=$r['MaNV']?>" onclick="return confirm('Are you sure you want to delete?');" role="button" data-toggle="modal"><i class="material-icons" style="color:#F44336">&#xE5C9;</i></a>
                           </td>
 
                         </tr>

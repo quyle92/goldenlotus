@@ -68,7 +68,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function layTenUser($maNV) {
-		echo $sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a,  [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV ='$maNV'	";
+		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a,  [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV ='$maNV'	";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -79,5 +79,55 @@ class GoldenLotus extends DbConnection{
 		catch ( PDOException $error ){
 			echo $error->getMessage();
 		}
+	}
+
+	public function xoaUser( $maNV ){
+		$sql = "DELETE FROM  [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] where [MaNhanVien] = '$maNV'";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+
+	}
+
+	public function countOccupiedTables() : int {
+		$sql = "SELECT * FROM  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] where [ThoiGianDongPhieu] IS NULL";
+		try 
+		{
+			$rs = sqlsrv_query($this->conn, $sql, array(), array( "Scrollable" => 'static' ));
+
+			if( sqlsrv_fetch( $rs ) === false) {
+			     die( print_r( sqlsrv_errors(), true));
+			}
+
+			return $count = sqlsrv_num_rows($rs);
+
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+
+	}
+
+	public function countTotalTables() : int {
+		$sql = "SELECT * FROM  [NH_STEAK_PIZZA].[dbo].[tblDMBan]";
+		try 
+		{
+			$rs = sqlsrv_query($this->conn, $sql, array(), array( "Scrollable" => 'static' ));
+			
+			if( sqlsrv_fetch( $rs ) === false) {
+			     die( print_r( sqlsrv_errors(), true));
+			}
+
+			return $count = sqlsrv_num_rows($rs);
+
+		}
+		catch ( PDOException $error )
+		{
+			echo $error->getMessage();
+		}
+
 	}
 }

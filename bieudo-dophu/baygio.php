@@ -1,11 +1,7 @@
 <?php
-$baygio = date();
-
-$sql = "SELECT DangNgoi, COUNT(*) as SoLuong
-  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu]
-   WHERE substring(Convert(varchar,GioVao,111),0,8) = '2020/09'
- GROUP BY DangNgoi ";
-
+$tong_so_ban = $goldenlotus->countTotalTables();
+$co_nguoi = $goldenlotus->countOccupiedTables();
+$ban_trong = $tong_so_ban - $co_nguoi;
 ?>
 
 <div class="container-fluid">
@@ -21,12 +17,14 @@ $sql = "SELECT DangNgoi, COUNT(*) as SoLuong
 //var ctx = document.getElementById('myChart').getContext('2d');
 const DOPHU_BAYGIO = document.getElementById('dophu-baygio');
 	
+  var coNguoi = <?=$co_nguoi?> ;
+  var banTrong = <?=$ban_trong?> ;
 	var data = {
     labels: ["Bàn trống",  "Có người"],
     datasets: [
       {
         label: "Độ phủ theo thời gian thực",
-        data: [10, 50],
+        data: [banTrong, coNguoi],
         backgroundColor: [
           "#DC143C",
           "#2E8B57"
