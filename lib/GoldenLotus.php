@@ -130,4 +130,88 @@ class GoldenLotus extends DbConnection{
 		}
 
 	}
+
+	public function getFoodSoldThisMonth ($thang_nay) {
+		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_nay' and SoLuong >0";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);
+			//$r=sqlsrv_fetch_array($rs); 
+			if(sqlsrv_has_rows($rs) != false) 
+				return $rs;
+			else throw new \Exception('Sth wrong. Please try again.');
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getFoodSoldLastMonth ($thang_truoc) {
+		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_truoc' and SoLuong >0";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);
+			//$r=sqlsrv_fetch_array($rs); 
+			if($rs != false) 
+				return $rs;
+			else throw new \Exception('Sth wrong. Please try again.');
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getFoodSoldAnotherMonth ($thang_khac) {
+		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_khac' and SoLuong >0";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);
+			//$r=sqlsrv_fetch_array($rs); 
+			if( $rs != false) 
+				return $rs;
+			else throw new \Exception('Sth wrong. Please try again.');
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getFoodSoldToday($hom_nay) {
+		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_nay' and SoLuong >0";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);
+			
+			if( $rs != false) 
+				return $rs;
+			else   die(print_r(sqlsrv_errors(), true));
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getFoodSoldYesterday($hom_truoc) {
+		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_truoc' and SoLuong >0";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);
+			//$r=sqlsrv_fetch_array($rs); 
+			if( $rs != false)  
+				return $rs;
+			else die(print_r(sqlsrv_errors(), true));
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getFoodSoldAnotherDay($hom_khac) {
+		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_khac' and SoLuong >0";
+		try{
+			$rs = sqlsrv_query($this->conn, $sql);
+			//$r=sqlsrv_fetch_array($rs); 
+			if( $rs != false) 
+				return $rs;
+			else die(print_r(sqlsrv_errors(), true));
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
 }
