@@ -9,7 +9,8 @@ $hom_khac = substr($hom_khac,6) . "/" . substr($hom_khac,3,2) . "/" . substr($ho
 
 $hang_ban = $goldenlotus->getFoodSoldAnotherDay($hom_khac);
 $data = "";
- while ($r=sqlsrv_fetch_array($hang_ban))
+
+while ($r=sqlsrv_fetch_array($hang_ban))
 { 
    $data .= '<tr>
     <td>' . $r["TenHangBan"]  .' </td>

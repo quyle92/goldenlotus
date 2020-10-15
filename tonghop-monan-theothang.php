@@ -14,8 +14,8 @@ $trungtam=$_SESSION['TenTrungTam'];
 
 $thang_nay  = date('Y/m',strtotime("-1 month"));
 $thang_truoc  = date('Y/m',strtotime("-1 month"));
-$thang_khac = isset($_POST['thang-khac']) ? $_POST['thang-khac'] : "";//16/10/2020
-$thang_khac = substr($thang_khac,6) . "/" . substr($thang_khac,3,2);
+
+
 
 ?>
 
@@ -120,19 +120,7 @@ $thang_khac = substr($thang_khac,6) . "/" . substr($thang_khac,3,2);
                               </tr>
                             </thead>
                             <tbody>
-                              <?php
-                              if( !empty( $thang_khac ) )
-                                $hang_ban = $goldenlotus->getFoodSoldAnotherMonth($thang_khac);
-                                while ($r=sqlsrv_fetch_array($hang_ban)){ ?>
-                                   <tr>
-                                    <td><?=$r['TenHangBan']?></td>
-                                    <td><?=$r['MaDVT']?></td>
-                                    <td><?=$r['SoLuong']?></td>
-                                    <td><?=number_format($r['ThanhTien'],0,",",".")?><sup>đ</sup></td>
-                                  </tr>
-                                <?php }
-                              
-                              ?>
+
                             </tbody>
                           </table>
                         </div>
@@ -153,6 +141,23 @@ $thang_khac = substr($thang_khac,6) . "/" . substr($thang_khac,3,2);
 <!-- Nav CSS -->
 
 <script>
+
+   $('form').on('submit', function (event){
+    event.preventDefault();
+    var thangKhac = $('#thang-khac').val();console.log(homKhac);
+    
+    $.ajax({
+      url:"tonghop-monan/theothang.php",
+      method:"POST",
+      data:{'thang-khac' : thangKhac},
+      dataType:"json",
+      success:function(data)
+      {
+        $('#tab3primary table tbody').html(data);
+      }
+    })
+  });
+
   /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
