@@ -65,9 +65,9 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                 $r = sqlsrv_fetch_array($bill_details_today, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
                                 ?>
                                   <tr>
-                                    <td><?=($i==0)?$r['ThoiGianBan']->format('Y-m-d'):""?></td>
+                                    <td><?=($i==0)?$r['ThoiGianBan']->format('d-m-Y'):""?></td>
                                     <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
-                                    <td><?=$r['MaHangBan']?></td>
+                                    <td><?=$r['MaLichSuPhieu']?></td>
                                     <td></td>
                                     <td></td>
                                     <td><?=$r['TenHangBan']?></td>
@@ -135,9 +135,9 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                 $r = sqlsrv_fetch_array($bill_details_yesterday, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
                                 ?>
                                   <tr>
-                                    <td><?=($i==0)?$r['ThoiGianBan']->format('Y-m-d'):""?></td>
+                                    <td><?=($i==0)?$r['ThoiGianBan']->format('d-m-Y'):""?></td>
                                     <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
-                                    <td><?=$r['MaHangBan']?></td>
+                                    <td><?=$r['MaLichSuPhieu']?></td>
                                     <td></td>
                                     <td></td>
                                     <td><?=$r['TenHangBan']?></td>
@@ -210,9 +210,9 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                   $r = sqlsrv_fetch_array($bill_details_by_date_of_month, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
                                   ?>
                                     <tr>
-                                      <td><?=($i==0)?$r['ThoiGianBan']->format('Y-m-d'):""?></td>
+                                      <td><?=($i==0)?$r['ThoiGianBan']->format('d-m-Y'):""?></td>
                                       <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
-                                      <td><?=$r['MaHangBan']?></td>
+                                      <td><?=$r['MaLichSuPhieu']?></td>
                                       <td></td>
                                       <td></td>
                                       <td><?=$r['TenHangBan']?></td>

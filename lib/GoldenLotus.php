@@ -216,7 +216,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsToday($today){
-		 $sql = "SELECT a.*, b.*, c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/26' ";
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/26' ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -230,7 +230,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsYesterday( $yesterday ){
-		 $sql = "SELECT a.*, b.*, c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/29'"; 
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/29'"; 
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -258,19 +258,6 @@ class GoldenLotus extends DbConnection{
 		}
 	}
 
-	// public function getDatesHasBillOfLastMonth( $last_month ){
-	// 	$sql = "SELECT substring( Convert(varchar,ThoiGian,111),0,11 ) as NgayCoBill, count( * ) FROM [NH_STEAK_PIZZA].[dbo].[tblOrderChiTiet] WHERE substring( Convert(varchar,ThoiGian,111),0,8 ) ='2020/09' GROUP BY substring( Convert(varchar,ThoiGian,111),0,11 )";
-	// 	try{
-	// 		$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-	// 		//$r=sqlsrv_fetch_array($rs); 
-	// 		if( $rs != false) 
-	// 			return $rs;
-	// 		else die(print_r(sqlsrv_errors(), true));
-	// 	}
-	// 	catch ( PDOException $error ){
-	// 		echo $error->getMessage();
-	// 	}
-	// }
 
 	public function getDatesHasBillBySelection( $tungay, $denngay  ){
 		$sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a , [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b, [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' AND SoLuong >0 AND a.MaLichSuPhieu=b.MaLichSuPhieu  GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 )";
@@ -287,7 +274,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsByDayOfMonth( $date ){
-		$sql = "SELECT a.*, b.*, c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' ";
+		$sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -299,4 +286,21 @@ class GoldenLotus extends DbConnection{
 			echo $error->getMessage();
 		}
 	}
+
+	public function getPayMethodDetailsByDate( $date ){
+		$sql = "SELECT  b.*, c.[MaLoaiThe] FROM  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) ='$date' ";
+		try{
+			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+			//$r=sqlsrv_fetch_array($rs); 
+			if( $rs != false) 
+				return $rs;
+			else die(print_r(sqlsrv_errors(), true));
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+
+
 }

@@ -1,6 +1,10 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus;
+
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 
@@ -63,11 +67,24 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $date = date('2020/08/26');$total = 0;
+                                $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
+                                while( $r = sqlsrv_fetch_array( $payment_method_details_by_date ) ) {  ?>
                                 <tr>
+                                  <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
+                                  <td><?=$r['GioVao']->format('d-m-Y')?></td>
+                                  <td><?=$r['MaLichSuPhieu']?></td>
+                                  <td><?=number_format($r['TienThucTra'],0,",",".")?><sup>đ</sup></td>
+                                </tr>
+                                <?php $total += $r['TienThucTra'];
+                                }                                
+                                ?>
+                                <tr>
+                                  <td>Tổng</td>
                                   <td></td>
                                   <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td><?=number_format($total,0,",",".")?><sup>đ</sup></td>
                                 </tr>
                               </tbody>
                              </table>
@@ -86,11 +103,24 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                               <?php
+                                $date = date('2020/08/29');$total = 0;
+                                $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
+                                while( $r = sqlsrv_fetch_array( $payment_method_details_by_date ) ) {  ?>
                                 <tr>
+                                  <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
+                                  <td><?=$r['GioVao']->format('d-m-Y')?></td>
+                                  <td><?=$r['MaLichSuPhieu']?></td>
+                                  <td><?=number_format($r['TienThucTra'],0,",",".")?><sup>đ</sup></td>
+                                </tr>
+                                <?php $total += $r['TienThucTra'];
+                                }                                
+                                ?>
+                                <tr>
+                                  <td>Tổng</td>
                                   <td></td>
                                   <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td><?=number_format($total,0,",",".")?><sup>đ</sup></td>
                                 </tr>
                               </tbody>
                              </table>
@@ -108,11 +138,41 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <?php
+                                $this_month = date('2020/08');
+                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
+                                while ( $rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ) )
+                                {
+                                $date = $rs['NgayCoBill'];
+                                $payment_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
+                                $count = sqlsrv_num_rows($payment_details_by_date);
+                                $total = 0;settype($total,"integer");
+                                $grand_total = 0;settype($total,"integer");
+                                for ($i = 0; $i < sqlsrv_num_rows($payment_details_by_date); $i++) {
+                                $r = sqlsrv_fetch_array($payment_details_by_date, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                ?>
+                                  <tr>
+                                  <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
+                                  <td><?=($i==0) ? $r['GioVao']->format('d-m-Y') : ""?></td>
+                                  <td><?=$r['MaLichSuPhieu']?></td>
+                                  <td><?php echo number_format($r['TienThucTra'],0,",","."); $total += $r['TienThucTra'];?><sup>đ</sup></td>
+                                  </tr>
+                                <?php
+                                if ($i == $count - 1) { ?> <tr><td>Tổng</td>
+                                    <td></td>
+                                    <td></td>
+      
+                                    <td><?php echo number_format($total,0,",",".") ; $grand_total += $total; ?><sup>đ</sup></td>
+                                    </tr>
+                                  <?php } 
+                                  } 
+                                } ?>
+                               <tr>
+                                  <td><strong>Grand Total</strong></td>
                                   <td></td>
                                   <td></td>
-                                  <td></td>
-                                  <td></td>
+     
+                                  <td><?=number_format($grand_total,0,",",".")?><sup>đ</sup></td>
                                 </tr>
                               </tbody>
                              </table>
@@ -120,14 +180,20 @@ if($denngay == "")
                         </div>
                         <div class="tab-pane fade" id="tab4primary">
                             <div class="row">
-                              <div class="col-xs-12 col-sm-12">
-                                <div class="col-md-2" style="margin-bottom:5px">Từ ngày:</div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="tungay" type="text"  value="<?php echo @$tungay ?>" id="tungay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px">Đến ngày: </div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="denngay" type="text"  value="<?php echo @$denngay ?>" id="denngay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
+                              <form action="" method="post">
+                                <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="tu-ngay" type="text"  value="" id="tu-ngay" />
+                                </div>
+                                <div class="col-md-2" style="margin-bottom:5px">Đến:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="den-ngay" type="text" value="" id="den-ngay" />
+                                </div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                              </form>
                             </div>
-                          </div>
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <table class="table table-striped table-bordered" id="sailorTable">
                                 <thead>
@@ -166,6 +232,25 @@ if($denngay == "")
 <!-- Nav CSS -->
 
 <script>
+
+    $('form').on('submit', function (event){
+    event.preventDefault();
+    var tuNgay = $('#tu-ngay').val();console.log(tuNgay);
+    var denNgay = $('#den-ngay').val();console.log(denNgay);
+    
+    $.ajax({
+      url:"bangke-chitiet-pttt/khac.php",
+      method:"POST",
+      data:{'tu-ngay' : tuNgay, 'den-ngay' : denNgay},
+      dataType:"json",
+      success:function(output)
+      {
+        $('#tab4primary table tbody').html(output);
+      }
+    })
+  });
+
+
   /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
@@ -191,8 +276,8 @@ $('.navbar-toggle').on('click', function() {
    
 });
 
-$('#tungay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-$('#denngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
 
 
 </script>

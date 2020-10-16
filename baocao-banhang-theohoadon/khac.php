@@ -27,9 +27,9 @@ while ($rs = sqlsrv_fetch_array( $dates_has_bill_by_selection ))
 	$r = sqlsrv_fetch_array($bill_details_by_date_of_month, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
 	$output .='
 	    <tr>
-	      <td>' . ( ($i==0) ? $r['ThoiGianBan']->format('Y-m-d') : "" ) . ' </td>
+	      <td>' . ( ($i==0) ? $r['ThoiGianBan']->format('d-m-Y') : "" ) . ' </td>
 	      <td>' . ( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" ) . '</td>
-	      <td>' . $r['MaHangBan'] . '</td>
+	      <td>' . $r['MaLichSuPhieu'] . '</td>
 	      <td></td>
 	      <td></td>
 	      <td>' . $r['TenHangBan'] . '</td>
