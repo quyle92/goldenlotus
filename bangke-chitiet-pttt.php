@@ -141,14 +141,18 @@ if($denngay == "")
                                 <?php
                                 $this_month = date('2020/08');
                                 $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
+                                $k=0;
+                                $total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
+                                $grand_total = 0;settype($total,"integer");
                                 while ( $rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ) )
                                 {
                                 $date = $rs['NgayCoBill'];
                                 $payment_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
                                 $count = sqlsrv_num_rows($payment_details_by_date);
                                 $total = 0;settype($total,"integer");
-                                $grand_total = 0;settype($total,"integer");
-                                for ($i = 0; $i < sqlsrv_num_rows($payment_details_by_date); $i++) {
+                               
+                                for ($i = 0; $i < sqlsrv_num_rows($payment_details_by_date); $i++) 
+                                {
                                 $r = sqlsrv_fetch_array($payment_details_by_date, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
                                 ?>
                                   <tr>
@@ -164,16 +168,21 @@ if($denngay == "")
       
                                     <td><?php echo number_format($total,0,",",".") ; $grand_total += $total; ?><sup>đ</sup></td>
                                     </tr>
-                                  <?php } 
-                                  } 
-                                } ?>
-                               <tr>
+                                  <?php }
+                                 
+                                } 
+                                $k++; 
+                                if($k == $total_count){ ?>
+                                  <tr>
                                   <td><strong>Grand Total</strong></td>
                                   <td></td>
                                   <td></td>
      
                                   <td><?=number_format($grand_total,0,",",".")?><sup>đ</sup></td>
                                 </tr>
+                                <?php }
+                                } ?>
+                               
                               </tbody>
                              </table>
                           </div>

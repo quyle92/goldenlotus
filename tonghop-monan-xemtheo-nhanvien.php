@@ -1,6 +1,10 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus;
+
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 
@@ -62,13 +66,29 @@ if($denngay == "")
                               </tr>
                             </thead>
                             <tbody>
+                            <?php
+                            $date = date('2020/08 /26');$total = 0;
+                            $food_sold_by_staff = $goldenlotus->getBillDetailsToday( $date );
+                            for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_staff); $i++) {
+                                $r = sqlsrv_fetch_array($food_sold_by_staff, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                            { ?>
                               <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><?= ($i==0) ? $r['GioVao']->format('d-m-Y') : ""?></td>
+                                <td><?=$r['MaNhanVien']?></td>
+                                <td><?=$r['TenHangBan']?></td>
+                                <td><?=$r['SoLuong']?></td>
+                                <td><?php echo number_format($r['DonGia']*$r['SoLuong'],0,",",".");
+                                    $total += $r['DonGia']*$r['SoLuong'] ?><sup>đ</sup></td>
                               </tr>
+                            <?php } 
+                            } ?>
+                            <tr>
+                                <td>Tổng</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><?=number_format($total,0,",",".")?><sup>đ</sup></td>
+                                </tr>
                             </tbody>
                           </table>
                         </div>
@@ -84,13 +104,29 @@ if($denngay == "")
                               </tr>
                             </thead>
                             <tbody>
+                            <?php
+                            $date = date('2020/08/29');$total = 0;
+                            $food_sold_by_staff = $goldenlotus->getBillDetailsToday( $date );
+                            for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_staff); $i++) {
+                                $r = sqlsrv_fetch_array($food_sold_by_staff, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                            { ?>
                               <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><?= ($i==0) ? $r['GioVao']->format('d-m-Y') : ""?></td>
+                                <td><?=$r['MaNhanVien']?></td>
+                                <td><?=$r['TenHangBan']?></td>
+                                <td><?=$r['SoLuong']?></td>
+                                <td><?php echo number_format($r['DonGia']*$r['SoLuong'],0,",",".");
+                                    $total += $r['DonGia']*$r['SoLuong'] ?><sup>đ</sup></td>
                               </tr>
+                            <?php } 
+                            } ?>
+                            <tr>
+                                <td>Tổng</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><?=number_format($total,0,",",".")?><sup>đ</sup></td>
+                                </tr>
                             </tbody>
                           </table>
                         </div>
@@ -106,13 +142,58 @@ if($denngay == "")
                               </tr>
                             </thead>
                             <tbody>
-                              <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                              </tr>
+                               <?php
+                                $this_month = date('2020/08');
+                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
+                                $k = 0;
+                                $total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
+                                $grand_total = 0;settype($total,"integer");
+                                while ( $rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ) )
+                                {
+                                $date = $rs['NgayCoBill'];
+                                $payment_details_by_date = $goldenlotus->getBillDetailsByDayOfMonth( $date );
+                                $count = sqlsrv_num_rows($payment_details_by_date);
+                                $total = 0;settype($total,"integer");
+                               
+                                for ($i = 0; $i < sqlsrv_num_rows($payment_details_by_date); $i++) 
+                                {
+                                $r = sqlsrv_fetch_array($payment_details_by_date, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                ?>
+                                  <tr>
+                                    <td><?= ($i==0) ? $r['GioVao']->format('d-m-Y') : ""?></td>
+                                    <td><?=$r['MaNhanVien']?></td>
+                                    <td><?=$r['TenHangBan']?></td>
+                                    <td><?=$r['SoLuong']?></td>
+                                    <td><?php echo number_format($r['DonGia']*$r['SoLuong'],0,",",".");
+                                        $total += $r['DonGia']*$r['SoLuong'] ?><sup>đ</sup>
+                                    </td>
+                                  </tr>
+                                <?php
+                                if ($i == $count - 1) { ?> <tr><td>Tổng</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><?php echo number_format($total,0,",",".") ;  $grand_total += $total; ?><sup>đ</sup></td>
+                                    </tr>
+                                  <?php 
+                                if( $k == $total_count -1  ){
+                                   ?>
+                                   <tr>
+                                    <td><strong>Grand Total</strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+
+                                    <td><?=number_format($grand_total,0,",",".")?><sup>đ</sup></td>
+                                  </tr>
+                                  <?php }
+                                }
+      
+                                    }
+                                    $k++;  
+                                } 
+                                
+                                //if (!empty($_SESSION['grand_total'])) unset($_SESSION['grand_total']); ?>
                             </tbody>
                           </table>
                         </div>

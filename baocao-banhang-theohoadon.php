@@ -199,14 +199,18 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                 <?php
                                 $this_month = date('Y/m');
                                 $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
+                                $k = 0;
+                                $total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
+                                $grand_total = 0;settype($total,"integer");
                                 while ($rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ))
                                 {
                                   $date = $rs['NgayCoBill'];
                                   $bill_details_by_date_of_month = $goldenlotus->getBillDetailsByDayOfMonth( $date );
                                   $count = sqlsrv_num_rows($bill_details_by_date_of_month);
                                   $total = 0;settype($total,"integer");
-                                  $grand_total = 0;settype($total,"integer");
-                                  for ($i = 0; $i < sqlsrv_num_rows($bill_details_by_date_of_month); $i++) {
+                                 
+                                  for ($i = 0; $i < sqlsrv_num_rows($bill_details_by_date_of_month); $i++) 
+                                  {
                                   $r = sqlsrv_fetch_array($bill_details_by_date_of_month, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
                                   ?>
                                     <tr>
@@ -227,7 +231,31 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                           $total += $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
                                     </tr>
                                   <?php
-                                  if ($i == $count - 1) { ?> <tr><td>Tổng</td>
+                                    if ($i == $count - 1) 
+                                    { ?> <tr><td>Tổng</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td><?php echo  number_format($total,0,",",".") ; $grand_total += $total; ?><sup>đ</sup></td>
+                                      </tr>
+                                    <?php 
+                     
+                                  } 
+                                }
+                                  $k++; 
+                                  if( $k == $total_count    ){
+                                   ?>
+                                   <tr>
+                                    <td><strong>Grand Total</strong></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -240,29 +268,13 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td><?php echo  number_format($total,0,",",".") ; $grand_total += $total; ?><sup>đ</sup></td>
-                                    </tr>
-                                  <?php } ?>
-                                  <?php 
-                                 }
-
-                               } ?>
-                                <tr>
-                                  <td><strong>Grand Total</strong></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td><?=number_format($grand_total,0,",",".")?><sup>đ</sup></td>
-                                </tr>
+                                    <td><?=number_format($grand_total,0,",",".")?><sup>đ</sup></td>
+                                  </tr>
+                                  <?php }
+                                  
+                             } 
+                             if (!empty($_SESSION['grand_total'])) unset($_SESSION['grand_total']); ?>
+                                
                               </tbody>
                              </table>
                           </div>

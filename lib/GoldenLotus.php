@@ -216,7 +216,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsToday($today){
-		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/26' ";
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/26' and SoLuong >0 ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -230,7 +230,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsYesterday( $yesterday ){
-		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/29'"; 
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/29' and SoLuong >0"; 
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -245,7 +245,7 @@ class GoldenLotus extends DbConnection{
 
 
 	public function getDatesHasBillOfThisMonth( $this_month ) {
-		  $sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2020/08' GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 ) ";
+		  $sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2020/08' and SoLuong >0 GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 ) ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -274,7 +274,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsByDayOfMonth( $date ){
-		$sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' ";
+		$sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
