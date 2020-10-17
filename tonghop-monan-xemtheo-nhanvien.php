@@ -199,11 +199,19 @@ if($denngay == "")
                         </div>
                         <div class="tab-pane fade" id="tab4primary">
                             <div class="row">
-                              <div class="col-md-2" style="margin-bottom:5px">Từ ngày:</div>
-                              <div class="col-md-3" style="margin-bottom:5px"><input name="tungay" type="text"  value="<?php echo @$tungay ?>" id="tungay" /></div>
-                              <div class="col-md-2" style="margin-bottom:5px">Đến ngày: </div>
-                              <div class="col-md-3" style="margin-bottom:5px"><input name="denngay" type="text"  value="<?php echo @$denngay ?>" id="denngay" /></div>
-                              <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
+                              <form action="" method="post">
+                                <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="tu-ngay" type="text"  value="" id="tu-ngay" />
+                                </div>
+                                <div class="col-md-2" style="margin-bottom:5px">Đến:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="den-ngay" type="text" value="" id="den-ngay" />
+                                </div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                              </form>
                           </div>
                           <table class="table table-striped table-bordered" width="100%" id="sailorTable">
                             <thead>
@@ -242,6 +250,24 @@ if($denngay == "")
 <!-- Nav CSS -->
 
 <script>
+
+       $('form').on('submit', function (event){
+    event.preventDefault();
+    var tuNgay = $('#tu-ngay').val();console.log(tuNgay);
+    var denNgay = $('#den-ngay').val();console.log(denNgay);
+    
+    $.ajax({
+      url:"tonghop-monan-xemtheo-nhanvien/khac.php",
+      method:"POST",
+      data:{'tu-ngay' : tuNgay, 'den-ngay' : denNgay},
+      dataType:"json",
+      success:function(output)
+      {
+        $('#tab4primary table tbody').html(output);
+      }
+    })
+  });
+
   /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
@@ -267,8 +293,8 @@ $('.navbar-toggle').on('click', function() {
    
 });
 
-$('#tungay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-$('#denngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
 
 
 </script>

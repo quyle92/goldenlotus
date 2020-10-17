@@ -301,6 +301,73 @@ class GoldenLotus extends DbConnection{
 		}
 	}
 
+	 public function getFoodGroupsByDate( $date ){
+		$sql = "select Ten from  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
+ LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 group by Ten";
+		try{
+			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+			
+			if( $rs != false) 
+				return $rs;
+			else die(print_r(sqlsrv_errors(), true));
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getFoodSoldByGroup( $date, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
+
+	 	$sql_2 = "select Ten from  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
+		 LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+		ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 group by Ten";
+			try{
+				$rs_2 = sqlsrv_query( $this->conn, $sql_2, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs_2 != false) 
+					{
+						//$nhom_hang_ban_arr = sqlsrv_fetch_array( $rs_2 );
+						while( $row = sqlsrv_fetch_array( $rs_2, SQLSRV_FETCH_ASSOC ) )
+							$nhom_hang_ban_arr[] = $row['Ten'];
+					}
+				else die(print_r(sqlsrv_errors(), true));
+			}
+			catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+
+		$sql = "  SELECT DISTINCT TenHangBan,MaHangBan, Ten, TotalOrderAmount as SoLuong, DonGia,TienGiamGia,SoTienDVPhi, SoTienVAT
+	    FROM
+	   ( SELECT Ten, MaHangBan, TenHangBan, DonGia, TienGiamGia,SoTienDVPhi,SoTienVAT,
+	    SUM(SoLuong) OVER(PARTITION BY TenHangBan) AS TotalOrderAmount
+	  	FROM
+		  ( SELECT  c.[Ten] ,  a.MaHangBan, b.[TenHangBan] , a.SoLuong, a.DonGia,
+		  p.TienGiamGia,p.SoTienDVPhi, p.SoTienVAT 	  
+		  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] p 
+		  JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
+		  ON p.MaLichSuPhieu = a.MaLichSuPhieu 
+		  LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b 
+		  ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+		  ON b.[MaNhomHangBan] = c.[Ma] 
+		  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and Ten=N'$nhom_hang_ban'
+		  and SoLuong >0  ) x  
+		  ) y Order by Ten
+		 ";
+
+
+			try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die(print_r(sqlsrv_errors(), true));
+			}
+			catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
 
 
 }

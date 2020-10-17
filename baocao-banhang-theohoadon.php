@@ -3,6 +3,7 @@ require('lib/db.php');
 require('lib/goldenlotus.php');
 @session_start();
 $goldenlotus = new GoldenLotus;
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 $matrungtam=$_SESSION['MaTrungTam'];
