@@ -58,7 +58,7 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                 <?php
                                 $today = date("2020/08/26");
                                 $nhom_hang_ban_arr = array();
-                                $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $today, $nhom_hang_ban_arr, $nhom_hang_ban = "" );
+                                $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $today, $nhom_hang_ban_arr );
                                                                
                                 foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
                                 { 
@@ -67,7 +67,7 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                   $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
                                   ?>
                                     <tr>
-                                      <td><?=$r['Ten']?></td>
+                                      <td><?=($i==0) ? $r['Ten'] : ""?></td>
                                       <td><?=$r['MaHangBan'] ?></td>
                                       <td><?=$r['TenHangBan']?></td>
                                       <td><?=$r['SoLuong']?></td>
@@ -110,31 +110,36 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                 </thead>
                                 <tbody>
                                 <?php
-                                $today = date("2020/08/29");
-                                $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $today );
-                                $count = sqlsrv_num_rows($food_sold_by_group);
-                                $total = 0;
-                                for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) {
-                                $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
-                                ?>
-                                  <tr>
-                                    <td><?=$r['Ten'] ?></td>
-                                    <td><?=$r['MaHangBan'] ?></td>
-                                    <td><?=$r['TenHangBan']?></td>
-                                    <td><?=$r['SoLuong']?></td>
-                                    <td></td>
-                                    <td><?=number_format($r['DonGia'],0,",",".")?><sup>đ</sup></td>
-                                    <td><?=$r['TienGiamGia']?></td>
-                                    <td></td>
-                                    <td><?=$r['SoTienDVPhi']?></td>
-                                    <td><?=$r['SoTienVAT']?></td>
-                                    <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
-                                        $total += $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
-                                    <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
-                                        $total += $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
-                                  </tr>
-                                <?php 
-                               } ?>
+                                $yesterday = date("2020/08/29");
+                                $nhom_hang_ban_arr = array();
+                                $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $yesterday, $nhom_hang_ban_arr );
+                                                               
+                                foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
+                                { 
+                                  $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $today, $nhom_hang_ban_arr, $nhom_hang_ban);
+                                  for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) {
+                                  $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                  ?>
+                                    <tr>
+                                      <td><?=($i==0) ? $r['Ten'] : ""?></td>
+                                      <td><?=$r['MaHangBan'] ?></td>
+                                      <td><?=$r['TenHangBan']?></td>
+                                      <td><?=$r['SoLuong']?></td>
+                                      <td></td>
+                                      <td><?=number_format($r['DonGia'],0,",",".")?><sup>đ</sup></td>
+                                      <td><?=$r['TienGiamGia']?></td>
+                                      <td></td>
+                                      <td><?=$r['SoTienDVPhi']?></td>
+                                      <td><?=$r['SoTienVAT']?></td>
+                                      <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
+                                          $total = $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
+                                      <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
+                                          $total = $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
+                                    </tr>
+                                  <?php 
+                                  } 
+                                }?>
+                              </tbody>
                               </tbody>
                              </table>
                           </div>
@@ -161,38 +166,34 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                                 <tbody>
                                 <?php
                                 $this_month = date('2020/08');
-                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
-                                while ($rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ))
-                                {
-                                  $date = $rs['NgayCoBill'];
-                                  $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $date );
-                                 
-                                  for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) 
-                                  {
+                                $nhom_hang_ban_arr = array();
+                                $food_sold_by_group = $goldenlotus->getFoodSoldByGroup_Month( $this_month, $nhom_hang_ban_arr);
+                                                               
+                                foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
+                                { 
+                                  $food_sold_by_group = $goldenlotus->getFoodSoldByGroup_Month( $this_month, $nhom_hang_ban_arr, $nhom_hang_ban);
+                                  for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) {
                                   $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
                                   ?>
                                     <tr>
-                                    <td><?=$r['Ten'] ?></td>
-                                    <td><?=$r['MaHangBan'] ?></td>
-                                    <td><?=$r['TenHangBan']?></td>
-                                    <td><?=$r['SoLuong']?></td>
-                                    <td></td>
-                                    <td><?=number_format($r['DonGia'],0,",",".")?><sup>đ</sup></td>
-                                    <td><?=$r['TienGiamGia']?></td>
-                                    <td></td>
-                                    <td><?=$r['SoTienDVPhi']?></td>
-                                    <td><?=$r['SoTienVAT']?></td>
-                                    <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
-                                        $total += $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
-                                    <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
-                                        $total += $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
-                                  </tr>
-                                  <?php
-                                }
-                  
-                              } 
-                              ?>
-                                
+                                      <td><?=($i==0) ? $r['Ten'] : ""?></td>
+                                      <td><?=$r['MaHangBan'] ?></td>
+                                      <td><?=$r['TenHangBan']?></td>
+                                      <td><?=$r['SoLuong']?></td>
+                                      <td></td>
+                                      <td><?=number_format($r['DonGia'],0,",",".")?><sup>đ</sup></td>
+                                      <td><?=$r['TienGiamGia']?></td>
+                                      <td></td>
+                                      <td><?=$r['SoTienDVPhi']?></td>
+                                      <td><?=$r['SoTienVAT']?></td>
+                                      <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
+                                          $total = $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
+                                      <td><?php echo number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".");
+                                          $total = $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
+                                    </tr>
+                                  <?php 
+                                  } 
+                                }?>
                               </tbody>
                              </table>
                           </div>

@@ -11,36 +11,34 @@ $denngay = isset( $_POST['den-ngay'] ) ? $_POST['den-ngay'] :"";
 $denngay = substr($denngay,6) . "/" . substr($denngay,3,2) . "/" . substr($denngay,0,2);
 
 $output = "";
-$dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $tungay, $denngay  );
-
-while ($rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ))
-{
-  $date = $rs['NgayCoBill'];
-  $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $date );
-
+$nhom_hang_ban_arr = array();
+$food_sold_by_group = $goldenlotus->getFoodSoldByGroup_DateSelected( $tungay, $denngay, $nhom_hang_ban_arr, $nhom_hang_ban = "" );
+                               
+foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
+{ 
+  $food_sold_by_group = $goldenlotus->getFoodSoldByGroup_DateSelected( $tungay, $denngay, $nhom_hang_ban_arr, $nhom_hang_ban);
   for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) 
   {
-	$r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
-	$output .='
-	    <tr>
-            <td>' . $r['Ten'] . '</td>
-            <td>' . $r['MaHangBan'] . '</td>
-            <td>'. $r['TenHangBan'] . '</td>
-            <td>' . $r['SoLuong'] . '</td>
-            <td></td>
-            <td>' . number_format($r['DonGia'],0,",",".") . '<sup>đ</sup></td>
-            <td>' . $r['TienGiamGia'] . '</td>
-            <td></td>
-            <td> ' . $r['SoTienDVPhi'] . '</td>
-            <td> ' . $r['SoTienVAT'] . '</td>
-            <td> ' . number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".")
-              . '<sup>đ</sup></td>
-            <td>' . number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".")
-               	 .  '<sup>đ</sup></td>
-        </tr>
-	   ';
-   } 
- 	
+  $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+ 
+  $output .=' <tr>
+      <td>' . ( ($i==0) ? $r['Ten'] : "" ) . '</td>
+      <td>' . $r['MaHangBan'] . '</td>
+      <td> ' . $r['TenHangBan'] . '</td>
+      <td> ' . $r['SoLuong']. '</td>
+      <td></td>
+      <td> ' .number_format($r['DonGia'],0,",","."). '<sup>đ</sup></td>
+      <td>' . $r['TienGiamGia'] . '</td>
+      <td></td>
+      <td>' .$r['SoTienDVPhi'] . '</td>
+      <td>' . $r['SoTienVAT'] . '</td>
+      <td>' . number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".") . '
+          <sup>đ</sup></td>
+      <td>' . number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".") . '
+          <sup>đ</sup></td>
+    </tr>';
+
+  } 
 }
 
 
