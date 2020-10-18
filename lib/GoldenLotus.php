@@ -216,7 +216,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsToday($today){
-		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/26' and SoLuong >0 ";
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$today' and SoLuong >0 ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -230,7 +230,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsYesterday( $yesterday ){
-		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='2020/08/29' and SoLuong >0"; 
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$yesterday' and SoLuong >0"; 
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -469,6 +469,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 				echo $error->getMessage();
 			}
 	}
+
 
 
 

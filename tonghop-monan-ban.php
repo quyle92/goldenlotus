@@ -23,7 +23,7 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
     <?php include 'menu.php'; ?>
       <div id="page-wrapper" >
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Bản kê chi tiết hóa đơn bán hàng</h3>
+            <h3 class="title">Bảng kê chi tiết hóa đơn bán hàng</h3>
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
