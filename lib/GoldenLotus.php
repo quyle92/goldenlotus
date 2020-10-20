@@ -470,6 +470,60 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			}
 	}
 
+	public function getSalesByFoodGroup( $date ){
+		$sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] x
+right Join 
+(	select t1.[MaNhomHangBan], t1.MaHangBan, t2.SoLuong, t2.DonGia, 
+	t2.SoLuong * t2.DonGia as TotalMoney
+	from [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] t1
+	left join (
+		select MaHangBan, [TenHangBan], SoLuong, DonGia  from
+		[NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+		where substring ( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' 
+		and SoLuong >0 ) t2 
+	on t2.MaHangBan = t1.MaHangBan 
+) y
+ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+			catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSalesByFoodGroupBySelection( $tungay, $denngay ){
+		$sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] x
+		right Join 
+		(	select t1.[MaNhomHangBan], t1.MaHangBan, t2.SoLuong, t2.DonGia, 
+			t2.SoLuong * t2.DonGia as TotalMoney
+			from [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] t1
+			left join (
+				select MaHangBan, [TenHangBan], SoLuong, DonGia  from
+				[NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+				where substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay'
+				and SoLuong >0 ) t2 
+			on t2.MaHangBan = t1.MaHangBan 
+		) y
+		ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+			catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
 
 
 

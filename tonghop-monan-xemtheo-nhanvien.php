@@ -287,6 +287,7 @@ for (i = 0; i < dropdown.length; i++) {
 dropdown[0].click();
 
 </script>
+
 <script>
 $('.navbar-toggle').on('click', function() {
   $('.sidebar-nav').toggleClass('block');  

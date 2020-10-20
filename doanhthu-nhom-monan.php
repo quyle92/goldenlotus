@@ -1,6 +1,10 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus;
+
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 
@@ -10,52 +14,111 @@ $trungtam=$_SESSION['TenTrungTam'];
 $tungay=@$_POST['tungay'];
 $denngay=@$_POST['denngay'];
 
-if($tungay == "")
-{
-	$tungay = "01-01-".date('Y');
-}
-
-if($denngay == "")
-{
-	$denngay = date('d-m-Y');
-}
+$bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
+$page_name = "BieuDoDoanhThu";
+if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
+    //die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
 ?>
 
 <!DOCTYPE HTML>
 <html>
 <head>
 <?php include ('head/head-revenue.month.php');?>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script>   
-<script>
+ <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-piechart-outlabels"></script>  -->
 
-
-</script>  
 </head>
 <body>
 <div id="wrapper">
     <?php include 'menu.php'; ?>
     <div id="page-wrapper">
-
     <div class="col-md-12 graphs">
-	<div class="xs">
-     <h3 class="title">Doanh thu theo nhóm món ăn</h3>
-     <div class="panel panel-warning" data-widget="{&quot;draggable&quot;: &quot;false&quot;}" data-widget-static="">
-    	<div class="panel-body no-padding">
-    		<div class="container-fluid">
-    			<div class="row">
-    				<div class="col-md-12" >
-    					<canvas id="dophu-baygio" ></canvas>
-    					<canvas id="pie-chart" ></canvas>
-    				</div>
-    			</div>
+  <div class="xs">
+  <h4>BẠN ĐANG ĐĂNG NHẬP VỚI QUYỀN - <?php echo $ten; ?> </h4>
+  <h2>Doanh thu nhóm món ăn </h2>
+    <form action="" method="post">
+  <div class="row">
 
-    		</div>
-    			
-    	</div>
+    <div class="col-md-2" style="margin-bottom:5px">Chi nhánh:</div>
+    <div class="col-md-3" style="margin-bottom:5px">
+      <select name="matrungtam" id="matrungtam" value="Tat ca">
+<?php 
+  $sql="SELECT * FROM tblDMTrungTam Order by MaTrungTam";
+  try
+  {
+    //lay ket qua query tong gia tri the
+    $result_tt = sqlsrv_query( $conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+    if($result_tt != false)
+    {
+      //show the results
+    
+      while ($r=sqlsrv_fetch_array($result_tt))
+      {
+      
+?>
+      <?php if($matrungtam == $r['MaTrungTam'])
+        {
+       ?>
+          <option value="<?php echo $r['MaTrungTam'];?>" selected="selected"><?php echo $r['TenTrungTam'];?></option>
+      <?php
+        }
+        else
+        {
+      ?>
+          <option value="<?php echo $r['MaTrungTam'];?>"><?php echo $r['TenTrungTam'];?></option>
+      <?php
+        }
+      ?>
+<?php
+      }
+    } 
+  }
+  catch (PDOException $e) {
+
+    //loi ket noi db -> show exception
+    echo $e->getMessage();
+  }
+?>
+      </select>
     </div>
+    <div class="col-md-3" style="margin-bottom:5px"></div>
+    <div class="col-md-2" style="margin-bottom:5px"></div>
+   </div>
+
+     </form>
+     <div class="panel with-nav-tabs panel-primary ">
+                <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li><a href="#tab1primary" data-toggle="tab">Tháng này</a></li>
+                            <li><a href="#tab2primary" data-toggle="tab">Tháng trước</a></li>
+                            <li><a href="#tab3primary" data-toggle="tab">Khác</a></li>
+                        </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="tab1primary">
+                          <div class="col-xs-12 col-sm-12 table-responsive">
+                            <?php require('doanhthu-nhom-monan/thangnay.php'); ?>
+                           </div>
+                      </div>
+                        <div class="tab-pane fade" id="tab2primary">
+                          <div class="col-xs-12 col-sm-12 table-responsive">
+                            <?php require('doanhthu-nhom-monan/thangtruoc.php'); ?>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" id="tab3primary">
+                          <div class="col-xs-12 col-sm-12 table-responsive">
+                             <?php require('doanhthu-nhom-monan/khac.php'); ?>
+                          </div>
+                        </div>
+                                
+                        
+                    </div>
+                </div>
+            </div>
 <!-- END BIEU DO DOANH THU-->
+
   </div>
- 	<!-- #end class xs-->
+  <!-- #end class xs-->
    </div>
    <!-- #end class col-md-12 -->
       </div>
@@ -64,6 +127,9 @@ if($denngay == "")
     <!-- /#wrapper -->
 <!-- Nav CSS -->
 <script>
+
+ 
+
 	/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
@@ -88,83 +154,16 @@ $('.navbar-toggle').on('click', function() {
   $('.sidebar-nav').toggleClass('block');  
    
 });
+
+  $('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+  $('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+
+  $('#datepicker').datepicker({
+      uiLibrary: 'bootstrap',
+       format: "dd/mm/yyyy",
+        todayBtn: true,
+  });
 </script>
 
-<script>
-//var ctx = document.getElementById('myChart').getContext('2d');
-const CHART2 = document.getElementById('dophu-baygio');
-	
-	var data = {
-    labels: ["Food delivery",  "Nhóm khác"],
-    datasets: [
-      {
-        label: "Doanh thu theo nhóm món ăn",
-        data: [10, 50],
-        backgroundColor: [
-          "#DC143C",
-          "#2E8B57"
-        ],
-        borderColor: [
-		  "#CB252B",
-          "#1D7A46"
-        ],
-        borderWidth: [1, 1]
-      }
-    ]
-  };
-
-  var options = {
-    responsive: true,
-    title: {
-      display: false,
-      position: "top",
-      text: "Độ phủ theo thời gian thực",
-      fontSize: 18,
-      fontColor: "#111"
-    },
-    legend: {
-      display: true,
-      position: "bottom",
-      labels: {
-        fontColor: "#333",
-        fontSize: 16
-      }
-    },
-      plugins: {
-        datalabels: {
-            formatter: (value, CHART2) => {
-                let sum = 0;
-                let dataArr = CHART2.chart.data.datasets[0].data;
-                dataArr.map(data => {
-                    sum += data;
-                });
-                let percentage = (value*100 / sum).toFixed(2)+"%";
-                return percentage;
-            },
-            color: '#fff',
-            
-        }
-    }
-  };
-
-var myPieChart  = new Chart(CHART2, {
-    type: 'doughnut',
-    data: data,
-    options: options
-});
-
-
-</script>
-    <script>
-
-        $('#tungay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-        $('#denngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-
-        $('#datepicker').datepicker({
-            uiLibrary: 'bootstrap',
-             format: "dd/mm/yyyy",
-              todayBtn: true,
-        });
-    </script>
 </body>
 </html>

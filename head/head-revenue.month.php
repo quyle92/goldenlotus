@@ -29,7 +29,6 @@
 <link href="js/jquery-ui-1.12.1.custom/jquery-ui.min.css" rel="stylesheet" />
 
 <!--  ChartJS   -->
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
 <!--  Datepicker -->   
