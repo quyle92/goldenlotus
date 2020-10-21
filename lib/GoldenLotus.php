@@ -635,6 +635,58 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			}
 	}
 
+	public function getBillEditDetailsByDate( $date ){	
+		$sql = "select a.* , b.*  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b
+			ON a.[NVTaoMaNV] = b.MaNV
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'  " ;
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getBillEditDetailsByMonth( $month ){	
+		$sql = "select a.* , b.*  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b
+			ON a.[NVTaoMaNV] = b.MaNV
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  " ;
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getBillEditDetailsBySelection( $tungay, $denngay ){
+		$sql = "select a.* , b.*  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b
+			ON a.[NVTaoMaNV] = b.MaNV
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' " ;
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+
 
 
 
