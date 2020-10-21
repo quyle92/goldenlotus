@@ -1,8 +1,8 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
-$id=$_SESSION['MaNV'];
-$ten=$_SESSION['TenNV'];
+$goldenlotus = new GoldenLotus;
 
 $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
@@ -63,12 +63,19 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $date = ('2020/08/26');
+                                $currency_report = $goldenlotus->getCurrencyReportByDate( $date );
+                                while( $r = sqlsrv_fetch_array($currency_report) )
+                                { ?>
                                 <tr>
+                                  <td><?=$r['MaTienTe']?></td>
                                   <td></td>
                                   <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td><?=number_format($r['ThucThu'],0,".",".")?><sup>đ</sup></td>
                                 </tr>
+                                <?php 
+                                } ?>
                               </tbody>
                              </table>
                            </div>
@@ -86,12 +93,20 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $date = ('2020/08/29');
+                                $currency_report = $goldenlotus->getCurrencyReportByDate( $date );
+                                while( $r = sqlsrv_fetch_array($currency_report) )
+                                { ?>
                                 <tr>
+                                  <td><?=$r['MaTienTe']?></td>
                                   <td></td>
                                   <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td><?=number_format($r['ThucThu'],0,".",".")?><sup>đ</sup></td>
                                 </tr>
+                                <?php 
+                                } ?>
+                              
                               </tbody>
                              </table>
                           </div>
@@ -108,25 +123,38 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $month = ('2020/08');
+                                $currency_report = $goldenlotus->getCurrencyReportByMonth( $month );
+                                while( $r = sqlsrv_fetch_array($currency_report) )
+                                { ?>
                                 <tr>
+                                  <td><?=$r['MaTienTe']?></td>
                                   <td></td>
                                   <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td><?=number_format($r['ThucThu'],0,".",".")?><sup>đ</sup></td>
                                 </tr>
+                                <?php 
+                                } ?>
                               </tbody>
                              </table>
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab4primary">
                             <div class="row">
-                              <div class="col-xs-12 col-sm-12">
-                                <div class="col-md-2" style="margin-bottom:5px">Từ ngày:</div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="tungay" type="text"  value="<?php echo @$tungay ?>" id="tungay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px">Đến ngày: </div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="denngay" type="text"  value="<?php echo @$denngay ?>" id="denngay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
-                            </div>
+                              <form method="POST" action="">
+                                  <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
+                                  <div class="col-md-3" style="margin-bottom:5px">
+                                    <input name="tu-ngay" type="text"  value="" id="tu-ngay" />
+                                  </div>
+                                  <div class="col-md-2" style="margin-bottom:5px">Đến:</div>
+                                  <div class="col-md-3" style="margin-bottom:5px">
+                                    <input name="den-ngay" type="text" value="" id="den-ngay" />
+                                  </div>
+                                  <div class="col-md-3" style="margin-bottom:5px">
+                                    <button type="submit" class="btn btn-info">Submit</button>
+                                  </div>
+                              </form>
                           </div>
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <table class="table table-striped table-bordered" id="sailorTable">
@@ -139,13 +167,8 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                </tr>
-                              </tbody>
+                
+                                </tbody>
                              </table>
                           </div>
                         </div>
@@ -166,6 +189,24 @@ if($denngay == "")
 <!-- Nav CSS -->
 
 <script>
+
+    $('form').on('submit', function (event){
+    event.preventDefault();
+    var tuNgay = $('#tu-ngay').val();console.log(tuNgay);
+    var denNgay = $('#den-ngay').val();console.log(denNgay);
+    
+    $.ajax({
+      url:"baocao-tiente/khac.php",
+      method:"POST",
+      data:{'tu-ngay' : tuNgay, 'den-ngay' : denNgay},
+      dataType:"json",
+      success:function(output)
+      {
+        $('#tab4primary table tbody').html(output);
+      }
+    })
+  });
+
   /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
@@ -191,8 +232,8 @@ $('.navbar-toggle').on('click', function() {
    
 });
 
-$('#tungay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-$('#denngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
 
 
 </script>

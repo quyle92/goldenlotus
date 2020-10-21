@@ -587,6 +587,53 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			}
 	}
 
+	public function getCurrencyReportByDate( $date ){
+		$sql = "  select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] 
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'   group by [MaTienTe]";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getCurrencyReportByMonth( $month ){
+		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] 
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  group by [MaTienTe]";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getCurrencyReportBySelection( $tungay, $denngay ){
+		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] 
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' group by [MaTienTe]";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
 
 
 
