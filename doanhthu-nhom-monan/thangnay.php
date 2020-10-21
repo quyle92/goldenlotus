@@ -14,7 +14,7 @@ while( $r = sqlsrv_fetch_array($sales_by_food_group) )
 <div class="container-fluid">
   <div class="row"></div><div class="row"></div><div class="row"></div><div class="row"></div>
 	<div class="row">
-		<div class="col-md-12" >
+		<div class="col-md-12 mychart" >
 			<canvas id="revenue-thismonth" ></canvas>
 		</div>
 	</div>
@@ -48,7 +48,8 @@ const REVENUE_BY_FOOD_GROUP_THIS_MONTH = document.getElementById('revenue-thismo
   };
 
   var options = {
-    // responsive: true,
+    responsive: true,
+    maintainAspectRatio: true,
     // layout: {
     //     padding: 100
     // },
@@ -56,7 +57,7 @@ const REVENUE_BY_FOOD_GROUP_THIS_MONTH = document.getElementById('revenue-thismo
       display: true,
       position: "top",
       text: "Doanh thu nhóm món ăn",
-      fontSize: 18,
+      fontSize: 12,
       fontColor: "#111"
     },
     legend: {
@@ -64,7 +65,7 @@ const REVENUE_BY_FOOD_GROUP_THIS_MONTH = document.getElementById('revenue-thismo
       position: "bottom",
       labels: {
         fontColor: "#333",
-        fontSize: 16
+        fontSize: 10
       }
     },
       plugins: {
@@ -78,7 +79,9 @@ const REVENUE_BY_FOOD_GROUP_THIS_MONTH = document.getElementById('revenue-thismo
                     sum += data;
                 });
                 let percentage = (value*100 / sum).toFixed(2)+"%";
-                return percentage;
+                if( (value*100 / sum).toFixed(2) > 5 )
+                  return percentage;
+                else return "";
               }
               else
               {
@@ -87,8 +90,36 @@ const REVENUE_BY_FOOD_GROUP_THIS_MONTH = document.getElementById('revenue-thismo
               }
             },
             color: '#fff',
+             font: {
+              weight: 'bold',
+              size: 10,
+            }
+
             
-        }
+        },
+      outlabels: {
+                  text: '%l: %p',
+                  color: 'white',
+                  stretch: 15,
+                  borderRadius: 20,
+                  borderWidth:1,
+                  font: {
+                      resizable: false,
+                       minSize: 8,
+                       maxSize: 12,
+                      size: 8
+                  },
+                  textAlign:"center",
+                  padding: 2,
+                  display: function(context){
+                          var index = context.dataIndex;
+                          var value = context.dataset.data[index];console.log(context.percent);
+                          return ( context.percent > 0.10 || context.percent ===0 ) ? false : true;
+                          
+
+                  }
+
+              },
     },
     tooltips:{
         callbacks: {

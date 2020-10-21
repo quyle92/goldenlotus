@@ -39,10 +39,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script> 
 
 <script>
-$('.navbar-toggle').on('click', function() {
-  $('.sidebar-nav').toggleClass('block');  
+// $('.navbar-toggle').on('click', function() {
+//   $('.sidebar-nav').toggleClass('block');  
    
-});
+// });
 </script>
 <!---//webfonts---> 
 

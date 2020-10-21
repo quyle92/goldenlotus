@@ -519,10 +519,74 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 					return $rs;
 				else die( print_r( sqlsrv_errors(), true ) );
 			}
-			catch ( PDOException $error ){
+		catch ( PDOException $error ){
 				echo $error->getMessage();
 			}
 	}
+
+	public function getSoldvsCancelledItemsByDate( $date ){
+		$sql = "select TenHangBan,
+		  	sum (CASE WHEN soluong > 0 THEN soluong
+		END) AS SLOrder,
+		 sum(soluong) as SLBan,
+			sum (CASE WHEN soluong < 0 THEN soluong
+		END) AS SLBo
+		FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) = '$date' group by TenHangBan";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSoldvsCancelledItemsByMonth( $month ){
+		$sql = "select TenHangBan,
+		  	sum (CASE WHEN soluong > 0 THEN soluong
+		END) AS SLOrder,
+		 sum(soluong) as SLBan,
+			sum (CASE WHEN soluong < 0 THEN soluong
+		END) AS SLBo
+		FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) = '$month' group by TenHangBan";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSoldvsCancelledItemsBySelection( $tungay, $denngay ){
+		$sql = "select TenHangBan,
+		  	sum (CASE WHEN soluong > 0 THEN soluong
+		END) AS SLOrder,
+		 sum(soluong) as SLBan,
+			sum (CASE WHEN soluong < 0 THEN soluong
+		END) AS SLBo
+		FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' group by TenHangBan";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
 
 
 

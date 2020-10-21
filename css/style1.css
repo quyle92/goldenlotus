@@ -2745,3 +2745,28 @@ span.btn_7{
   font-size: 64%;
 }
 }
+
+@media only screen and (max-width: 768px){
+  .navbar-header.pc-only, .navbar-default.sidebar.pc-only{
+      display: none;
+      
+  }
+}
+
+@media only screen and (min-width: 769px){
+  .navbar-header.pc-only .navbar-toggle, .navbar-default.sidebar.pc-only{
+      display: block;
+      float: right;
+  }
+
+  .navbar-default.sidebar.pc-only{
+    position: relative;
+    left: 80px;
+  }
+
+  .new-menu{display:block!important;}
+  .navbar-collapse.collaps{display:none;}
+
+
+}
+

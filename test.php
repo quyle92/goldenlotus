@@ -7,14 +7,28 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-piechart-outlabels"></script> 
         <script src="https://rawgit.com/beaver71/Chart.PieceLabel.js/master/build/Chart.PieceLabel.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <title>Pie Chart Outlabels</title>
+        <style>
+
+        </style>
     </head>
     <body>
         <div id="chart-wrapper">
-              <canvas id="outlabeledChart"></canvas>
+            <div class="container">
+                <div class="row">
+                    <div class="mychart">
+                        <canvas id="outlabeledChart"></canvas>
+                    </div>
+                </div>
+            </div>
+              
         </div>
         <script id="script-construct">
-          const TEST_CHART =  document.getElementById('outlabeledChart');
+          const TEST_CHART =  document.getElementById('outlabeledChart').getContext("2d");
+                // TEST_CHART.canvas.parentNode.style.height = 400;
+                // TEST_CHART.canvas.parentNode.style.width = 800;
             var chart = new Chart(TEST_CHART, {
                 type: 'doughnut',
                 data: {
@@ -48,6 +62,7 @@
                 },
                 options: {
                   responsive: true,
+                  maintainAspectRatio: true,
                   layout: {
                     padding: 100
                   },
@@ -55,28 +70,38 @@
                   plugins: {
                         legend: false,
                         outlabels: {
-                            text: '%l %p',
+                            text: '%l: %p',
                             color: 'white',
-                            stretch: 45,
+                            stretch: 25,
+                            borderRadius: 20,
+                            borderWidth:1,
                             font: {
-                                resizable: true,
-                                minSize: 8,
-                                maxSize: 12,
-                                size: 6
+                                resizable: false,
+                                 minSize: 8,
+                                 maxSize: 12,
+                                size: 8
                             },
-                            padding: {top: 20},
+                            textAlign:"center",
+                            padding: 2,
+                            display: function(context){
+                                    var index = context.dataIndex;
+                                    var value = context.dataset.data[index];console.log(context.percent);
+                                    if(context.percent < 0.05 )
+                                        return true;
+                                    else return false;
+                            }
 
                         },
                   },
                    tooltips:{
-                    callbacks: {
-                        label: function(tooltipItem, data) {
-                            var indice = tooltipItem.index;
-                            var formatNum = addCommas(data.datasets[tooltipItem.datasetIndex].data[indice]);                 
-                            return  data.labels[indice] +': '+ formatNum + '';
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var indice = tooltipItem.index;
+                                var formatNum = addCommas(data.datasets[tooltipItem.datasetIndex].data[indice]);                 
+                                return  data.labels[indice] +': '+ formatNum + '';
+                            }
                         }
-                    }
-                } 
+                    } 
   
                 }
               });

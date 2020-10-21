@@ -24,8 +24,18 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
 <html>
 <head>
 <?php include ('head/head-revenue.month.php');?>
- <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-piechart-outlabels"></script>  -->
-
+ <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-piechart-outlabels"></script> 
+<style>
+@media screen and (max-width:375px){
+    .container-fluid .mychart{
+        position: absolute;
+        top: 60px;
+        left: -21px;
+        width: 430px;
+        height: 400px;
+    }
+}
+</style>
 </head>
 <body>
 <div id="wrapper">
@@ -150,8 +160,8 @@ dropdown[0].click();
 
 </script>
 <script>
-$('.navbar-toggle').on('click', function() {
-  $('.sidebar-nav').toggleClass('block');  
+$('.navbar-toggle.pc-only').on('click', function() {
+  $('.sidebar-nav.pc-only').toggleClass('new-menu');  
    
 });
 

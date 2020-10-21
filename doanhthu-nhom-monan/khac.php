@@ -27,7 +27,7 @@
     var tuNgay = $('#tu-ngay').val();//console.log(tuNgay);
     var denNgay = $('#den-ngay').val();//console.log(denNgay);
     var formValues= $(this).serialize();
-    //console.log(formValues);
+   
     $.ajax({
     url:"doanhthu-nhom-monan/ajax-call/process-khac.php",
     method:"POST",
@@ -52,58 +52,89 @@
         };
 
        
-        var options = {
-          // responsive: true,
-          // layout: {
-          //   padding: 100
-          // },
-          title: {
-            display: true,
-            position: "top",
-            text: "Doanh thu nhóm món ăn",
-            fontSize: 18,
-            fontColor: "#111"
-          },
-          legend: {
-            display: true,
-            position: "bottom",
-            labels: {
-              fontColor: "#333",
-              fontSize: 16
-            }
-          },
-            plugins: {
-              datalabels: {
-              formatter: (value, REVENUE_BY_FOOD_GROUP_BY_SELECTION) => {
-                  if(value>0)
-                { 
-                  let sum = 0;
-                  let dataArr = REVENUE_BY_FOOD_GROUP_BY_SELECTION.chart.data.datasets[0].data;
-                  dataArr.map(data => {
-                      sum += data;
-                  });
-                  let percentage = (value*100 / sum).toFixed(2)+"%";
+      var options = {
+    responsive: true,
+    maintainAspectRatio: true,
+    // layout: {
+    //     padding: 100
+    // },
+    title: {
+      display: true,
+      position: "top",
+      text: "Doanh thu nhóm món ăn",
+      fontSize: 12,
+      fontColor: "#111"
+    },
+    legend: {
+      display: true,
+      position: "bottom",
+      labels: {
+        fontColor: "#333",
+        fontSize: 10
+      }
+    },
+      plugins: {
+        datalabels: {
+            formatter: (value, REVENUE_BY_FOOD_GROUP_THIS_MONTH) => {
+              if(value>0)
+              {
+                let sum = 0;
+                let dataArr = REVENUE_BY_FOOD_GROUP_THIS_MONTH.chart.data.datasets[0].data;
+                dataArr.map(data => {
+                    sum += data;
+                });
+                let percentage = (value*100 / sum).toFixed(2)+"%";
+                if( (value*100 / sum).toFixed(2) > 10 )
                   return percentage;
-                }
-                else
-                {
-                  value = "";
-                  return value;
-                }
-              },
-              color: '#fff',
-              
-             }
-          },
-          tooltips:{
-            callbacks: {
-                label: function(tooltipItem, data) {
-                    var formatNum = addCommas(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
-                    return data.labels[tooltipItem.index] + ': ' + formatNum; 
-                      }
-                  }
+                else return "";
+              }
+              else
+              {
+                value = "";
+                return value;
+              }
+            },
+            color: '#fff',
+             font: {
+              weight: 'bold',
+              size: 10,
             }
-        }; 
+
+            
+        },
+      outlabels: {
+                  text: '%l: %p',
+                  color: 'white',
+                  stretch: 15,
+                  borderRadius: 20,
+                  borderWidth:1,
+                  font: {
+                      resizable: false,
+                       minSize: 8,
+                       maxSize: 12,
+                      size: 8
+                  },
+                  textAlign:"center",
+                  padding: 2,
+                  display: function(context){
+                          var index = context.dataIndex;
+                          var value = context.dataset.data[index];console.log(context.percent);
+                          return ( context.percent > 0.10 || context.percent ===0 ) ? false : true;
+                          
+
+                  }
+
+              },
+    },
+    tooltips:{
+        callbacks: {
+            label: function(tooltipItem, data) {
+                var formatNum = addCommas(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+                return data.labels[tooltipItem.index] + ': ' + formatNum; 
+            }
+        }
+    } 
+  };
 
       var myPieChart  = new Chart(REVENUE_BY_FOOD_GROUP_BY_SELECTION, {
           type: 'doughnut',
@@ -111,6 +142,7 @@
           options: options
       });
 
+      //hàm này đề format lại Number theo 1,000
           function addCommas(nStr)
         {
             nStr += '';
