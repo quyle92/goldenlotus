@@ -1,6 +1,9 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus;
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 
@@ -60,9 +63,23 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                                </tbody>
+                                <?php
+                                $date = date('2020/08/26');
+                                $total = 0;
+                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByDate( $date );
+                                while( $r = sqlsrv_fetch_array( $tong_hop_do_bo) )
+                                { ?>
                                 <tr>
-                                   <td></td>
-                                  <td></td>
+                                  <td><?=$r['TenHangBan']?></td>
+                                  <td><?=$r['SoLuong']?></td><?php  $total += $r['SoLuong']; ?>
+                                </tr>
+                                <?php 
+                                }
+                                ?>
+                                <tr>
+                                    <th><strong>Tổng</strong></th>
+                                    <th><strong><?=$total?></strong></th>
                                 </tr>
                               </tbody>
                              </table>
@@ -78,9 +95,21 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $date = date('2020/08/28');
+                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByDate( $date );
+                                while( $r = sqlsrv_fetch_array( $tong_hop_do_bo) )
+                                { ?>
                                 <tr>
-                                   <td></td>
-                                  <td></td>
+                                  <td><?=$r['TenHangBan']?></td>
+                                  <td><?=$r['SoLuong']?></td><?php  $total += $r['SoLuong']; ?>
+                                </tr>
+                                <?php 
+                                }
+                                ?>
+                                <tr>
+                                    <th><strong>Tổng</strong></th>
+                                    <th><strong><?=$total?></strong></th>
                                 </tr>
                               </tbody>
                              </table>
@@ -96,9 +125,21 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $month = date('2020/08');
+                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByMonth( $month );
+                                while( $r = sqlsrv_fetch_array( $tong_hop_do_bo) )
+                                { ?>
                                 <tr>
-                                   <td></td>
-                                  <td></td>
+                                  <td><?=$r['TenHangBan']?></td>
+                                  <td><?=$r['SoLuong']?></td><?php  $total += $r['SoLuong']; ?>
+                                </tr>
+                                <?php 
+                                }
+                                ?>
+                                <tr>
+                                    <th><strong>Tổng</strong></th>
+                                    <th><strong><?=$total?></strong></th>
                                 </tr>
                               </tbody>
                              </table>
@@ -106,13 +147,19 @@ if($denngay == "")
                         </div>
                         <div class="tab-pane fade" id="tab4primary">
                             <div class="row">
-                              <div class="col-xs-12 col-sm-12">
-                                <div class="col-md-2" style="margin-bottom:5px">Từ ngày:</div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="tungay" type="text"  value="<?php echo @$tungay ?>" id="tungay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px">Đến ngày: </div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="denngay" type="text"  value="<?php echo @$denngay ?>" id="denngay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
-                            </div>
+                              <form action="" method="post">
+                                <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="tu-ngay" type="text"  value="" id="tu-ngay" />
+                                </div>
+                                <div class="col-md-2" style="margin-bottom:5px">Đến:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="den-ngay" type="text" value="" id="den-ngay" />
+                                </div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                              </form>
                           </div>
                           <div class="col-xs-12 col-sm-12 table-responsive">
                            <table class="table table-striped table-bordered" id="sailorTable">
@@ -123,10 +170,7 @@ if($denngay == "")
                                   </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                   <td></td>
-                                  <td></td>
-                                </tr>
+                
                               </tbody>
                              </table>
                           </div>
@@ -136,6 +180,7 @@ if($denngay == "")
                     </div>
                 </div>
             </div>
+        
 <!-- END BIEU DO DOANH THU-->
 
   <!-- #end class xs-->
@@ -148,6 +193,24 @@ if($denngay == "")
 <!-- Nav CSS -->
 
 <script>
+
+$('form').on('submit', function (event){
+    event.preventDefault();
+    var tuNgay = $('#tu-ngay').val();console.log(tuNgay);
+    var denNgay = $('#den-ngay').val();console.log(denNgay);
+    
+    $.ajax({
+      url:"tonghop-dobo/khac.php",
+      method:"POST",
+      data:{'tu-ngay' : tuNgay, 'den-ngay' : denNgay},
+      dataType:"json",
+      success:function(output)
+      {
+        $('#tab4primary table tbody').html(output);
+      }
+    })
+  });
+
   /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
@@ -173,8 +236,8 @@ $('.navbar-toggle').on('click', function() {
    
 });
 
-$('#tungay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-$('#denngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
 
 
 </script>

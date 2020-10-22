@@ -686,6 +686,199 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			}
 	}
 
+	public function getCancelledFoodItemByDate( $date ) {
+		$sql = "SELECT a.*, b.*,c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' ";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getCancelledFoodItemByMonth ( $month ) {
+		$sql = "SELECT a.*, b.*,c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month' ";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getCancelledFoodItemBySelection ( $tungay, $denngay ) {
+		$sql = "SELECT a.*, b.*,c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay' " ;
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSumFoodCancelledByDate( $date ) {
+		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' group by TenHangBan ";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSumFoodCancelledByMonth ( $month ) {
+		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month'  group by TenHangBan";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSumFoodCancelledBySelection ( $tungay, $denngay ) {
+		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay'  group by TenHangBan " ;
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSalesByTableID ( $date, $occupation = null ){
+		if( $occupation == '0' && $occupation != null )
+		{
+			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
+					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
+					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
+					from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
+					left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
+					left join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
+					= '$date' 
+					Where [ThoiGianDongPhieu] IS  NULL) t1
+				Group By MaBan";
+		}
+		elseif ( $occupation == '1' )
+		{
+			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
+					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
+					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
+					from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
+					left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
+					left join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
+					= '$date' 
+					 Where [ThoiGianDongPhieu] IS NOT NULL) t1
+				Group By MaBan";
+		}
+		elseif ( $occupation == null)
+		{
+			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
+					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
+					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
+					from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
+					left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
+					left join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
+					= '$date' ) t1
+				Group By MaBan";
+		}
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSalesByFoodNames ( $date, $table_id, $occupation = null ){
+
+		if( $occupation == '0' && $occupation != null )
+		{
+		echo	 $sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
+					sum (SoLuong*DonGia)  OVER(PARTITION BY TenHangBan) AS DoanhThu
+				 from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
+				 left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b
+				 on a.[MaBan] = b.[MaBan]
+				 join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c
+				 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+				 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
+				 and [ThoiGianDongPhieu] IS  NULL
+				 and a.MaBan ='$table_id'";
+		}
+		elseif( $occupation == '1' )
+		{
+			$sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
+				sum (SoLuong*DonGia)  OVER(PARTITION BY TenHangBan) AS DoanhThu
+			 from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
+			 left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b
+			 on a.[MaBan] = b.[MaBan]
+			 join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c
+			 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
+			 and [ThoiGianDongPhieu] IS NOT NULL
+			 and a.MaBan ='$table_id'";
+		}
+		elseif ( $occupation == null)
+		{
+			$sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
+				sum (SoLuong*DonGia)  OVER(PARTITION BY TenHangBan) AS DoanhThu
+			 from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
+			 left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b
+			 on a.[MaBan] = b.[MaBan]
+			 join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c
+			 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
+			 and a.MaBan ='$table_id'";
+		}
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
 
 
 

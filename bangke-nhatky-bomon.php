@@ -1,6 +1,9 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus;
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 
@@ -37,7 +40,7 @@ if($denngay == "")
       <div id="page-wrapper" >
 
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Kiểm tra đồng bộ thực đơn</h3>
+            <h3 class="title">Bảng kê nhật ký bỏ món</h3>
 
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
@@ -60,22 +63,26 @@ if($denngay == "")
                                     <th>Món</th>
                                     <th>Vị trí</th>
                                     <th>Giờ gọi</th>
-                                    <th>Phút gọi</th>
                                     <th>SL</th>
-                                    <th>Bỏ</th>
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $date = date('2020/08/26');
+                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByDate( $date );
+                                while( $r = sqlsrv_fetch_array( $nhat_ky_bo_mon) )
+                                { ?>
                                 <tr>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('d-m-yy') : "" )?></td>
+                                  <td><?=$r['TenNV']?></td>
+                                  <td><?=$r['TenHangBan']?></td>
+                                  <td><?=$r['MaBan']?></td>
+                                  <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('H:i') : "" )?></td>
+                                  <td><?=$r['SoLuong']?></td>
                                 </tr>
+                                <?php 
+                              }
+                                ?>
                               </tbody>
                              </table>
                            </div>
@@ -90,22 +97,29 @@ if($denngay == "")
                                     <th>Món</th>
                                     <th>Vị trí</th>
                                     <th>Giờ gọi</th>
-                                    <th>Phút gọi</th>
+                                    
                                     <th>SL</th>
-                                    <th>Bỏ</th>
+                                   
                                   </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
+                                <?php
+                                $date = date('2020/08/28');
+                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByDate( $date );
+                                while( $r = sqlsrv_fetch_array( $nhat_ky_bo_mon) )
+                                { ?>
+                                <tr>
+                                  <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('d-m-yy') : "" )?></td>
+                                  <td><?=$r['TenNV']?></td>
+                                  <td><?=$r['TenHangBan']?></td>
+                                  <td><?=$r['MaBan']?></td>
+                                  <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('H:i') : "" )?></td>
+                                  <td><?=$r['SoLuong']?></td>
                                 </tr>
+                                <?php 
+                              }
+                                ?>
                               </tbody>
                              </table>
                           </div>
@@ -120,35 +134,47 @@ if($denngay == "")
                                     <th>Món</th>
                                     <th>Vị trí</th>
                                     <th>Giờ gọi</th>
-                                    <th>Phút gọi</th>
+                                    
                                     <th>SL</th>
-                                    <th>Bỏ</th>
+                                   
                                   </tr>
                                 </thead>
                                 <tbody>
+                                <?php
+                                $month = date('2020/08');
+                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByMonth( $month );
+                                while( $r = sqlsrv_fetch_array( $nhat_ky_bo_mon) )
+                                { ?>
                                 <tr>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
+                                  <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('d-m-yy') : "" )?></td>
+                                  <td><?=$r['TenNV']?></td>
+                                  <td><?=$r['TenHangBan']?></td>
+                                  <td><?=$r['MaBan']?></td>
+                                  <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('H:i') : "" )?></td>
+                                  <td><?=$r['SoLuong']?></td>
                                 </tr>
+                                <?php 
+                              }
+                                ?>
                               </tbody>
                              </table>
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab4primary">
                             <div class="row">
-                              <div class="col-xs-12 col-sm-12">
-                                <div class="col-md-2" style="margin-bottom:5px">Từ ngày:</div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="tungay" type="text"  value="<?php echo @$tungay ?>" id="tungay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px">Đến ngày: </div>
-                                <div class="col-md-3" style="margin-bottom:5px"><input name="denngay" type="text"  value="<?php echo @$denngay ?>" id="denngay" /></div>
-                                <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
-                            </div>
+                              <form action="" method="post">
+                                <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="tu-ngay" type="text"  value="" id="tu-ngay" />
+                                </div>
+                                <div class="col-md-2" style="margin-bottom:5px">Đến:</div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <input name="den-ngay" type="text" value="" id="den-ngay" />
+                                </div>
+                                <div class="col-md-3" style="margin-bottom:5px">
+                                  <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                              </form>
                           </div>
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <table class="table table-striped table-bordered" id="sailorTable">
@@ -159,22 +185,13 @@ if($denngay == "")
                                     <th>Món</th>
                                     <th>Vị trí</th>
                                     <th>Giờ gọi</th>
-                                    <th>Phút gọi</th>
+                                    
                                     <th>SL</th>
-                                    <th>Bỏ</th>
+                                   
                                   </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                </tr>
+
                               </tbody>
                              </table>
                           </div>
@@ -196,6 +213,24 @@ if($denngay == "")
 <!-- Nav CSS -->
 
 <script>
+
+$('form').on('submit', function (event){
+    event.preventDefault();
+    var tuNgay = $('#tu-ngay').val();console.log(tuNgay);
+    var denNgay = $('#den-ngay').val();console.log(denNgay);
+    
+    $.ajax({
+      url:"bangke-nhatky-bomon/khac.php",
+      method:"POST",
+      data:{'tu-ngay' : tuNgay, 'den-ngay' : denNgay},
+      dataType:"json",
+      success:function(output)
+      {
+        $('#tab4primary table tbody').html(output);
+      }
+    })
+  });
+
   /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
@@ -221,8 +256,8 @@ $('.navbar-toggle').on('click', function() {
    
 });
 
-$('#tungay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-$('#denngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
 
 
 </script>
