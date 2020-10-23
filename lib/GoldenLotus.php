@@ -879,6 +879,63 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			}
 	}
 
+	public function getQtyOrderSummary( $date ) {
+		$sql = " SELECT SUM(CASE WHEN SoLuong<=1 THEN 1 ELSE 0 END) as LessThanOrEqualTo1,
+			 SUM(CASE WHEN SoLuong between 1 and 2 THEN 1 ELSE 0 END) as From1To2,
+			 SUM(CASE WHEN SoLuong between 2 and 3 THEN 1 ELSE 0 END) as From2To3,
+			 SUM(CASE WHEN SoLuong between 2 and 3 THEN 1 ELSE 0 END) as From3To4,
+			 SUM(CASE WHEN SoLuong >=4 THEN 1 ELSE 0 END) as GreaterThan4
+			 from
+				(select a.MaLichSuPhieu, sum (SoLuong) as SoLuong
+				from [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a Join
+				[NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] b
+				on   a.MaLichSuPhieu = b.MaLichSuPhieu Where 
+				substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date'
+				group by a.MaLichSuPhieu) t1";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSalesAmountSummary( $date ) {
+		$sql = "SELECT SUM(CASE WHEN TienThucTra<=500000 THEN 1 ELSE 0 END) as LessThanOrEqualToHalfMil,
+				 SUM(CASE WHEN TienThucTra between 500000 and 1000000 THEN 1 ELSE 0 END) as FromHalfMilTo1,
+				 SUM(CASE WHEN TienThucTra between 1000000 and 2000000 THEN 1 ELSE 0 END) as From1To2,
+				 SUM(CASE WHEN TienThucTra between 2000000 and 3000000 THEN 1 ELSE 0 END) as From2To3,
+				 SUM(CASE WHEN TienThucTra between 3000000 and 4000000 THEN 1 ELSE 0 END) as From3To4,
+				 SUM(CASE WHEN TienThucTra >=4000000 THEN 1 ELSE 0 END) as GreaterThan4
+				 from
+					(
+					select a.MaLichSuPhieu, sum (TienThucTra) as TienThucTra
+					from [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a  Where 
+					substring( Convert(varchar,ThoiGianTaoPhieu,111),0,11 ) ='$date'
+					group by a.MaLichSuPhieu
+					) t1
+				";
+
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+
+
+
 
 
 

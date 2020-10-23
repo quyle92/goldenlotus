@@ -1,6 +1,47 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus;
+
+$date = date('2020/08/26');
+$qty_chart = $goldenlotus-> getQtyOrderSummary( $date );
+//$qty_sum_arr = array();
+while($r = sqlsrv_fetch_array( $qty_chart))
+{
+  $qty_sum_arr = array();
+  foreach ($r as $k=>$v)
+  {
+    $qty_sum_arr[] = $v;
+  }
+}
+
+$qty_sum_arr_new = array();
+for ( $i = 1; $i < count($qty_sum_arr); $i++)
+{ if( $i % 2)
+    array_push( $qty_sum_arr_new, $qty_sum_arr[$i] );
+}
+
+
+
+$sales_chart = $goldenlotus-> getSalesAmountSummary( $date );
+$sales_sum_arr = array();
+while($r1 = sqlsrv_fetch_array( $sales_chart))
+{
+  $sales_sum_arr = array();
+  foreach ($r1 as $k=>$v)
+  {
+    $sales_sum_arr[] = $v;
+  }
+}
+
+$sales_sum_arr_new = array();
+for ( $i = 1; $i < count($sales_sum_arr); $i++)
+{ if( $i % 2)
+    array_push( $sales_sum_arr_new, $sales_sum_arr[$i] );
+}
+
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 
@@ -38,13 +79,6 @@ if($denngay == "")
 
     <div class="col-md-12 graphs">
 	<div class="xs">
-<!--     <div class="row">
-      <div class="col-md-2" style="margin-bottom:5px">Từ ngày:</div>
-        <div class="col-md-3" style="margin-bottom:5px"><input name="tungay" type="text"  value="<?php echo @$tungay ?>" id="tungay" /></div>
-        <div class="col-md-2" style="margin-bottom:5px">Đến ngày: </div>
-        <div class="col-md-3" style="margin-bottom:5px"><input name="denngay" type="text"  value="<?php echo @$denngay ?>" id="denngay" /></div>
-        <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
-    </div> -->
 
  <h3 class="title">Báo cáo hóa đơn</h3>
  <div class="panel panel-warning" data-widget="{&quot;draggable&quot;: &quot;false&quot;}" data-widget-static="">
@@ -101,15 +135,17 @@ $('.navbar-toggle').on('click', function() {
 </script>
 
 <script>
-//var ctx = document.getElementById('myChart').getContext('2d');
-const CHART1 = document.getElementById('bieudo-soluong');
+var qty_sum_arr = new Array();
+    qty_sum_arr = <?php echo json_encode( $qty_sum_arr_new );?>
+
+const QTY_CHART = document.getElementById('bieudo-soluong');
 	
 	var data = {
     labels: ["<=1",  "1-2", "2-3", "3-4", ">=5"],
     datasets: [
       {
         label: "Độ phủ theo thời gian thực",
-        data: [10, 50, 22,33,44],
+        data: qty_sum_arr,
         backgroundColor: [
           "#D9A2BD",
           "#633DC6",
@@ -124,13 +160,6 @@ const CHART1 = document.getElementById('bieudo-soluong');
 
   var options = {
     responsive: true,
-    title: {  
-      display: false,
-      position: "top",
-      text: "Độ phủ theo thời gian thực",
-      fontSize: 18,
-      fontColor: "#111"
-    },
     legend: {
       display: true,
       position: "bottom",
@@ -141,9 +170,9 @@ const CHART1 = document.getElementById('bieudo-soluong');
     },
       plugins: {
         datalabels: {
-            formatter: (value, CHART2) => {
+            formatter: (value, QTY_CHART) => {
                 let sum = 0;
-                let dataArr = CHART2.chart.data.datasets[0].data;
+                let dataArr = QTY_CHART.chart.data.datasets[0].data;
                 dataArr.map(data => {
                     sum += data;
                 });
@@ -162,7 +191,7 @@ const CHART1 = document.getElementById('bieudo-soluong');
 
   };
 
-var myPieChart  = new Chart(CHART1, {
+var myPieChart  = new Chart(QTY_CHART, {
     type: 'doughnut',
     data: data,
     options: options
@@ -184,15 +213,17 @@ var myPieChart  = new Chart(CHART1, {
 </script>
 
 <script>
-//var ctx = document.getElementById('myChart').getContext('2d');
-const CHART2 = document.getElementById('bieudo-sotien');
+var sales_sum_arr = []; 
+sales_sum_arr =  <?php echo json_encode( $sales_sum_arr_new );?>
+
+const Money_Chart = document.getElementById('bieudo-sotien');
   
   var data2 = {
-    labels: ["<=1",  "1-2", "2-3", "3-4", ">=5"],
+    labels: ["<= 500 000",  "500 000 - 1 000 000", "1 000 000 - 2 000 000", "2 000 000 - 3 000 000", "3 000 000 - 4 000 000", ">= 4 000 000"],
     datasets: [
       {
         label: "Độ phủ theo thời gian thực",
-        data: [10, 50, 22,33,44],
+        data: sales_sum_arr,
         backgroundColor: [
           "#D9A2BD",
           "#633DC6",
@@ -207,13 +238,6 @@ const CHART2 = document.getElementById('bieudo-sotien');
 
   var options2 = {
     responsive: true,
-    title: {  
-      display: false,
-      position: "top",
-      text: "Độ phủ theo thời gian thực",
-      fontSize: 18,
-      fontColor: "#111"
-    },
     legend: {
       display: true,
       position: "bottom",
@@ -224,9 +248,9 @@ const CHART2 = document.getElementById('bieudo-sotien');
     },
       plugins: {
         datalabels: {
-            formatter: (value, CHART2) => {
+            formatter: (value, Money_Chart) => {
                 let sum = 0;
-                let dataArr = CHART2.chart.data.datasets[0].data;
+                let dataArr = Money_Chart.chart.data.datasets[0].data;
                 dataArr.map(data => {
                     sum += data;
                 });
@@ -244,7 +268,7 @@ const CHART2 = document.getElementById('bieudo-sotien');
       }
   };
 
-var myPieChart  = new Chart(CHART2, {
+var myPieChart  = new Chart(Money_Chart, {
     type: 'doughnut',
     data: data2,
     options: options2

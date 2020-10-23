@@ -139,10 +139,22 @@ var options = {
       fontColor: 'black'
     }
   },
+  plugins: {
+        datalabels: false
+  },
   scales: {
     yAxes: [{
         ticks: {
-            beginAtZero: true
+            beginAtZero: true,
+            callback: function(value, index, values) {
+              // Convert the number to a string and splite the string every 3 charaters from the end
+              value = value.toString();
+              value = value.split(/(?=(?:...)*$)/);
+
+              // Convert the array to a string and format the output
+              value = value.join('.');
+              return  value;
+              }
         }
        
     }]},
@@ -157,7 +169,15 @@ var options = {
    title: {
     display:false,
     text:"TEXT"
-   }
+   },
+   tooltips:{
+      callbacks: {
+          label: function(tooltipItem, data) {
+              var formatNum = addCommas(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+              return  data.labels[tooltipItem.index] + ': ' + formatNum; 
+          }
+      }
+   } 
 };
 
 var lineChart = new Chart(salesThisYear, {
@@ -165,6 +185,20 @@ var lineChart = new Chart(salesThisYear, {
     data: data,
     options: options
 });
+
+    function addCommas(nStr)
+{
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+
 
 salesThisYear.onclick = function(e) {
   var point = lineChart.getElementAtEvent(e);

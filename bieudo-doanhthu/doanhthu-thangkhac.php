@@ -46,20 +46,16 @@
         var result = [];
         json_data=JSON.parse(data);  
         for(var i in json_data)
-          result.push([i, json_data [i]]);
-        console.log(json_data['doanhthu_t8']);
-        var t1 = json_data['doanhthu_t8'];
+          //result.push( [i, addCommas( json_data [i] ) ] );
+          result.push(  parseInt( json_data [i] )   );
+        console.log(  ( result ) ) ;
         var  anotherMonthSales = document.getElementById('others');
-        console.log(t1);
-
-        var speedData = {
+       
+        var data = {
              labels :["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11,", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25","26", "27", "28", "29", "30", "31"],
               datasets: [{
-                data:[
-                json_data['doanhthu_01'],json_data['doanhthu_02'],json_data['doanhthu_03'],json_data['doanhthu_04'],json_data['doanhthu_05'],json_data['doanhthu_06'],json_data['doanhthu_07'],json_data['doanhthu_08'],json_data['doanhthu_09'],json_data['doanhthu_10'],json_data['doanhthu_11'],json_data['doanhthu_12'],
-                json_data['doanhthu_13'],json_data['doanhthu_14'],json_data['doanhthu_15'],json_data['doanhthu_16'],json_data['doanhthu_17'],json_data['doanhthu_18'],json_data['doanhthu_19'],json_data['doanhthu_20'],json_data['doanhthu_21'],json_data['doanhthu_22'],json_data['doanhthu_23'],json_data['doanhthu_24'],
-                json_data['doanhthu_25'],json_data['doanhthu_26'],json_data['doanhthu_27'],json_data['doanhthu_28'],json_data['doanhthu_29'],json_data['doanhthu_30'],json_data['doanhthu_31'] 
-                ],
+                label: "Revenue",
+                data:result,
                  fill: false,
                  lineTension: 0,
                 borderColor: 'rgb(51, 153, 255)',
@@ -84,19 +80,32 @@
 
         }
 
-        var chartOptions = {
+        var options = {
           legend: {
-            display: false,
+            display: true,
             position: 'top',
             labels: {
               boxWidth: 80,
               fontColor: 'black'
             }
           },
+          plugins: {
+                datalabels: false
+          },
           scales: {
             yAxes: [{
                 ticks: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    userCallback: function(value, index, values) {
+                      // Convert the number to a string and split the string every 3 charaters from the end
+                      value = value.toString();
+                      value = value.split(/(?=(?:...)*$)/);
+
+                      // Convert the array to a string and format the output
+                      value = value.join('.');
+                      return value;
+                      }
+
                 }
                
             }]},
@@ -109,17 +118,65 @@
               }]
            ,
            title: {
-            display:false,
-            text:"TEXT"
-           }
+            display:true,
+            text:"Doanh Thu Khác"
+           },
+           tooltips:{
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var formatNum = addCommas(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+                        return "Day " +  data.labels[tooltipItem.index] + ': ' + formatNum; 
+                    }
+                }
+            } 
+
         };
 
-        var lineChart = new Chart(anotherMonthSales, {
+      var lineChart = new Chart(anotherMonthSales, {
             type: 'line',
-            data:speedData,
-            options: chartOptions
-        });
+            data:data,
+            options: options,
+            //make data figure above point
+           //  plugins: [{
+           //    afterDatasetsDraw: function(chart) {
+           //       var ctx = chart.ctx;
+           //       chart.data.datasets.forEach(function(dataset, index) {
+           //          var datasetMeta = chart.getDatasetMeta(index);
+           //          if (datasetMeta.hidden) return;
+           //          datasetMeta.data.forEach(function(point, index) {
+           //             var value = dataset.data[index],
+           //                 x = point.getCenterPoint().x,
+           //                 y = point.getCenterPoint().y,
+           //                 radius = point._model.radius,
+           //                 fontSize = 10,
+           //                 fontFamily = 'Verdana',
+           //                 fontColor = 'black',
+           //                 fontStyle = 'normal';
+           //             ctx.save();
+           //             ctx.textBaseline = 'middle';
+           //             ctx.textAlign = 'center';
+           //             ctx.font = fontStyle + ' ' + fontSize + 'px' + ' ' + fontFamily;
+           //             ctx.fillStyle = fontColor;
+           //             ctx.fillText(addCommas( value ), x, y - radius - fontSize);
+           //             ctx.restore();
+           //          });
+           //       });
+           //    }
+           // }]
+      });
 
+    function addCommas(nStr)
+{
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
 
         anotherMonthSales.onclick = function(e) {
           var point = lineChart.getElementAtEvent(e);

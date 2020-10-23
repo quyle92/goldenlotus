@@ -93,10 +93,22 @@
               fontColor: 'black'
             }
           },
+          plugins: {
+            datalabels: false
+          },
           scales: {
             yAxes: [{
                 ticks: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    callback: function(value, index, values) {
+                      // Convert the number to a string and splite the string every 3 charaters from the end
+                      value = value.toString();
+                      value = value.split(/(?=(?:...)*$)/);
+
+                      // Convert the array to a string and format the output
+                      value = value.join('.');
+                      return  value;
+                      }
                 }
                
             }]},
@@ -111,7 +123,15 @@
            title: {
             display:false,
             text:"TEXT"
-           }
+           },
+           tooltips:{
+              callbacks: {
+                  label: function(tooltipItem, data) {
+                      var formatNum = addCommas(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+                      return  data.labels[tooltipItem.index] + ': ' + formatNum; 
+                  }
+              }
+           } 
         };
 
         var lineChart = new Chart(anotherYearSales, {
