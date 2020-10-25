@@ -933,6 +933,198 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			}
 	}
 
+	public function getFoodSoldQtyByHour( $date, $nhom_hang_ban = null ){
+
+		if( $nhom_hang_ban == null)
+		{
+			$sql = "select
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '09:00:00' and '09:59:59' THEN SoLuong ELSE 0 END) as '09h-10h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '10:00:00' and '10:59:59' THEN SoLuong ELSE 0 END) as '10h-11h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '11:00:00' and '11:59:59' THEN SoLuong ELSE 0 END) as '11h-12h',	
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '12:00:00' and '12:59:59' THEN SoLuong ELSE 0 END) as '12h-13h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '13:00:00' and '13:59:59' THEN SoLuong ELSE 0 END) as '13h-14h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '14:00:00' and '14:59:59' THEN SoLuong ELSE 0 END) as '14h-15h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '15:00:00' and '15:59:59' THEN SoLuong ELSE 0 END) as '15h-16h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '16:00:00' and '16:59:59' THEN SoLuong ELSE 0 END) as '16h-17h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '17:00:00' and '17:59:59' THEN SoLuong ELSE 0 END) as '17h-18h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '18:00:00' and '18:59:59' THEN SoLuong ELSE 0 END) as '18h-19h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h'
+				from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+				where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
+				";
+		}
+		else 
+		{
+			$sql = "select
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '09:00:00' and '09:59:59' THEN SoLuong ELSE 0 END) as '09h-10h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '10:00:00' and '10:59:59' THEN SoLuong ELSE 0 END) as '10h-11h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '11:00:00' and '11:59:59' THEN SoLuong ELSE 0 END) as '11h-12h',	
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '12:00:00' and '12:59:59' THEN SoLuong ELSE 0 END) as '12h-13h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '13:00:00' and '13:59:59' THEN SoLuong ELSE 0 END) as '13h-14h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '14:00:00' and '14:59:59' THEN SoLuong ELSE 0 END) as '14h-15h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '15:00:00' and '15:59:59' THEN SoLuong ELSE 0 END) as '15h-16h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '16:00:00' and '16:59:59' THEN SoLuong ELSE 0 END) as '16h-17h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '17:00:00' and '17:59:59' THEN SoLuong ELSE 0 END) as '17h-18h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '18:00:00' and '18:59:59' THEN SoLuong ELSE 0 END) as '18h-19h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h'
+				from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a
+					Left join [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b
+					on a.MaHangBan = b.MaHangBan
+					left join [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c
+					on b.[MaNhomHangBan] = c.[Ma]
+					where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
+					and b.[MaNhomHangBan]='$nhom_hang_ban'
+				";
+		}
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+
+	}
+
+	public function getSalesAmountByHour( $date, $nhom_hang_ban = null ){
+
+		if( $nhom_hang_ban == null)
+		{
+			$sql = "select
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '09:00:00' and '09:59:59' THEN ThanhTien ELSE 0 END) as '09h-10h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '10:00:00' and '10:59:59' THEN ThanhTien ELSE 0 END) as '10h-11h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '11:00:00' and '11:59:59' THEN ThanhTien ELSE 0 END) as '11h-12h',	
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '12:00:00' and '12:59:59' THEN ThanhTien ELSE 0 END) as '12h-13h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '13:00:00' and '13:59:59' THEN ThanhTien ELSE 0 END) as '13h-14h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '14:00:00' and '14:59:59' THEN ThanhTien ELSE 0 END) as '14h-15h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '15:00:00' and '15:59:59' THEN ThanhTien ELSE 0 END) as '15h-16h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '16:00:00' and '16:59:59' THEN ThanhTien ELSE 0 END) as '16h-17h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '17:00:00' and '17:59:59' THEN ThanhTien ELSE 0 END) as '17h-18h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '18:00:00' and '18:59:59' THEN ThanhTien ELSE 0 END) as '18h-19h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '19:00:00' and '19:59:59' THEN ThanhTien ELSE 0 END) as '19h-20h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h'
+							
+						from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+
+						where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
+				";
+		}
+		else 
+		{
+			$sql = "select
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '09:00:00' and '09:59:59' THEN ThanhTien ELSE 0 END) as '09h-10h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '10:00:00' and '10:59:59' THEN ThanhTien ELSE 0 END) as '10h-11h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '11:00:00' and '11:59:59' THEN ThanhTien ELSE 0 END) as '11h-12h',	
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '12:00:00' and '12:59:59' THEN ThanhTien ELSE 0 END) as '12h-13h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '13:00:00' and '13:59:59' THEN ThanhTien ELSE 0 END) as '13h-14h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '14:00:00' and '14:59:59' THEN ThanhTien ELSE 0 END) as '14h-15h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '15:00:00' and '15:59:59' THEN ThanhTien ELSE 0 END) as '15h-16h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '16:00:00' and '16:59:59' THEN ThanhTien ELSE 0 END) as '16h-17h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '17:00:00' and '17:59:59' THEN ThanhTien ELSE 0 END) as '17h-18h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '18:00:00' and '18:59:59' THEN ThanhTien ELSE 0 END) as '18h-19h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '19:00:00' and '19:59:59' THEN ThanhTien ELSE 0 END) as '19h-20h',
+							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h'
+							
+					from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] b
+						Left join [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] c
+						on b.MaHangBan = c.MaHangBan
+						left join [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] d
+						on c.[MaNhomHangBan] = d.[Ma]
+					where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
+					and c.[MaNhomHangBan]='$nhom_hang_ban'
+				";
+		}
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+
+	}
+
+	public function getNDMNhomHangBan() {
+		$sql = "select * from [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan]";
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+	}
+
 
 
 

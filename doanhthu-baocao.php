@@ -168,7 +168,7 @@ if($denngay == "")
                               <div class="col-md-2" style="margin-bottom:5px">Đến ngày: </div>
                               <div class="col-md-3" style="margin-bottom:5px"><input name="denngay" type="text"  value="<?php echo @$denngay ?>" id="denngay" /></div>
                               <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
-                          </div>
+                            </div>
                           <table class="table table-striped table-bordered" width="100%" id="sailorTable">
                               <thead>
                                 <tr>
