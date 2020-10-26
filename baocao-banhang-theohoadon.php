@@ -359,7 +359,7 @@ var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
 for (i = 0; i < dropdown.length; i++) {
   dropdown[i].addEventListener("click", function() {
-    this.classList.toggle("active");
+    //this.classList.toggle("active");
     var dropdownContent = this.nextElementSibling;
     if (dropdownContent.style.display === "block") {
       dropdownContent.style.display = "none";
@@ -368,7 +368,7 @@ for (i = 0; i < dropdown.length; i++) {
     }
   });
 }
-dropdown[0].click();
+//dropdown[0].click();
 </script>
 <script>
 $('.navbar-toggle').on('click', function() {

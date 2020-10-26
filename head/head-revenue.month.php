@@ -9,7 +9,7 @@
 <!-- Custom CSS -->
 <link href="css/style1.css" rel='stylesheet' type='text/css' />
 <link href="css/custom.css" rel="stylesheet">
-<link href="css/font-awesome.css" rel="stylesheet"> 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.5.0/css/all.min.css" rel="stylesheet"> 
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
@@ -39,10 +39,22 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script> 
 
 <script>
-// $('.navbar-toggle').on('click', function() {
-//   $('.sidebar-nav').toggleClass('block');  
-   
-// });
+// Get current page and set current in nav
+var url=location.href;
+var urlFilename = url.substring(url.lastIndexOf('/')+1);
+$(document).ready(function() {
+  $(".sidebar .sidebar-nav .dropdown-container li").each(function() {
+      var navItem = $(this);
+      if (navItem.find("a").attr("href") == urlFilename) {
+        //navItem.addClass("active");
+        navItem.parent().css({display:"block"})
+        navItem.css({background:'green'})
+        navItem.find("a").css({color:'#fff'})
+      }
+  });
+});
+
+
 </script>
 <!---//webfonts---> 
 

@@ -24,10 +24,9 @@ $thang_truoc  = date('Y/m',strtotime("-1 month"));
 <head>
 <?php include ('head/head-revenue.month.php');?>
     
-<style type="text/css">
-
-
-</style>  
+<script>
+ 
+</script>   
 </head>
 <body>
 <div id="wrapper">
@@ -162,19 +161,24 @@ $thang_truoc  = date('Y/m',strtotime("-1 month"));
 var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
 
+
 for (i = 0; i < dropdown.length; i++) {
   dropdown[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var dropdownContent = this.nextElementSibling;
-    if (dropdownContent.style.display === "block") {
+   // //this.classList.toggle("active");
+    var dropdownContent = this.nextElementSibling;//console.log(dropdownContent);
+    if (dropdownContent.style.display == "block") {
       dropdownContent.style.display = "none";
+    
+
     } else {
       dropdownContent.style.display = "block";
+
     }
   });
 }
 
-dropdown[0].click();
+////dropdown[0].click();
+
 
 </script>
 <script>
@@ -185,8 +189,7 @@ $('.navbar-toggle').on('click', function() {
 
 $('#thang-khac').datepicker({ uiLibrary: 'bootstrap',format: "dd/mm/yyyy"}); 
 
-
-
+;
 </script>
 </body>
 </html>

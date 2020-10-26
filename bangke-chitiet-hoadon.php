@@ -33,7 +33,7 @@ $trungtam=$_SESSION['TenTrungTam'];
       <div id="page-wrapper" >
 
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Bản kê chi tiết hóa đơn bán hàng</h3>
+            <h3 class="title">Bảng kê chi tiết hóa đơn bán hàng</h3>
 
             <div class="panel with-nav-tabs panel-primary bangke-chitiet-hoadon">
                 <div class="panel-heading">
@@ -335,7 +335,7 @@ $trungtam=$_SESSION['TenTrungTam'];
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab4primary">
-                            <div class="row">
+                            <div class="row" style="padding-left: 17px;">
                               <form action="" method="post">
                                 <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
                                 <div class="col-md-3" style="margin-bottom:5px">
@@ -422,7 +422,7 @@ var i;
 
 for (i = 0; i < dropdown.length; i++) {
   dropdown[i].addEventListener("click", function() {
-    this.classList.toggle("active");
+    //this.classList.toggle("active");
     var dropdownContent = this.nextElementSibling;
     if (dropdownContent.style.display === "block") {
       dropdownContent.style.display = "none";
@@ -432,7 +432,7 @@ for (i = 0; i < dropdown.length; i++) {
   });
 }
 
-dropdown[0].click();
+//dropdown[0].click();
 
 </script>
 <script>

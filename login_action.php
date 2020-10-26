@@ -5,7 +5,7 @@ session_start();
 	$password=$_POST['password'];
 
 	//Truy van DB de kiem tra
-	 $sql="select PWDCOMPARE('$password',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, b.NhomNhanVien, c.TenTrungTam, a.[BaoCaoDuocXem]  
+	echo $sql="select PWDCOMPARE('$password',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, b.NhomNhanVien, c.TenTrungTam, a.[BaoCaoDuocXem]  
 from [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a, [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b, 
 [NH_STEAK_PIZZA].[dbo].[tblDMTrungTam] c 
  where a.MaNhanVien = b.MaNV and b.MaTrungTam = c.MaTrungTam and a.TenSD like '$user'";
@@ -60,7 +60,7 @@ from [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a, [NH_STEAK_PIZZA].[dbo].[tblDMNhanV
 ?>
 		<script>
 			window.onload=function(){
-		alert("Đăng nhập không thành công. Sai email hoặc mật khẩu");
+				alert("Đăng nhập không thành công. Sai email hoặc mật khẩu");
 				setTimeout('window.location="login.php"',0);
 			}
 		</script>

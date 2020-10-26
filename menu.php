@@ -11,67 +11,96 @@
     </div>
     <div class="navbar-default sidebar" role="navigation">
         <div class="sidebar-nav navbar-collapse collapse" aria-expanded="false"> 
-            <li style="list-style-type: none;" class="li-level1">
-                <a class="menu-level1" href="home.php"><i class="fa fa-home nav_icon"></i>Home</a>
-            </li>
-            <button class="dropdown-btn"  data-report="BieuDoDoanhThu"><i class="fa fa-money nav_icon"></i>Biểu đồ doanh thu/ độ phủ
+   
+            <button class="dropdown-btn"  data-report="BieuDoDoanhThu"><i class="fas fa-columns"></i> Biểu đồ
                 <span class="fa fa-caret-down"></span>
             </button> 
             <div class="dropdown-container">
+
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="doanhthu-theonam.php"><i class="fa fa-signal nav_icon"></i>Doanh thu theo năm</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="doanhthu-theothang.php"><i class="fa fa-tags nav_icon"></i>Doanh thu theo tháng</a>
+                    <a class="menu-level2" href="doanhthu-theothang.php"><i class="fas fa-chart-area"></i>  Doanh thu theo tháng</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="dophu.php"><i class="fas fa-chart-pie"></i>Độ phủ</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="doanhthu-nhom-monan.php"><i class="fas fa-chart-line"></i>Doanh thu nhóm món ăn</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="baocao-gio.php"><i class="far fa-clock"></i>Báo cáo giờ</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="baocao-hoadon.php"><i class="fas fa-file-invoice-dollar"></i>Báo cáo hóa đơn</a>
                 </li>
             </div>
-            <button class="dropdown-btn"><i class="fa fa-users nav_icon"></i>Báo cáo bán hàng
+            <button class="dropdown-btn" data-report="BaoCaoBanHang"><i class="fas fa-utensils"></i></i> Báo cáo bán hàng
                 <span class="fa fa-caret-down"></span>
             </button>
             <div class="dropdown-container">
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="khachhang_chart.php"><i class="fa fa-signal nav_icon"></i>Thống kê số lượng</a>
+                    <a class="menu-level2" href="tonghop-monan-theothang.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp món ăn bán theo tháng</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="khachhang.php"><i class="fa fa-users nav_icon"></i>Tổng hợp món ăn bán theo tháng</a>
+                    <a class="menu-level2" href="tonghop-monan-theongay.php"><i class="fas fa-cookie"></i>
+                    Tổng hợp món ăn bán theo ngày</a>
                 </li>
-
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="khachhang_lichhen.php"><i class="fa fa-phone nav_icon"></i>
-                    Lịch sử chăm sóc</a>
+                    <a class="menu-level2" href="bangke-chitiet-pttt.php"><i class="fas fa-money-bill-alt"></i>
+                    Bảng kê chi tiết phương thức thanh toán</a>
                 </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="baocao-banhang-theohoadon.php"><i class="fas fa-menorah"></i>
+                    Báo cáo bán hàng chi tiết món theo từng hóa đơn</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="tonghop-monan-xemtheo-nhanvien.php"><i class="fas fa-user-tie"></i>
+                    Tổng hợp món ăn bán theo ngày (Xem theo nhân viên)</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="tonghop-monan-ban.php"><i class="fas fa-cloud-meatball"></i>
+                    Tổng hợp món ăn bán</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="bangke-chitiet-hoadon.php"><i class="fas fa-file-alt"></i>
+                    Bảng kê chi tiết hóa đơn bán hàng</a>
+                </li>
+                
             </div>
-<!--             <li style="list-style-type: none;" class="li-level1">
-                <a class="menu-level1" href="booking.php"><i class="fa fa-calendar nav_icon"></i>
-                    Lịch hẹn</a>
-            </li> -->
-            <button class="dropdown-btn"><i class="fa fa-table nav_icon"></i>Báo cáo nhập hàng 
+            <button class="dropdown-btn"  data-report="BaoCaoQuanTri"><i class="fab fa-acquisitions-incorporated"></i> Báo cáo quản trị 
                 <span class="fa fa-caret-down"></span>
             </button>
             <div class="dropdown-container">
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="licenseNoCustomer.php"><i class="fa fa-calculator nav_icon"></i>Doanh thu nhân viên</a>
+                    <a class="menu-level2" href="doichieu-soluong-bangoi.php"><i class="fas fa-file-csv"></i>
+                    Đối chiếu số lượng giữa bán và gọi</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="licenseNoCustomer.php"><i class="fa fa-building nav_icon"></i>Hoa hồng kỹ thuật viên</a>
+                    <a class="menu-level2" href="baocao-tiente.php"><i class="fas fa-funnel-dollar"></i>
+                    Báo cáo tiền tệ</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="licenseNoCustomer.php"><i class="fa fa-edit nav_icon"></i>Hoa hồng đối tác</a>
-                </li>
-            </div>
-            <button class="dropdown-btn"><i class="fa fa-archive nav_icon"></i>SMS Marketing 
-                <span class="fa fa-caret-down"></span>
-            </button>
-            <div class="dropdown-container">
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="smsAccount.php"><i class="fa fa-archive nav_icon"></i>Tài khoản SMS</a>
+                    <a class="menu-level2" href="bangke-suahoadon.php"><i class="fas fa-receipt"></i>
+                    Bảng kê sửa hóa đơn</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="smsHistory.php"><i class="fa fa-table nav_icon"></i>Lịch sử gửi SMS</a>
+                    <a class="menu-level2" href="bangke-nhatky-bomon.php"><i class="fas fa-trash-alt"></i>
+                    Bảng kê nhật ký bỏ món</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="tonghop-dobo.php"><i class="fas fa-recycle"></i>
+                    Tổng hợp đồ bỏ</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="danhsach-ban-doanhthu.php"><i class="fas fa-table"></i>
+                    Danh sách bàn - doanh thu</a>
                 </li>
             </div>
             <li style="list-style-type: none;" class="li-level1">
-                <a class="menu-level1" href="account.php"><i class="fa fa-user nav_icon"></i>Đổi mật khẩu</a>
+                <a class="menu-level1" href="account.php"><i class="fas fa-key"></i> Đổi mật khẩu</a>
             </li>
             <?php 
             $maNV = (isset($_SESSION['MaNV'])?$_SESSION['MaNV']:"");
@@ -84,7 +113,7 @@
             </li>';
             ?>
             <li style="list-style-type: none;" class="li-level1">
-                <a class="menu-level1" href="logout.php"><i class="fa fa-sign-out nav_icon"></i>Thoát</a>
+                <a class="menu-level1" href="logout.php"><i class="fas fa-external-link-alt"></i> Thoát</a>
             </li>
         </div>
     </div>
@@ -126,16 +155,31 @@ $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuo
 <script>
    // var baoCaoDuocXem ="";
     var baoCaoDuocXem= <?=json_encode($bao_cao_duoc_xem);?>;
+
     var bieuDoDoanhThu = $('button[data-report="BieuDoDoanhThu"]').attr('data-report');
+    var baoCaoBanHang = $('button[data-report="BaoCaoBanHang"]').attr('data-report');
+    var baoCaoQuanTri = $('button[data-report="BaoCaoQuanTri"]').attr('data-report');
     var admin = '<?=$_SESSION['MaNV']?>';
-    //console.log(baoCaoDuocXem);console.log(bieuDoDoanhThu);console.log(admin);
-    if( admin != 'HDQT' && jQuery.inArray( bieuDoDoanhThu, baoCaoDuocXem ) == -1){
-        $('button[data-report="BieuDoDoanhThu"]').css({display:'none'});
-        $('button[data-report="BieuDoDoanhThu"] + div.dropdown-container').html('');
+
+    var reportArr = []; 
+    reportArr = [bieuDoDoanhThu, baoCaoBanHang, baoCaoQuanTri];
+    console.log(baoCaoDuocXem);
+    var i;
+    var k;
+    for ( i = 0; i < baoCaoDuocXem.length; i++ )
+    {
+        if( admin != 'HDQT' && jQuery.inArray( baoCaoDuocXem,  reportArr) == -1){
+            for( k = 0; k < reportArr.length; k++ )
+            {
+                if( baoCaoDuocXem != reportArr[k] )
+                { 
+                    $('button[data-report="' + reportArr[k] + '"]').css({display:'none'});
+                    $('button[data-report="' + reportArr[k] + '"] + div.dropdown-container').html('');
+                }
+            }
+        }
     }
 
-//     function() {
-//   $('.sidebar-nav').toggleClass('block');
 
-// }
 </script>
+

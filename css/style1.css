@@ -273,7 +273,7 @@ nav.top1.navbar.navbar-default.navbar-static-top {
 .navbar-right li{
 	display:inline-block;
 }
-i.nav_icon {
+.dropdown-container li a i {
   color: #fff;
   margin-right:6px;
 }

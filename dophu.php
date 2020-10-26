@@ -79,9 +79,9 @@ $trungtam=$_SESSION['TenTrungTam'];
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
                             <li><a href="#tab1primary" data-toggle="tab">Bây giờ</a></li>
-                            <li><a href="#tab2primary" data-toggle="tab">Tháng này</a></li>
+                            <!-- <li><a href="#tab2primary" data-toggle="tab">Tháng này</a></li>
                             <li><a href="#tab3primary" data-toggle="tab">Tháng trước</a></li>
-                            <li><a href="#tab3primary" data-toggle="tab">Khác</a></li>
+                            <li><a href="#tab3primary" data-toggle="tab">Khác</a></li> -->
                         </ul>
                 </div>
                 <div class="panel-body">
@@ -91,21 +91,21 @@ $trungtam=$_SESSION['TenTrungTam'];
                           	<?php require('bieudo-dophu/baygio.php'); ?>
                            </div>
                         </div>
-                        <div class="tab-pane fade" id="tab2primary">
+                        <!-- <div class="tab-pane fade" id="tab2primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                          	<?php require('bieudo-dophu/thangnay.php'); ?>
+                          	<?php //require('bieudo-dophu/thangnay.php'); ?>
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab3primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                          	<?php require('bieudo-dophu/thangtruoc.php');  ?>
+                          	<?php //require('bieudo-dophu/thangtruoc.php');  ?>
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab3primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                            <?php require('bieudo-dophu/khac.php');  ?>
+                            <?php //require('bieudo-dophu/khac.php');  ?>
                           </div>
-                        </div>
+                        </div> -->
                         
                     </div>
                 </div>
@@ -128,7 +128,7 @@ var i;
 
 for (i = 0; i < dropdown.length; i++) {
   dropdown[i].addEventListener("click", function() {
-  	this.classList.toggle("active");
+  	//this.classList.toggle("active");
   	var dropdownContent = this.nextElementSibling;
   	if (dropdownContent.style.display === "block") {
   		dropdownContent.style.display = "none";
@@ -138,7 +138,7 @@ for (i = 0; i < dropdown.length; i++) {
   });
 }
 
-dropdown[0].click();
+//dropdown[0].click();
 
 </script>
 <script>
