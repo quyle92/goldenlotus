@@ -1,6 +1,9 @@
 <?php
 require('lib/db.php');
+require('lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus;
+
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 $matrungtam=$_SESSION['MaTrungTam'];
@@ -38,64 +41,94 @@ if($denngay == "")
     <?php include 'menu.php'; ?>
       <div id="page-wrapper" >
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
+            <form action="" method="post">
+              <div class="row">
+                <div class="col-md-2" style="margin-bottom:5px">Chi nhánh:</div>
+                <div class="col-md-3" style="margin-bottom:5px">
+                  <select name="matrungtam" id="matrungtam" value="Tat ca">
+                    <?php 
+                    $chi_nhanh = $goldenlotus->getChiNhanh();
+                    while ( $r = sqlsrv_fetch_array($chi_nhanh) )
+                    { if($matrungtam == $r['MaTrungTam']) ?>
+                      <option value="<?php echo $r['MaTrungTam'];?>" selected="selected"><?php echo $r['TenTrungTam'];?></option>
+                    <?php }
+                    ?>
+                  </select>
+                </div>
+                <div class="col-md-3" style="margin-bottom:5px"></div>
+                <div class="col-md-2" style="margin-bottom:5px"></div>
+              </div>
+            </form>
+
             <h3 class="title">Thực đơn</h3>
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#tab1primary" data-toggle="tab">Tất cả</a></li>
-                            <li><a href="#tab2primary" data-toggle="tab">PORK</a></li>
+                            <li class="active"><a href="#tab1primary" data-toggle="tab">TẤT CẢ</a></li>
+                            <?php 
+                            $all_food_items = $goldenlotus->getAllFoodGroups();
+                            for ($i = 0; $i < sqlsrv_num_rows($all_food_items); $i++) 
+                            {  $r = sqlsrv_fetch_array($all_food_items) ?>
+                            <li><a href="#<?=$r['Ma']?>" data-toggle="tab"><?=$r['Ten']?></a></li>
+                            <?php }
+                            ?>
                         </ul>
                 </div>
                 <div class="panel-body">
                     <div class="tab-content">
                       <div class="tab-pane fade in active" id="tab1primary">
-                          <div class="panel panel-default" style="width: 33.33%;float: left">
-                                <ul class="list-group danh-sach-ban">
-                                    <li class="list-group-item">
-                                        <div class="row toggle" id="dropdown-detail-1" data-toggle="detail-1">
-                                            <div class="col-xs-10">
-                                              <div style="display:flex">
-                                                <div class="tbl-image">
-                                                    <img src="https://i.pinimg.com/originals/3b/5f/3f/3b5f3fe6d684d7cb19baa41820a66981.jpg"  width="80" height="80">
-                                                </div> 
-                                                <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
-                                                  <strong>01. Pork Belly</strong>
-                                                  <br>
-                                                  <span>Giá:</span>
-                                                  <br>
-                                                  <span>Hoạt động: <img src="https://png.pngtree.com/element_our/sm/20180515/sm_5afb099d307d3.jpg" width="30" height="30"/></span>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                     </li>
-                                </ul>
+                      <?php 
+                      $all_food_items = $goldenlotus->getAllFoodItems();
+                      for ($i = 0; $i < sqlsrv_num_rows($all_food_items); $i++) 
+                      { $r = sqlsrv_fetch_array($all_food_items, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i); ?>
+                          <div class="panel panel-default col-md-5" >
+                            <div style="display:flex;white-space: nowrap;overflow: hidden;">
+                                <div class="tbl-image">
+                                    <!-- <img src="https://i.pinimg.com/originals/3b/5f/3f/3b5f3fe6d684d7cb19baa41820a66981.jpg"  width="80" height="80"> -->
+                                </div> 
+                                <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
+                                  <div class="tenhangban" style="min-width: 50px"><strong><?=$r['MaHangBan']?>. <?=$r['TenHangBan']?> </strong></div>
+                                
+                                  <span>Giá: <?=( $r['Gia'] ) ? number_format($r['Gia'],0,",",".") : ""?> </span>
+                                  <br>
+                                  <span>Hoạt động: <img src="https://png.pngtree.com/element_our/sm/20180515/sm_5afb099d307d3.jpg" width="30" height="30"/></span>
+                                </div>
+                              </div>
                           </div>
+                          <?php if( !($i % 2) ) echo '<div class="col-md-2" ></div>'; ?>
+                      <?php } ?>
                       </div>
-                      <div class="tab-pane fade" id="tab2primary">
-                           <div class="panel panel-default" style="width: 33.33%;float: left">
-                                <ul class="list-group danh-sach-ban">
-                                    <li class="list-group-item">
-                                        <div class="row toggle" id="dropdown-detail-1" data-toggle="detail-1">
-                                            <div class="col-xs-10">
-                                              <div style="display:flex">
-                                                <div class="tbl-image">
-                                                    <img src="https://i.pinimg.com/originals/3b/5f/3f/3b5f3fe6d684d7cb19baa41820a66981.jpg"  width="80" height="80">
-                                                </div> 
-                                                <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
-                                                  <strong>01. Pork Belly</strong>
-                                                  <br>
-                                                  <span>Giá:</span>
-                                                  <br>
-                                                  <span>Hoạt động: <img src="https://png.pngtree.com/element_our/sm/20180515/sm_5afb099d307d3.jpg" width="30" height="30"/></span>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                     </li>
-                                </ul>
-                          </div>
-                        </div>
+
+                      <?php
+                      $all_food_items = $goldenlotus->getAllFoodGroups();
+                      while( $r = sqlsrv_fetch_array($all_food_items) )
+                      { ?>
+                      <div class="tab-pane fade" id="<?=$r['Ma']?>">
+                        <?php 
+                        $food_group = $r['Ma'];
+                        $food_items_by_group = $goldenlotus->getFoodItemsByGroup( $food_group );
+                        for ($i = 0; $i < sqlsrv_num_rows($food_items_by_group); $i++) 
+                        { $r1 = sqlsrv_fetch_array($food_items_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i); ?>
+                            <div class="panel panel-default col-md-5" >
+                              <div style="display:flex;white-space: nowrap;overflow: hidden;">
+                                  <div class="tbl-image">
+                                    
+                                  </div> 
+                                  <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
+                                    <div class="tenhangban" style="min-width: 50px"><strong><?=$r1['MaHangBan']?>. <?=$r1['TenHangBan']?> </strong></div>
+                                  
+                                    <span>Giá:   <?=( $r1['Gia'] ) ? number_format($r1['Gia'],0,",",".") : ""?></span>
+                                    <br>
+                                    <span>Hoạt động: <img src="https://png.pngtree.com/element_our/sm/20180515/sm_5afb099d307d3.jpg" width="30" height="30"/></span>
+                                  </div>
+                                </div>
+                            </div>
+                            <?php if( !($i % 2) ) echo '<div class="col-md-2" ></div>'; ?>
+                          <?php 
+                        } ?>
+                      </div>
+                      <?php } ?> 
+
                     </div>
                 </div>
             </div>

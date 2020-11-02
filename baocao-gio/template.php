@@ -1,12 +1,18 @@
-
+<?php
+$ajax_dir = "baocao-gio/ajax-call/process-";
+$ajax_url = $ajax_dir . $nhom_hang_ban_ten . ".php";;
+?>
 <div class="tab-pane fade in" id="<?=$nhom_hang_ban_id?>">
-  <form action="" method="post" id="<?=$nhom_hang_ban_id ?>">
+  <form action="" method="post" id="2014204" class="<?=$nhom_hang_ban_id?>">
     <div class="col-md-2" style="margin-bottom:5px">Ngày:</div>
     <div class="col-md-3" style="margin-bottom:5px"><input name="tungay" type="text"  value="<?php echo @$tungay ?>" id="tungay-<?=$nhom_hang_ban_id?>" />
       <input name="nhom_hang_ban_id" type="hidden"  value="<?=$nhom_hang_ban_id ?>" id="nhom_hang_ban_id" />
+      <input name="nhom_hang_ban_ten" type="hidden"  value="<?=$nhom_hang_ban_ten ?>" id="nhom_hang_ban_ten" />
     </div>
     <div class="col-md-2" style="margin-bottom:5px"><input type="submit" value="Lọc"></div>
   </form>
+
+
 
   <div class="tab-pane fade in" id="<?=$nhom_hang_ban_id?>">
     <div class="col-xs-12 col-sm-12 table-responsive">
@@ -21,8 +27,6 @@
 </div>
 
 
-
-
 <script>
 
     $('#tungay-<?=$nhom_hang_ban_id?>').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
@@ -34,19 +38,21 @@
     });
 
 
-  $('form#<?=$nhom_hang_ban_id?>').on('submit', function (event){
+  
+  $('form.<?=$nhom_hang_ban_id?>').on('submit', function (event){
     event.preventDefault();
     var formValues= $(this).serialize();
+    var url = '<?=$ajax_url?>';console.log(url);
 
     $.ajax({
-      url:"baocao-gio/ajax-call/process-NU002.php",
+      url: url,
       method:"POST",
       data:formValues,
       //dataType:"json",
-      success:function(reponse)
+      success:function(response)
       {
           var result = [];
-          result = JSON.parse(reponse);
+          result = JSON.parse(response);
           //console.log(typeof (reponse) );//string
           //console.log(typeof (result) );//object
          /****************** Qty *********************/   
@@ -54,7 +60,7 @@
               qty_sum_arr = result[0];
           var maxValueQty = result[1];
          
-          const QTY_CHART_NU002 = document.getElementById("bieudo-soluong-" + "<?=$nhom_hang_ban_id?>");
+          const QTY_CHART_<?=$nhom_hang_ban_ten?> = document.getElementById("bieudo-soluong-" + "<?=$nhom_hang_ban_id?>");
             
             var dataQty = {
               labels: ["8h00",  "9h00", "10h00", "11h00", "12h00","13h00","14h00","15h00","16h00","17h00","18h00","19h00","20h00"],
@@ -122,7 +128,7 @@
                }
             };
 
-          var mylineChart  = new Chart(QTY_CHART_NU002, {
+          var mylineChart  = new Chart(QTY_CHART_<?=$nhom_hang_ban_ten?>, {
               type: 'line',
               data: dataQty,
               options: optionsQty,
@@ -132,8 +138,8 @@
       var sales_sum_arr = new Array();
           sales_sum_arr = result[2];
       var maxValueMoney = result[3];
-     
-      const MONEY_CHART_NU002 = document.getElementById('bieudo-sotien-' + "<?=$nhom_hang_ban_id?>");
+      
+      const MONEY_CHART_<?=$nhom_hang_ban_ten?> = document.getElementById('bieudo-sotien-' + "<?=$nhom_hang_ban_id?>");
         
         var dataMoney = {
           labels: ["8h00",  "9h00", "10h00", "11h00", "12h00","13h00","14h00","15h00","16h00","17h00","18h00","19h00","20h00"],
@@ -201,7 +207,7 @@
            }
         };
 
-      var myMoneyChart  = new Chart(MONEY_CHART_NU002 , {
+      var myMoneyChart  = new Chart(MONEY_CHART_<?=$nhom_hang_ban_ten?> , {
           type: 'line',
           data: dataMoney,
           options: optionsMoney

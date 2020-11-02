@@ -17,7 +17,7 @@ $report_arr = serialize( $_POST['report_arr'] );
 
 if ( $username != "" && $password != "" && $report_arr != "" )
 {
-	echo $sql="INSERT INTO [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] ( [TenSD], [MaNhanVien],
+	echo $sql="INSERT INTO [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] ( [TenSD], [MaNhanVien],
 	   [MatKhau],[KiemTraSD],[DangSD],[TamNgung],[KhongDoi],[SuDungDacBiet], [BaoCaoDuocXem]) VALUES ( '$username', '$maNV', PWDENCRYPT('$password'), 0,0,0,0,0, '$report_arr' )"; 
 
 	try{

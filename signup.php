@@ -18,8 +18,10 @@ $trungtam=$_SESSION['TenTrungTam'];
 $tungay=@$_POST['tungay'];
 $denngay=@$_POST['denngay'];
 
-
+if( $_SESSION['MaNV'] != 'HDQT' )
+   die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
 ?>
+
 
 <!DOCTYPE HTML>
 <html>

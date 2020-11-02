@@ -10,6 +10,11 @@ $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
 $today  = date('Y/m/d',strtotime("-1 month"));
 $yesterday  = date('Y/m/d',strtotime("-1 month"));
+
+$bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
+$page_name = "BaoCaoBanHang";
+if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
+   die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -201,19 +206,19 @@ $yesterday  = date('Y/m/d',strtotime("-1 month"));
                         <div class="tab-pane fade" id="tab4primary">
                             <div class="row">
                               <form action="" method="post">
-                                <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
-                                <div class="col-md-3" style="margin-bottom:5px">
-                                  <input name="tu-ngay" type="text"  value="" id="tu-ngay" />
-                                </div>
-                                <div class="col-md-2" style="margin-bottom:5px">Đến:</div>
-                                <div class="col-md-3" style="margin-bottom:5px">
-                                  <input name="den-ngay" type="text" value="" id="den-ngay" />
-                                </div>
-                                <div class="col-md-3" style="margin-bottom:5px">
-                                  <button type="submit" class="btn btn-info">Submit</button>
-                                </div>
-                            </form>
-                          </div>
+                                  <div class="col-md-2" style="margin-bottom:5px">Từ:</div>
+                                  <div class="col-md-3" style="margin-bottom:5px">
+                                    <input name="tu-ngay" type="text"  value="" id="tu-ngay" />
+                                  </div>
+                                  <div class="col-md-2" style="margin-bottom:5px">Đến:</div>
+                                  <div class="col-md-3" style="margin-bottom:5px">
+                                    <input name="den-ngay" type="text" value="" id="den-ngay" />
+                                  </div>
+                                  <div class="col-md-3" style="margin-bottom:5px">
+                                    <button type="submit" class="btn btn-info">Submit</button>
+                                  </div>
+                              </form>
+                            </div>
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <table class="table table-striped table-bordered" id="sailorTable">
                                 <thead>

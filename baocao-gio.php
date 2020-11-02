@@ -1,6 +1,10 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require('lib/db.php');
 require('lib/goldenlotus.php');
+require('helper/custom-function.php');
 @session_start();
 $goldenlotus = new GoldenLotus;
 
@@ -65,7 +69,11 @@ if($denngay == "")
 	$denngay = date('d-m-Y');
 }
 
-
+$bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
+$page_name = "BieuDoDoanhThu";
+if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
+   die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
+ 
 ?>
 
 <!DOCTYPE HTML>
@@ -86,7 +94,7 @@ if($denngay == "")
     <div class="col-md-12 graphs">
 
 
- <h3 class="title">Báo cáo hóa đơn</h3>
+ <h3 class="title">Báo cáo giờ</h3>
  <div class="panel panel-warning" data-widget="{&quot;draggable&quot;: &quot;false&quot;}" data-widget-static="">
 	<div class="panel-body no-padding">
 		<div class="container-fluid">
@@ -131,9 +139,22 @@ if($denngay == "")
                         $nhom_hang_ban = $goldenlotus->getNDMNhomHangBan();
                         while( $r = sqlsrv_fetch_array($nhom_hang_ban) )
                         {
-                        $nhom_hang_ban_id = $r['Ma']; 
-                        $nhom_hang_ban_ten = $r['Ten']; 
-                        require_once ('baocao-gio/' . strtolower($r['Ma']) . '.php'); 
+                          $nhom_hang_ban_id = $r['Ma']; 
+                          $nhom_hang_ban_ten = stripSpecial(stripUnicode(($r['Ten'])));
+
+                          $file_name = 'baocao-gio/' . $nhom_hang_ban_ten . '.php';
+                          $file_name_ajax = 'baocao-gio/ajax-call/process-' . $nhom_hang_ban_ten . '.php';
+                          if( !( file_exists($file_name) ) ){
+                            $file_contents = file_get_contents("baocao-gio/template.php");
+                            file_put_contents( $file_name , $file_contents );
+                          }
+                          if( !( file_exists($file_name_ajax) ) ){
+                            $file_contents = file_get_contents("baocao-gio/ajax-call/ajax-template.php");
+                            file_put_contents( $file_name_ajax , $file_contents );
+                          }
+                                                  
+                          require_once ( $file_name ); 
+                          //require_once ('baocao-gio/' . $nhom_hang_ban_ten . '.php'); 
                     	 }
                         ?>
                      

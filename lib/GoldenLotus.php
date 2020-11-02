@@ -2,7 +2,7 @@
 class DbConnection {
 
 	protected $serverName = "DELL-PC\SQLEXPRESS";
-	protected $connectionInfo = array( "Database"=>"NH_STEAK_PIZZA","CharacterSet" => "UTF-8", "UID"=>"sa", "PWD"=>"123");
+	protected $connectionInfo = array( "Database"=>"GOLDENLOTUS_Q3","CharacterSet" => "UTF-8", "UID"=>"sa", "PWD"=>"123");
 	protected $conn;
 
 	function __construct() {
@@ -13,7 +13,7 @@ class DbConnection {
 class GoldenLotus extends DbConnection{
 
 	public function layMaNV() {
-		$sql = "SELECT *  FROM [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien]";
+		$sql = "SELECT *  FROM [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien]";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -27,7 +27,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function layTatCaBaoCao(){
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblDMBaoCao] ";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblDMBaoCao] ";
 		try {
 			$rs = sqlsrv_query($this->conn, $sql); 
 			if(sqlsrv_has_rows($rs) != false) 
@@ -40,7 +40,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function layDanhSachUsers() {
-		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a,  [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV 		";
+		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] a,  [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV 		";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -54,7 +54,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function layBaoCao( $ma_bao_cao ){
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblDMBaoCao] WHERE [MaBaoCao] = '$ma_bao_cao' ";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblDMBaoCao] WHERE [MaBaoCao] = '$ma_bao_cao' ";
 		try {
 			$rs = sqlsrv_query($this->conn, $sql);
 			$r=sqlsrv_fetch_array($rs); 
@@ -68,7 +68,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function layTenUser($maNV) {
-		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a,  [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV ='$maNV'	";
+		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] a,  [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV ='$maNV'	";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -82,7 +82,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function xoaUser( $maNV ){
-		$sql = "DELETE FROM  [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] where [MaNhanVien] = '$maNV'";
+		$sql = "DELETE FROM  [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] where [MaNhanVien] = '$maNV'";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 		}
@@ -93,7 +93,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function countOccupiedTables() : int {
-		$sql = "SELECT * FROM  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] where [ThoiGianDongPhieu] IS NULL";
+		$sql = "SELECT * FROM  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] where [ThoiGianDongPhieu] IS NULL";
 		try 
 		{
 			$rs = sqlsrv_query($this->conn, $sql, array(), array( "Scrollable" => 'static' ));
@@ -112,7 +112,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function countTotalTables() : int {
-		$sql = "SELECT * FROM  [NH_STEAK_PIZZA].[dbo].[tblDMBan]";
+		$sql = "SELECT * FROM  [GOLDENLOTUS_Q3].[dbo].[tblDMBan]";
 		try 
 		{
 			$rs = sqlsrv_query($this->conn, $sql, array(), array( "Scrollable" => 'static' ));
@@ -132,7 +132,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldThisMonth ($thang_nay) {
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_nay' and SoLuong >0";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_nay' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -146,7 +146,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldLastMonth ($thang_truoc) {
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_truoc' and SoLuong >0";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_truoc' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -160,7 +160,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldAnotherMonth ($thang_khac) {
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_khac' and SoLuong >0";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_khac' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -174,7 +174,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldToday($hom_nay) {
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_nay' and SoLuong >0";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_nay' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			
@@ -188,7 +188,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldYesterday($hom_truoc) {
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_truoc' and SoLuong >0";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_truoc' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -202,7 +202,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldAnotherDay($hom_khac) {
-		$sql = "SELECT * FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_khac' and SoLuong >0";
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_khac' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -216,7 +216,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsToday($today){
-		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$today' and SoLuong >0 ";
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$today' and SoLuong >0 ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -230,7 +230,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsYesterday( $yesterday ){
-		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$yesterday' and SoLuong >0"; 
+		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$yesterday' and SoLuong >0"; 
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -245,7 +245,7 @@ class GoldenLotus extends DbConnection{
 
 
 	public function getDatesHasBillOfThisMonth( $this_month ) {
-		  $sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2020/08' and SoLuong >0 GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 ) ";
+		  $sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2020/08' and SoLuong >0 GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 ) ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -260,7 +260,7 @@ class GoldenLotus extends DbConnection{
 
 
 	public function getDatesHasBillBySelection( $tungay, $denngay  ){
-		$sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a , [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b, [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' AND SoLuong >0 AND a.MaLichSuPhieu=b.MaLichSuPhieu  GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 )";
+		$sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a , [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b, [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' AND SoLuong >0 AND a.MaLichSuPhieu=b.MaLichSuPhieu  GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 )";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -274,7 +274,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getBillDetailsByDayOfMonth( $date ){
-		$sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a JOIN  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 ";
+		$sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -288,7 +288,7 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getPayMethodDetailsByDate( $date ){
-		$sql = "SELECT  b.*, c.[MaLoaiThe] FROM  [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b  LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) ='$date' ";
+		$sql = "SELECT  b.*, c.[MaLoaiThe] FROM  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) ='$date' ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -302,8 +302,8 @@ class GoldenLotus extends DbConnection{
 	}
 
 	 public function getFoodGroupsByDate( $date ){
-		$sql = "select Ten from  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
- LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+		$sql = "select Ten from  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a 
+ LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 group by Ten";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -319,8 +319,8 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 
 	public function getFoodSoldByGroup( $date, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
 
-	 	$sql_2 = "select Ten from  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
-		 LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+	 	$sql_2 = "select Ten from  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a 
+		 LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 group by Ten";
 			try{
 				$rs_2 = sqlsrv_query( $this->conn, $sql_2, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -344,11 +344,11 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 	  	FROM
 		  ( SELECT  c.[Ten] ,  a.MaHangBan, b.[TenHangBan] , a.SoLuong, a.DonGia,
 		  p.TienGiamGia,p.SoTienDVPhi, p.SoTienVAT 	  
-		  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] p 
-		  JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
+		  FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] p 
+		  JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a 
 		  ON p.MaLichSuPhieu = a.MaLichSuPhieu 
-		  LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b 
-		  ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+		  LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b 
+		  ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		  ON b.[MaNhomHangBan] = c.[Ma] 
 		  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and Ten=N'$nhom_hang_ban'
 		  and SoLuong >0  ) x  
@@ -370,8 +370,8 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 
 	public function getFoodSoldByGroup_Month( $month, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
 
-	 	$sql_2 = "select Ten from  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
-		 LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+	 	$sql_2 = "select Ten from  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a 
+		 LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$month' and SoLuong >0 group by Ten";
 			try{
 				$rs_2 = sqlsrv_query( $this->conn, $sql_2, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -395,11 +395,11 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 	  	FROM
 		  ( SELECT  c.[Ten] ,  a.MaHangBan, b.[TenHangBan] , a.SoLuong, a.DonGia,
 		  p.TienGiamGia,p.SoTienDVPhi, p.SoTienVAT 	  
-		  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] p 
-		  JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
+		  FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] p 
+		  JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a 
 		  ON p.MaLichSuPhieu = a.MaLichSuPhieu 
-		  LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b 
-		  ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+		  LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b 
+		  ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		  ON b.[MaNhomHangBan] = c.[Ma] 
 		  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$month' and Ten=N'$nhom_hang_ban'
 		  and SoLuong >0  ) x  
@@ -421,8 +421,8 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 
 	public function getFoodSoldByGroup_DateSelected( $tungay, $denngay, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
 
-	 	$sql_2 = "select Ten from  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
-		 LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+	 	$sql_2 = "select Ten from  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a 
+		 LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' and SoLuong >0 group by Ten";
 			try{
 				$rs_2 = sqlsrv_query( $this->conn, $sql_2, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -446,11 +446,11 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 	  	FROM
 		  ( SELECT  c.[Ten] ,  a.MaHangBan, b.[TenHangBan] , a.SoLuong, a.DonGia,
 		  p.TienGiamGia,p.SoTienDVPhi, p.SoTienVAT 	  
-		  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] p 
-		  JOIN [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a 
+		  FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] p 
+		  JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a 
 		  ON p.MaLichSuPhieu = a.MaLichSuPhieu 
-		  LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b 
-		  ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c 
+		  LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b 
+		  ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		  ON b.[MaNhomHangBan] = c.[Ma] 
 		  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' and Ten=N'$nhom_hang_ban'
 		  and SoLuong >0  ) x  
@@ -471,14 +471,14 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 	}
 
 	public function getSalesByFoodGroup( $date ){
-		$sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] x
+		$sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] x
 right Join 
 (	select t1.[MaNhomHangBan], t1.MaHangBan, t2.SoLuong, t2.DonGia, 
 	t2.SoLuong * t2.DonGia as TotalMoney
-	from [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] t1
+	from [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] t1
 	left join (
 		select MaHangBan, [TenHangBan], SoLuong, DonGia  from
-		[NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+		[GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan]
 		where substring ( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' 
 		and SoLuong >0 ) t2 
 	on t2.MaHangBan = t1.MaHangBan 
@@ -498,14 +498,14 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getSalesByFoodGroupBySelection( $tungay, $denngay ){
-		$sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] x
+		$sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] x
 		right Join 
 		(	select t1.[MaNhomHangBan], t1.MaHangBan, t2.SoLuong, t2.DonGia, 
 			t2.SoLuong * t2.DonGia as TotalMoney
-			from [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] t1
+			from [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] t1
 			left join (
 				select MaHangBan, [TenHangBan], SoLuong, DonGia  from
-				[NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+				[GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan]
 				where substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay'
 				and SoLuong >0 ) t2 
 			on t2.MaHangBan = t1.MaHangBan 
@@ -531,7 +531,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		 sum(soluong) as SLBan,
 			sum (CASE WHEN soluong < 0 THEN soluong
 		END) AS SLBo
-		FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) = '$date' group by TenHangBan";
+		FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) = '$date' group by TenHangBan";
 
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -552,7 +552,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		 sum(soluong) as SLBan,
 			sum (CASE WHEN soluong < 0 THEN soluong
 		END) AS SLBo
-		FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) = '$month' group by TenHangBan";
+		FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) = '$month' group by TenHangBan";
 
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -573,7 +573,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		 sum(soluong) as SLBan,
 			sum (CASE WHEN soluong < 0 THEN soluong
 		END) AS SLBo
-		FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' group by TenHangBan";
+		FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' group by TenHangBan";
 
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -588,7 +588,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getCurrencyReportByDate( $date ){
-		$sql = "  select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] 
+		$sql = "  select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] 
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'   group by [MaTienTe]";
 
 		try{
@@ -604,7 +604,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getCurrencyReportByMonth( $month ){
-		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] 
+		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] 
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  group by [MaTienTe]";
 
 		try{
@@ -620,7 +620,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getCurrencyReportBySelection( $tungay, $denngay ){
-		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] 
+		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] 
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' group by [MaTienTe]";
 
 		try{
@@ -636,7 +636,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getBillEditDetailsByDate( $date ){	
-		$sql = "select a.* , b.*  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b
+		$sql = "select a.* , b.*  FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b
 			ON a.[NVTaoMaNV] = b.MaNV
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'  " ;
 
@@ -653,7 +653,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getBillEditDetailsByMonth( $month ){	
-		$sql = "select a.* , b.*  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b
+		$sql = "select a.* , b.*  FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b
 			ON a.[NVTaoMaNV] = b.MaNV
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  " ;
 
@@ -670,7 +670,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getBillEditDetailsBySelection( $tungay, $denngay ){
-		$sql = "select a.* , b.*  FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b
+		$sql = "select a.* , b.*  FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b
 			ON a.[NVTaoMaNV] = b.MaNV
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' " ;
 
@@ -687,7 +687,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getCancelledFoodItemByDate( $date ) {
-		$sql = "SELECT a.*, b.*,c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' ";
+		$sql = "SELECT a.*, b.*,c.* FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' ";
 
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -702,7 +702,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getCancelledFoodItemByMonth ( $month ) {
-		$sql = "SELECT a.*, b.*,c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month' ";
+		$sql = "SELECT a.*, b.*,c.* FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month' ";
 
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -717,7 +717,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getCancelledFoodItemBySelection ( $tungay, $denngay ) {
-		$sql = "SELECT a.*, b.*,c.* FROM [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay' " ;
+		$sql = "SELECT a.*, b.*,c.* FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay' " ;
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 				
@@ -731,7 +731,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getSumFoodCancelledByDate( $date ) {
-		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' group by TenHangBan ";
+		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' group by TenHangBan ";
 
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -746,7 +746,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getSumFoodCancelledByMonth ( $month ) {
-		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month'  group by TenHangBan";
+		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month'  group by TenHangBan";
 
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
@@ -761,7 +761,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getSumFoodCancelledBySelection ( $tungay, $denngay ) {
-		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay'  group by TenHangBan " ;
+		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay'  group by TenHangBan " ;
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 				
@@ -780,9 +780,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
 					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
 					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
-					from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
-					left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
-					left join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+					from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
+					left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
+					left join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
 					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
 					= '$date' 
 					Where [ThoiGianDongPhieu] IS  NULL) t1
@@ -793,9 +793,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
 					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
 					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
-					from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
-					left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
-					left join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+					from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
+					left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
+					left join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
 					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
 					= '$date' 
 					 Where [ThoiGianDongPhieu] IS NOT NULL) t1
@@ -806,9 +806,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
 					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
 					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
-					from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
-					left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
-					left join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
+					from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
+					left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
+					left join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
 					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
 					= '$date' ) t1
 				Group By MaBan";
@@ -832,10 +832,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		{
 		echo	 $sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
 					sum (SoLuong*DonGia)  OVER(PARTITION BY TenHangBan) AS DoanhThu
-				 from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
-				 left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b
+				 from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
+				 left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b
 				 on a.[MaBan] = b.[MaBan]
-				 join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c
+				 join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c
 				 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
 				 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
 				 and [ThoiGianDongPhieu] IS  NULL
@@ -845,10 +845,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		{
 			$sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
 				sum (SoLuong*DonGia)  OVER(PARTITION BY TenHangBan) AS DoanhThu
-			 from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
-			 left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b
+			 from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
+			 left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b
 			 on a.[MaBan] = b.[MaBan]
-			 join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c
+			 join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c
 			 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
 			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
 			 and [ThoiGianDongPhieu] IS NOT NULL
@@ -858,10 +858,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		{
 			$sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
 				sum (SoLuong*DonGia)  OVER(PARTITION BY TenHangBan) AS DoanhThu
-			 from [NH_STEAK_PIZZA].[dbo].[tblDMBan] a
-			 left join [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] b
+			 from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
+			 left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b
 			 on a.[MaBan] = b.[MaBan]
-			 join  [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] c
+			 join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c
 			 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
 			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
 			 and a.MaBan ='$table_id'";
@@ -887,8 +887,8 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			 SUM(CASE WHEN SoLuong >=4 THEN 1 ELSE 0 END) as GreaterThan4
 			 from
 				(select a.MaLichSuPhieu, sum (SoLuong) as SoLuong
-				from [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a Join
-				[NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] b
+				from [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] a Join
+				[GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] b
 				on   a.MaLichSuPhieu = b.MaLichSuPhieu Where 
 				substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date'
 				group by a.MaLichSuPhieu) t1";
@@ -915,7 +915,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 				 from
 					(
 					select a.MaLichSuPhieu, sum (TienThucTra) as TienThucTra
-					from [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a  Where 
+					from [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] a  Where 
 					substring( Convert(varchar,ThoiGianTaoPhieu,111),0,11 ) ='$date'
 					group by a.MaLichSuPhieu
 					) t1
@@ -964,13 +964,13 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 					between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
 					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h'
-				from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+				from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan]
 				where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
 				";
 		}
 		else 
 		{
-			$sql = "select
+			 $sql = "select
 				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 					between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
 					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
@@ -997,10 +997,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 					between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
 					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h'
-				from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] a
-					Left join [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] b
+				from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a
+					Left join [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b
 					on a.MaHangBan = b.MaHangBan
-					left join [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] c
+					left join [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c
 					on b.[MaNhomHangBan] = c.[Ma]
 					where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
 					and b.[MaNhomHangBan]='$nhom_hang_ban'
@@ -1052,7 +1052,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h'
 							
-						from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan]
+						from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan]
 
 						where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
 				";
@@ -1087,10 +1087,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h'
 							
-					from [NH_STEAK_PIZZA].[dbo].[tblLSPhieu_HangBan] b
-						Left join [NH_STEAK_PIZZA].[dbo].[tblDMHangBan] c
+					from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] b
+						Left join [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] c
 						on b.MaHangBan = c.MaHangBan
-						left join [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan] d
+						left join [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] d
 						on c.[MaNhomHangBan] = d.[Ma]
 					where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
 					and c.[MaNhomHangBan]='$nhom_hang_ban'
@@ -1111,7 +1111,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	}
 
 	public function getNDMNhomHangBan() {
-		$sql = "select * from [NH_STEAK_PIZZA].[dbo].[tblDMNhomHangBan]";
+		$sql = "select * from [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] order By Ten";
 		try{
 				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 				
@@ -1125,11 +1125,82 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		}
 	}
 
+	public function getChiNhanh(){
+		$sql="SELECT * FROM tblDMTrungTam Order by MaTrungTam";
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+	}
 
+	public function getAllFoodItems(){
+		$sql=" SELECT a.MaHangBan, a.TenHangBan , b.MaHangBan, b.Gia FROM [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] a   join [GOLDENLOTUS_Q3].[dbo].[tblGiaBanHang] b ON a.[MaHangBan] = b.[MaHangBan] WHERE MaNhomHangBan IS NOT NULL";
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+	}
 
+	public function getAllFoodGroups(){
+		$sql="SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan]  order by ten";
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+	}
 
+	public function getFoodItemsByGroup( $food_group ) {
+		$sql=" SELECT a.MaHangBan, a.TenHangBan , b.MaHangBan, b.Gia FROM [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] a   join [GOLDENLOTUS_Q3].[dbo].[tblGiaBanHang] b ON a.[MaHangBan] = b.[MaHangBan] AND MaNhomHangBan = '$food_group' AND MaNhomHangBan IS NOT NULL";
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				
+				if( $rs != false) 
+					return $rs;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+	}
 
+	public function getTotalSales( $today ) {
+		$sql="select sum(TienThucTra) as TienThucTra from [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],111),0,11 ) =  '$today'";
+		try{
+				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				//while
+				$r = sqlsrv_fetch_array( $rs );
 
+				if( $rs != false) 
+					return $r;
+				else die( print_r( sqlsrv_errors(), true ) );
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+	}
 
 
 }

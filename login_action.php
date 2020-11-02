@@ -5,9 +5,9 @@ session_start();
 	$password=$_POST['password'];
 
 	//Truy van DB de kiem tra
-	echo $sql="select PWDCOMPARE('$password',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, b.NhomNhanVien, c.TenTrungTam, a.[BaoCaoDuocXem]  
-from [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a, [NH_STEAK_PIZZA].[dbo].[tblDMNhanVien] b, 
-[NH_STEAK_PIZZA].[dbo].[tblDMTrungTam] c 
+	$sql="select PWDCOMPARE('$password',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, b.NhomNhanVien, c.TenTrungTam, a.[BaoCaoDuocXem]  
+from [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] a, [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b, 
+[GOLDENLOTUS_Q3].[dbo].[tblDMTrungTam] c 
  where a.MaNhanVien = b.MaNV and b.MaTrungTam = c.MaTrungTam and a.TenSD like '$user'";
 	
 	$dungmatkhau = 0; $tensd = ""; $manv = ""; $tennv = ""; $matrungtam = ""; $tentrungtam = ""; $manhomnhanvien = ""; $smsbrandname = "";
@@ -16,7 +16,7 @@ from [NH_STEAK_PIZZA].[dbo].[tblDSNguoiSD] a, [NH_STEAK_PIZZA].[dbo].[tblDMNhanV
 	{
 		//lay ket qua query
 		$rs = sqlsrv_query($conn,$sql, array(), array( "Scrollable" => 'static' ));
-		$r=sqlsrv_fetch_array($rs); var_dump( sqlsrv_num_rows($rs) );var_dump(sqlsrv_has_rows($rs) );
+		$r=sqlsrv_fetch_array($rs); //var_dump( sqlsrv_num_rows($rs) );var_dump(sqlsrv_has_rows($rs) );
 		if(sqlsrv_has_rows($rs) != false)
 		{
 			//foreach ($result_dangnhap as $r)

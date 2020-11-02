@@ -22,10 +22,10 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6).
 SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/10' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT10, 
   SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/11' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT11, 
 SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6)."/12' Then (c.[SoLuong] * c.[DonGia])  Else 0 END) as DoanhThuT12 
-    FROM [NH_STEAK_PIZZA].[dbo].[tblLichSuPhieu] a 
- Join [NH_STEAK_PIZZA].[dbo].[tblOrder] b 
+    FROM [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] a 
+ Join [GOLDENLOTUS_Q3].[dbo].[tblOrder] b 
  ON a.[MaLichSuPhieu] = b.[MaLichSuPhieu]
- join [NH_STEAK_PIZZA].[dbo].[tblOrderChiTiet] c 
+ join [GOLDENLOTUS_Q3].[dbo].[tblOrderChiTiet] c 
  ON b.[OrderID] = c.[OrderID] 
     where a.DangNgoi = 0 and a.PhieuHuy = 0 and a.DaTinhTien = 1";
   try

@@ -3,11 +3,10 @@ require('lib/db.php');
 require('lib/goldenlotus.php');
 @session_start();
 $goldenlotus = new GoldenLotus;
-$maNV = isset($_GET['maNV']) ? $_GET['maNV'] : "";
-if( !empty($maNV) ){
-$user = $goldenlotus->layTenUser($maNV);
-$user = sqlsrv_fetch_array($user);
-}
+
+$today = date('Y-m-d');
+$sales = $goldenlotus->getTotalSales($today);
+
 
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
@@ -15,8 +14,6 @@ $ten=$_SESSION['TenNV'];
 $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
 
-$tungay=@$_POST['tungay'];
-$denngay=@$_POST['denngay'];
 
 if( $_SESSION['MaNV'] != 'HDQT' )
    die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
@@ -28,7 +25,15 @@ if( $_SESSION['MaNV'] != 'HDQT' )
 <head>
 <?php include ('head/head-revenue.month.php');?>
 <style>
-
+.graphs {
+    padding: 2em 1em;
+    background: transparent;
+    font-family: 'Roboto', sans-serif;
+}
+table {
+	    text-transform: capitalize;
+	    font-size: 18px;
+}
 </style>
 <!-- Bootstrap iOS toggle https://www.bootstraptoggle.com/ -->
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -40,52 +45,41 @@ if( $_SESSION['MaNV'] != 'HDQT' )
     <div id="page-wrapper">
     <div class="col-md-12 graphs">
     <div class="xs">
-   
-      <h3>ĐỔI MẬT KHẨU</h3>
-    <div class="bs-example4" data-example-id="contextual-table">
-    <div class="table-responsive">
-     <form action="" method="post">
-      <table class="table">
-          <tr>
-            <td width="7%"></td>
-            <td width="11%"></td>
-             <th width="19%" scope="row">Tên đăng nhập:</th>
-            <td width="22%"><input name="id" type="text" size="35" value="<?php echo $_SESSION['TenSD']?>"></td>
-            <td width="27%"></td>
-            <td width="14%"></td>
-          </tr>
-          
-          <tr>
-            <td></td>
-            <td></td>
-            <th scope="row">Mật khẩu mới:</th>
-            <td> <input name="pass" type="password" size="35" required></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <th scope="row">Nhập lại mật khẩu:</th>
-            <td> <input name="repass" type="password" size="35" required></td>
-            <td class="error"><?php echo @$msg?></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><input name="submit" type="submit" value="Xác nhận"></td>
-            
-            <td></td>
-            <td></td>
-          </tr>
+   		<div class="container">
+			<div class="row">
+		        <div class="col-md-6">
+		    		<table class="table table-striped table-hover">
+		    			<thead>
+		    				<tr>
+		    					<th> Chi Nhánh</th>
+		    					<th>doanh thu</th>
+		    				
 
-     
-      </table>
-      </form>
-    </div><!-- /.table-responsive -->
-   </div>
+		    				</tr>
+		    			</thead>
+		    			<tbody>
+		    				<tr>
+		    					<td>tất cả chi nhánh</td>
+		    					<td><?=number_format($sales[0],0,",",".")?><sup>đ</sup><d>
+		    				
+
+		    				</tr>
+		    				<tr>
+		    	
+		    					<td>golden lotus spa q3</td>
+		    					<td><?=number_format($sales[0],0,",",".")?><sup>đ</sup><d>
+
+		    				</tr>
+
+
+		    			</tbody>
+		    		</table>
+		    	</div>
+			</div>
+		</div>
+               
+    </div>
+<!-- END BIEU DO DOANH THU-->
 
   </div>
     <!-- #end class xs-->

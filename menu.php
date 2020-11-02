@@ -75,7 +75,7 @@
             </button>
             <div class="dropdown-container">
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="doichieu-soluong-bangoi.php"><i class="fas fa-file-csv"></i>
+                    <a class="menu-level2" href="doichieu-solieu-bangoi.php"><i class="fas fa-file-csv"></i>
                     Đối chiếu số lượng giữa bán và gọi</a>
                 </li>
                 <li style="list-style-type: none;">
@@ -98,7 +98,14 @@
                     <a class="menu-level2" href="danhsach-ban-doanhthu.php"><i class="fas fa-table"></i>
                     Danh sách bàn - doanh thu</a>
                 </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="diemtong.php"><i class="fas fa-table"></i>
+                    Điểm tổng</a>
+                </li>
             </div>
+            <li style="list-style-type: none;" class="li-level1">
+                <a class="menu-level1" href="thucdon.php"><i class="fas fa-utensils"></i> Thực đơn</a>
+            </li>
             <li style="list-style-type: none;" class="li-level1">
                 <a class="menu-level1" href="account.php"><i class="fas fa-key"></i> Đổi mật khẩu</a>
             </li>
@@ -106,10 +113,10 @@
             $maNV = (isset($_SESSION['MaNV'])?$_SESSION['MaNV']:"");
             if($_SESSION['MaNV'] == 'HDQT')
              echo '<li style="list-style-type: none;" class="li-level1">
-                <a class="menu-level1" href="signup.php"><i class="fa fa-sign-out nav_icon"></i>Signup</a>
+                <a class="menu-level1" href="signup.php"><i class="fas fa-user-secret"></i> Signup</a>
             </li>
             <li style="list-style-type: none;" class="li-level1">
-                <a class="menu-level1" href="users.php"><i class="fa fa-users nav_icon"></i>Users</a>
+                <a class="menu-level1" href="users.php"><i class="fa fa-users nav_icon"></i> Users</a>
             </li>';
             ?>
             <li style="list-style-type: none;" class="li-level1">

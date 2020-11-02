@@ -47,11 +47,21 @@ $(document).ready(function() {
       var navItem = $(this);
       if (navItem.find("a").attr("href") == urlFilename) {
         //navItem.addClass("active");
-        navItem.parent().css({display:"block"})
-        navItem.css({background:'green'})
-        navItem.find("a").css({color:'#fff'})
+        navItem.parent().css({display:"block"});
+        navItem.css({background:'green'});
+        navItem.find("a").css({color:'#fff'});
       }
   });
+
+ $(".sidebar .sidebar-nav li").each(function() {
+      var liItem = $(this);
+
+      if (liItem.find("a").attr("href") == urlFilename) {
+          liItem.css({background:'green'});
+          liItem.find("a").css({color:'#fff'});
+      }
+  });
+
 });
 
 
