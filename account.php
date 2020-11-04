@@ -8,6 +8,17 @@ if( !empty($maNV) ){
 $user = $goldenlotus->layTenUser($maNV);
 $user = sqlsrv_fetch_array($user);
 }
+$thanhcong="";
+$loi=array();
+if($_POST['submit']){
+
+  $maNV= $_POST['id'];
+  $password= $_POST['pass'];
+  $repass = $_POST['repass'];//var_dump($password); var_dump($repass);die;
+  $thanhcong = $goldenlotus->changePassword( $maNV, $password, $repass, $loi );
+  
+
+}
 
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
@@ -19,7 +30,7 @@ $tungay=@$_POST['tungay'];
 $denngay=@$_POST['denngay'];
 
 if( $_SESSION['MaNV'] != 'HDQT' )
-   die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
+  // die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
 ?>
 
 
@@ -43,6 +54,24 @@ if( $_SESSION['MaNV'] != 'HDQT' )
    
       <h3>ĐỔI MẬT KHẨU</h3>
     <div class="bs-example4" data-example-id="contextual-table">
+      
+            <?php
+              if($thanhcong==false) {
+                  foreach( $loi as $l)
+                  {
+                    echo "<div class='alert alert-danger'>
+                         <ul><li>$l</li></ul>
+                      </div>";
+                  }
+              }
+              else{
+                  echo "<div class='alert alert-success'>
+                         Đổi Password thành công
+                      </div>";
+              }
+
+            ?>
+         
     <div class="table-responsive">
      <form action="" method="post">
       <table class="table">
@@ -59,7 +88,7 @@ if( $_SESSION['MaNV'] != 'HDQT' )
             <td></td>
             <td></td>
             <th scope="row">Mật khẩu mới:</th>
-            <td> <input name="pass" type="password" size="35" required></td>
+            <td> <input name="pass" type="password" size="35" ></td>
             <td></td>
             <td></td>
           </tr>
@@ -67,8 +96,8 @@ if( $_SESSION['MaNV'] != 'HDQT' )
             <td></td>
             <td></td>
             <th scope="row">Nhập lại mật khẩu:</th>
-            <td> <input name="repass" type="password" size="35" required></td>
-            <td class="error"><?php echo @$msg?></td>
+            <td> <input name="repass" type="password" size="35" ></td>
+            <td class="error"></td>
             <td></td>
           </tr>
           <tr>

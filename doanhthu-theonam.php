@@ -84,7 +84,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
      <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li><a href="#tab1primary" data-toggle="tab">Năm này</a></li>
+                            <li class="active"><a href="#tab1primary" data-toggle="tab">Năm này</a></li>
                             <li><a href="#tab2primary" data-toggle="tab">Năm trước</a></li>
                             <li><a href="#tab3primary" data-toggle="tab">Khác</a></li>
                         </ul>

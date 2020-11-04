@@ -4,15 +4,15 @@ require("../lib/goldenlotus.php");
 @session_start();
 $goldenlotus = new GoldenLotus;
 
-$thang_khac = isset($_POST['thang-khac']) ? $_POST['thang-khac'] : "";//16/10/2020
-$thang_khac = substr($thang_khac,6) . "/" . substr($thang_khac,3,2);
+$thang_khac = isset($_POST['thang-khac']) ? $_POST['thang-khac'] : "";//10/2020
+$thang_khac = substr($thang_khac,3) . "/" . substr($thang_khac,0,2);
 
-$hang_ban = $goldenlotus->getFoodSoldAnotherMonth($thang_khac);
-$data = "";
-
+$hang_ban = $goldenlotus->getFoodSoldAnotherMonth($thang_khac, $total);
+$data = array();
+$data[] = 'Tổng doanh thu: ' . number_format($total,0,",",".")  . '<sup>đ</sup>';
 while ($r=sqlsrv_fetch_array($hang_ban))
 { 
-   $data .= '<tr>
+   $data []= '<tr>
     <td>' . $r["TenHangBan"]  .' </td>
     <td>'. $r["MaDVT"] . '</td>
     <td>' .$r["SoLuong"] .'</td>

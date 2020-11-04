@@ -81,6 +81,37 @@ class GoldenLotus extends DbConnection{
 		}
 	}
 
+	public function changePassword( $maNV, $password, $repass, &$loi ) {
+
+		$thanhcong=true;
+
+		$maNV = htmlentities(trim(strip_tags($maNV)),ENT_QUOTES,'utf-8');
+		$password = htmlentities(trim(strip_tags($password)),ENT_QUOTES,'utf-8');
+		$repass = htmlentities(trim(strip_tags($repass)),ENT_QUOTES,'utf-8');
+
+		if ($password=="") 	{$thanhcong=false; $loi[]="new password not entered";} 
+
+		if ($repass=="") 	{$thanhcong=false; $loi[]="Pls re-enter new password";} 
+		if ($repass != $password) 	{$thanhcong=false; $loi[]="new password does not match" . $repass . $repass;} 
+
+		if ( $thanhcong==true )
+		{
+			$sql = "UPDATE [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] SET [MatKhau] = PWDENCRYPT('$password') where MaNV ='$maNV'";
+			try
+			{
+				$rs = sqlsrv_query($this->conn, $sql);
+				
+			}
+
+			catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+		}
+
+		return $thanhcong;
+		
+	}
+
 	public function xoaUser( $maNV ){
 		$sql = "DELETE FROM  [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] where [MaNhanVien] = '$maNV'";
 		try{
@@ -131,37 +162,57 @@ class GoldenLotus extends DbConnection{
 
 	}
 
-	public function getFoodSoldThisMonth ($thang_nay) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_nay' and SoLuong >0";
+	public function getFoodSoldThisMonth ($thang_nay, &$total = null ) {
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2015/08' and SoLuong >0";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2015/08' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
-			//$r=sqlsrv_fetch_array($rs); 
+
+			$rs_1 = sqlsrv_query($this->conn, $sql_1);
+			$row_rs = sqlsrv_fetch_array( $rs_1 );
+			$total=$row_rs[0];
+
 			if(sqlsrv_has_rows($rs) != false) 
 				return $rs;
-			else throw new \Exception('Sth wrong. Please try again.');
+			else die( print_r( sqlsrv_errors(), true ) );
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
 		}
 	}
 
-	public function getFoodSoldLastMonth ($thang_truoc) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_truoc' and SoLuong >0";
+	public function getFoodSoldLastMonth ($thang_truoc, &$total = null) {
+
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/09' and SoLuong >0";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/09' and SoLuong >0";
+
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
-			//$r=sqlsrv_fetch_array($rs); 
+
+			$rs_1 = sqlsrv_query($this->conn, $sql_1);
+			$row_rs = sqlsrv_fetch_array( $rs_1 );
+			$total=$row_rs[0];
+
 			if($rs != false) 
 				return $rs;
-			else throw new \Exception('Sth wrong. Please try again.');
+			else die( print_r( sqlsrv_errors(), true ) );
 		}
+
 		catch ( PDOException $error ){
 			echo $error->getMessage();
 		}
 	}
 
-	public function getFoodSoldAnotherMonth ($thang_khac) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_khac' and SoLuong >0";
+	public function getFoodSoldAnotherMonth ($thang_khac, &$total = null) {
+		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/10' and SoLuong >0";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/09' and SoLuong >0";
+
 		try{
+
+			$rs_1 = sqlsrv_query($this->conn, $sql_1);
+			$row_rs = sqlsrv_fetch_array( $rs_1 );
+			$total=$row_rs[0];
+
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
 			if( $rs != false) 
@@ -777,41 +828,20 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getSalesByTableID ( $date, $occupation = null ){
 		if( $occupation == '0' && $occupation != null )
 		{
-			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
-					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
-					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
-					from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
-					left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
-					left join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
-					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
-					= '$date' 
-					Where [ThoiGianDongPhieu] IS  NULL) t1
-				Group By MaBan";
+			$sql = "SELECT a.MaBan, sum(TienThucTra) as DoanhThu  from  [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.MaBan = b.MaBan and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '2015/08/19' where [ThoiGianDongPhieu] IS NOT NULL  group by a.MaBan order by DoanhThu DESC";
 		}
 		elseif ( $occupation == '1' )
 		{
-			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
-					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
-					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
-					from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
-					left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
-					left join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
-					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
-					= '$date' 
-					 Where [ThoiGianDongPhieu] IS NOT NULL) t1
-				Group By MaBan";
+			$sql = "SELECT a.MaBan, sum(TienThucTra) as DoanhThu  from  [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a 
+					left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.MaBan = b.MaBan	
+					and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
+					= '2015/08/19' where [ThoiGianDongPhieu] is   null 
+					group by a.MaBan order by DoanhThu DESC";
 		}
 		elseif ( $occupation == null)
 		{
-			$sql = "SELECT MaBan, sum(DoanhThu) as DoanhThu FROM
-					( select  distinct TenHangBan, a.MaBan, b.[MaLichSuPhieu], 
-					sum(SoLuong*DonGia)  OVER(PARTITION BY a.MaBan, b.[MaLichSuPhieu],TenHangBan) AS DoanhThu
-					from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
-					left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.[MaBan] = b.[MaBan]
-					left join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
-					 and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
-					= '$date' ) t1
-				Group By MaBan";
+			$sql = "SELECT a.MaBan, sum(TienThucTra) as DoanhThu from  [GOLDENLOTUS_Q3].[dbo].[tblDMBan]a left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b on  a.MaBan = b.MaBan	and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
+				= '2015/08/19' group by a.MaBan order by DoanhThu DESC";
 		}
 
 		try{
@@ -830,15 +860,15 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 
 		if( $occupation == '0' && $occupation != null )
 		{
-		echo	 $sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
+		 	$sql = "SELECT distinct TenHangBan, MaHangBan, MaDVT, sum (SoLuong)  OVER(PARTITION BY TenHangBan) AS SoLuong,
 					sum (SoLuong*DonGia)  OVER(PARTITION BY TenHangBan) AS DoanhThu
 				 from [GOLDENLOTUS_Q3].[dbo].[tblDMBan] a
 				 left join [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b
 				 on a.[MaBan] = b.[MaBan]
 				 join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c
 				 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
-				 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
-				 and [ThoiGianDongPhieu] IS  NULL
+				 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
+
 				 and a.MaBan ='$table_id'";
 		}
 		elseif( $occupation == '1' )
@@ -850,8 +880,8 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			 on a.[MaBan] = b.[MaBan]
 			 join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c
 			 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
-			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
-			 and [ThoiGianDongPhieu] IS NOT NULL
+			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
+
 			 and a.MaBan ='$table_id'";
 		}
 		elseif ( $occupation == null)
@@ -863,7 +893,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 			 on a.[MaBan] = b.[MaBan]
 			 join  [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] c
 			 on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]  
-			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '2020/08/26'
+			 where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
 			 and a.MaBan ='$table_id'";
 		}
 

@@ -37,7 +37,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
     <div id="page-wrapper">
 
     <div class="col-md-12 graphs">
- <h3 class="title">Doanh thu</h3>
+ <h3 class="title">Doanh thu bán hàng theo tháng</h3>
 
             <div class="panel with-nav-tabs panel-primary">
                 <div class="panel-heading">
@@ -51,10 +51,21 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                 <div class="panel-body">
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="tab1primary">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <strong>Tổng doanh thu: <?php 
+                                   $goldenlotus->getFoodSoldThisMonth ($thang_nay, $total);
+                                   echo  number_format($total,0,",",".");
+                                  ?><sup>đ</sup>  
+                              </strong>
+                            </div>
+                          </div>
+                          <br>
+                            
                          <table class="table table-striped table-bordered" width="100%" id="sailorTable">
                           <thead>
                             <tr>
-                              <th>Món ăn</th>
+                              <th>Hàng Bán</th>
                               <th>DVT</th>
                               <th>SL</th>
                               <th>Thành tiền</th>
@@ -63,19 +74,30 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                           <tbody>
                           <?php
                           $hang_ban = $goldenlotus->getFoodSoldThisMonth($thang_nay);
+                          $total = 0;
                           while ($r=sqlsrv_fetch_array($hang_ban)){ ?>
                              <tr>
                               <td><?=$r['TenHangBan']?></td>
                               <td><?=$r['MaDVT']?></td>
                               <td><?=$r['SoLuong']?></td>
-                              <td><?=number_format($r['ThanhTien'],0,",",".")?><sup>đ</sup></td>
+                              <td><?php echo number_format($r['ThanhTien'],0,",","."); $total += $r['ThanhTien'];?><sup>đ</sup></td>
                             </tr>
                          <?php }
-                           ?>
+                           ?> 
                           </tbody>
                           </table>
                         </div>
                         <div class="tab-pane fade" id="tab2primary">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <strong>Tổng doanh thu: <?php 
+                                   $goldenlotus->getFoodSoldLastMonth ($thang_truoc, $total);
+                                   echo  number_format($total,0,",",".");
+                                  ?><sup>đ</sup>  
+                              </strong>
+                            </div>
+                          </div>
+                          <br>
                           <table class="table table-striped table-bordered" width="100%" id="sailorTable">
                             <thead>
                               <tr>
@@ -112,6 +134,13 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                               </div>
                             </form>
                           </div>
+                          <div class="row tong_doanh_thu">
+                            <div class="col-md-6">
+                              <strong>  
+                              </strong>
+                            </div>
+                          </div>
+                          <br>
                          <table class="table table-striped table-bordered" width="100%" id="sailorTable">
                             <thead>
                               <tr>
@@ -146,16 +175,27 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
 
    $('form').on('submit', function (event){
     event.preventDefault();
-    var thangKhac = $('#thang-khac').val();console.log(homKhac);
+    var thangKhac = $('#thang-khac').val();console.log(thangKhac);
     
     $.ajax({
       url:"tonghop-monan/theothang.php",
       method:"POST",
       data:{'thang-khac' : thangKhac},
-      dataType:"json",
-      success:function(data)
-      {
-        $('#tab3primary table tbody').html(data);
+      //dataType:"json",
+      success:function(response)
+      {  
+        var result = JSON.parse(response);
+        var total = result[0];
+        
+        /*
+        *remove total (first value in array) from array
+        */
+         result.shift();
+
+
+        $('#tab3primary .row.tong_doanh_thu .col-md-6 strong').html(total);
+        $('#tab3primary table tbody').html(result);
+        
       }
     })
   });
@@ -190,7 +230,7 @@ $('.navbar-toggle').on('click', function() {
    
 });
 
-$('#thang-khac').datepicker({ uiLibrary: 'bootstrap',format: "dd/mm/yyyy"}); 
+$('#thang-khac').datepicker({ uiLibrary: 'bootstrap',format: "mm/yyyy"}); 
 
 ;
 </script>

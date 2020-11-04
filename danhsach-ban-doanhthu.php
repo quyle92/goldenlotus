@@ -65,7 +65,7 @@ justify-content: center;
       <div id="page-wrapper" >
 
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Tồng hợp đồ bỏ</h3>
+            <h3 class="title">Danh Sách Bàn + Doanh Thu</h3>
 
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
@@ -84,7 +84,7 @@ justify-content: center;
                                     <h3 class="panel-title">Danh sách bàn + doanh thu</h3>
                                 </div>
                                 <?php
-                                $date = date('2020/08/26');
+                                $date = date('2015/08/19');
                                 $occupation = null;
                                 $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
                                 $i = 1;
@@ -151,7 +151,7 @@ justify-content: center;
                                     <h3 class="panel-title">Danh sách bàn + doanh thu</h3>
                                 </div>   
                                 <?php
-                                $date = date('2020/08/26');
+                                //$date = date('2020/08/26');
                                 $occupation = '1';
                                 $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
                                 $i = 1;
@@ -218,7 +218,7 @@ justify-content: center;
                                     <h3 class="panel-title">Danh sách bàn + doanh thu</h3>
                                 </div>   
                                 <?php
-                                $date = date('2020/08/26');
+                                //$date = date('2020/08/26');
                                 $occupation = '0';
                                 $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
                                 $i = 1;

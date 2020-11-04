@@ -484,5 +484,11 @@ Sizes
 .checkbox-slider-lg input:checked + span:after {
   margin-left: 40px;
 }
+
+/*.with-nav-tabs.panel-primary .nav-tabs > li > a:active{
+  background: #fff;
+  color: #337AB7;
+}*/
+
 </style>
 

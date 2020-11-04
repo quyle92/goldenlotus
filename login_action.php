@@ -1,8 +1,8 @@
 <?php
 require('lib/db.php');
 session_start();
-	$user=$_POST['username'];
-	$password=$_POST['password'];
+	$user=htmlentities(trim(strip_tags($_POST['username'])),ENT_QUOTES,'utf-8');
+	$password=htmlentities(trim(strip_tags($_POST['password'])),ENT_QUOTES,'utf-8');
 
 	//Truy van DB de kiem tra
 	$sql="select PWDCOMPARE('$password',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, b.NhomNhanVien, c.TenTrungTam, a.[BaoCaoDuocXem]  
@@ -41,7 +41,7 @@ from [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] a, [GOLDENLOTUS_Q3].[dbo].[tblDMNhanV
 				$_SESSION['NhomNhanVien']=$manhomnhanvien;
 				$_SESSION['BaoCaoDuocXem']=$bao_cao_duoc_xem;
 			
-				header('location:signup.php');
+				header('location:thaydoi-matkhau.php');
 			}//end if dung mat khau
 			else
 			{
