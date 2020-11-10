@@ -21,7 +21,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
 <!DOCTYPE HTML>
 <html>
 <head>
-<?php include ('head/head-revenue.month.php');?>
+<?php include ('head/head-tag.php');?>
 
 
 </head>

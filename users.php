@@ -143,6 +143,7 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                           <th>Tên</th>
                           <th>Báo cáo được xem</th>
                           <th></th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -173,6 +174,10 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                           </ul></td>
                           <td>
                               <a href="signup.php?maNV=<?=$r['MaNV']?>"><i class="material-icons">&#xE8B8;</i></a>
+                              
+                          </td>
+                          <td>
+                             
                               <a href="user-delete.php?maNV=<?=$r['MaNV']?>" onclick="return confirm('Are you sure you want to delete?');" role="button" data-toggle="modal"><i class="material-icons" style="color:#F44336">&#xE5C9;</i></a>
                           </td>
 

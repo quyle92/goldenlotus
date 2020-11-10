@@ -28,7 +28,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
     <?php include 'menu.php'; ?>
       <div id="page-wrapper" >
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Bản kê chi tiết hóa đơn bán hàng</h3>
+            <h3 class="title"> Báo cáo bán hàng chi tiết món theo từng hóa đơn</h3>
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">

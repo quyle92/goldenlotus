@@ -14,6 +14,7 @@ $trungtam=$_SESSION['TenTrungTam'];
 
 $thang_nay  = date('Y/m',strtotime("-1 month"));
 $thang_truoc  = date('Y/m',strtotime("-1 month"));
+$thang_nay = $thang_truoc  = date('2016/09');
 
 
 $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
@@ -28,7 +29,13 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
 <?php include ('head/head-revenue.month.php');?>
     
 <script>
- 
+   $(document).ready(function() {
+    $('#this_month').DataTable();
+} );
+  $(document).ready(function() {
+    $('#last_month').DataTable();
+} );
+
 </script>   
 </head>
 <body>
@@ -62,7 +69,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                           </div>
                           <br>
                             
-                         <table class="table table-striped table-bordered" width="100%" id="sailorTable">
+                         <table class="table table-striped table-bordered display" width="100%" id="this_month">
                           <thead>
                             <tr>
                               <th>Hàng Bán</th>
@@ -98,7 +105,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                             </div>
                           </div>
                           <br>
-                          <table class="table table-striped table-bordered" width="100%" id="sailorTable">
+                          <table class="table table-striped table-bordered display" width="100%" id="last_month">
                             <thead>
                               <tr>
                                 <th>Món ăn</th>
@@ -141,7 +148,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                             </div>
                           </div>
                           <br>
-                         <table class="table table-striped table-bordered" width="100%" id="sailorTable">
+                         <table class="table table-striped table-bordered display" width="100%" id="custom_month">
                             <thead>
                               <tr>
                               <th>Món ăn</th>
@@ -195,7 +202,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
 
         $('#tab3primary .row.tong_doanh_thu .col-md-6 strong').html(total);
         $('#tab3primary table tbody').html(result);
-        
+        $('#custom_month').DataTable({ 
+          "destroy": true, //use for reinitialize datatable
+        });
+
       }
     })
   });

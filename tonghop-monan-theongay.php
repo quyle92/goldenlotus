@@ -12,8 +12,9 @@ $trungtam=$_SESSION['TenTrungTam'];
 
 
 
-$hom_nay  = date('Y/m/d',strtotime("-1 month"));
-$hom_truoc  = date('Y/m/d',strtotime("-1 month"));
+$hom_nay  = date('Y/m/d');
+$hom_truoc  = date('Y/m/d',strtotime("-1 day"));//2016/03/13
+$hom_nay = $hom_truoc = $hom_khac = date('2016/03/13');
 
 $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
 $page_name = "BaoCaoBanHang";
@@ -25,7 +26,15 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
 <html>
 <head>
 <?php include ('head/head-revenue.month.php');?>
-    
+<script>
+   $(document).ready(function() {
+    $('#today').DataTable();
+} );
+  $(document).ready(function() {
+    $('#yesterday').DataTable();
+} );
+
+</script> 
 <style type="text/css">
 
 
@@ -51,7 +60,18 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                 <div class="panel-body">
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="tab1primary">
-                         <table class="table table-striped table-bordered" width="100%" id="sailorTable">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <strong>Tổng doanh thu: <?php 
+                                   $goldenlotus->getFoodSoldToday ($hom_nay, $total);
+                                   echo  number_format($total,0,",",".");
+                                  ?><sup>đ</sup>  
+                              </strong>
+                            </div>
+                          </div>
+                          <br>
+
+                         <table class="table table-striped table-bordered" width="100%" id="today">
                           <thead>
                             <tr>
                               <th>Món ăn</th>
@@ -62,7 +82,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                           </thead>
                           <tbody>
                           <?php
-                          $hang_ban = $goldenlotus->getFoodSoldToday($hom_nay);
+                          $hang_ban = $goldenlotus->getFoodSoldToday($hom_nay, $total);
                           while ($r=sqlsrv_fetch_array($hang_ban)){ ?>
                              <tr>
                               <td><?=$r['TenHangBan']?></td>
@@ -76,7 +96,18 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                           </table>
                         </div>
                         <div class="tab-pane fade" id="tab2primary">
-                          <table class="table table-striped table-bordered" width="100%" id="sailorTable">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <strong>Tổng doanh thu: <?php 
+                                   $goldenlotus->getFoodSoldYesterday ($hom_truoc, $total);
+                                   echo  number_format($total,0,",",".");
+                                  ?><sup>đ</sup>  
+                              </strong>
+                            </div>
+                          </div>
+                          <br>
+
+                          <table class="table table-striped table-bordered" width="100%" id="yesterday">
                             <thead>
                               <tr>
                                 <th>Món ăn</th>
@@ -87,7 +118,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                             </thead>
                             <tbody>
                               <?php
-                                $hang_ban = $goldenlotus->getFoodSoldYesterday($hom_truoc);
+                                $hang_ban = $goldenlotus->getFoodSoldYesterday($hom_truoc, $total);
                                 while ($r=sqlsrv_fetch_array($hang_ban)){ ?>
                                    <tr>
                                     <td><?=$r['TenHangBan']?></td>
@@ -101,6 +132,14 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                           </table>
                         </div>
                         <div class="tab-pane fade" id="tab3primary">
+                          <div class="row tong_doanh_thu">
+                            <div class="col-md-6">
+                              <strong>  
+                              </strong>
+                            </div>
+                          </div>
+                          <br>
+
                           <div class="row">
                             <form action="" method="post">
                               <div class="col-md-2" style="margin-bottom:5px">Ngày:</div>
@@ -112,7 +151,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                               </div>
                             </form>
                           </div>
-                         <table class="table table-striped table-bordered" width="100%" id="sailorTable">
+                         <table class="table table-striped table-bordered" width="100%" id="custom_day">
                             <thead>
                               <tr>
                               <th>Món ăn</th>
@@ -152,12 +191,26 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
       url:"tonghop-monan/theongay.php",
       method:"POST",
       data:{'hom-khac' : homKhac},
-      dataType:"json",
-      success:function(data)
+      //dataType:"json",
+      success:function(response)
       {
-        $('#tab3primary table tbody').html(data);
+        var result = JSON.parse(response);
+        var total = result[0];
+        
+        /*
+        *remove total (first value in array) from array
+        */
+         result.shift();
+
+
+        $('#tab3primary .row.tong_doanh_thu .col-md-6 strong').html(total);
+        $('#tab3primary table tbody').html(result);
+        $('#custom_day').DataTable({ 
+          "destroy": true, //use for reinitialize datatable
+        });
+
       }
-    })
+    });
   });
 
 

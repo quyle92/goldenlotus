@@ -29,7 +29,7 @@
     var formValues= $(this).serialize();
    
     $.ajax({
-    url:"doanhthu-nhom-monan/ajax-call/process-khac.php",
+    url:"../doanhthu-nhom-monan/ajax-call/process-khac.php",
     method:"POST",
     //data:{'tu-ngay' : tuNgay, 'den-ngay' : denNgay},
     data:formValues,

@@ -38,29 +38,35 @@
 <!-- DataLabels plugin --> 
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script> 
 
+<!-- DataTable plugin --> 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
+
 <script>
 // Get current page and set current in nav
-var url=location.href;
-var urlFilename = url.substring(url.lastIndexOf('/')+1);
+var path = location.href;
+
+var path2 = path.substr(path.lastIndexOf("/") + 1);
+//var path3 = path2.substr(path2.lastIndexOf("/") + 1);
+console.log(path2);//baocao-tiente
+
 $(document).ready(function() {
-  $(".sidebar .sidebar-nav .dropdown-container li").each(function() {
-      var navItem = $(this);
-      if (navItem.find("a").attr("href") == urlFilename) {
-        //navItem.addClass("active");
-        navItem.parent().css({display:"block"});
-        navItem.css({background:'green'});
-        navItem.find("a").css({color:'#fff'});
+  $(".sidebar .sidebar-nav li a.menu-level1").each(function() {
+     
+      var href = $(this).attr("href");
+      var href2 = href.substr( href.lastIndexOf("/")+ 1);
+      console.log(href2);
+
+
+      if (path2 == href2) {
+          $(this).parent().css({background:'green'});
+          $(this).parent().find("a").css({color:'#fff'});
       }
   });
 
- $(".sidebar .sidebar-nav li").each(function() {
-      var liItem = $(this);
-
-      if (liItem.find("a").attr("href") == urlFilename) {
-          liItem.css({background:'green'});
-          liItem.find("a").css({color:'#fff'});
-      }
-  });
+ 
+ 
 
 });
 

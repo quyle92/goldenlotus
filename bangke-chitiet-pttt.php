@@ -11,8 +11,6 @@ $ten=$_SESSION['TenNV'];
 $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
 
-$tungay=@$_POST['tungay'];
-$denngay=@$_POST['denngay'];
 
 if($tungay == "")
 {
@@ -34,6 +32,17 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
 <html>
 <head>
 <?php include ('head/head-revenue.month.php');?>
+<script>
+   $(document).ready(function() {
+    $('#today').DataTable();
+} );
+  $(document).ready(function() {
+    $('#yesterday').DataTable();
+} );
+
+
+
+</script>
 <style>
 
 
@@ -46,7 +55,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
       <div id="page-wrapper" >
 
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Bản kê chi tiết hóa đơn bán hàng</h3>
+            <h3 class="title">Bản kê chi tiết phương thức thanh toán</h3>
 
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
@@ -60,9 +69,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                 <div class="panel-body">
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="tab1primary">
-                        
+                          
+
                             <div class="col-xs-12 col-sm-12 table-responsive">
-                             <table class="table table-striped table-bordered" id="sailorTable">
+                             <table class="table table-striped table-bordered" id="today">
                                 <thead>
                                   <tr>
                                     <th>PTTT</th>
@@ -73,7 +83,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = date('2020/08/26');$total = 0;
+                                $date = date('2016/03/13');$total = 0;
                                 $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
                                 while( $r = sqlsrv_fetch_array( $payment_method_details_by_date ) ) {  ?>
                                 <tr>
@@ -97,8 +107,9 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                         
                         </div>
                         <div class="tab-pane fade" id="tab2primary">
+                          
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                            <table class="table table-striped table-bordered" id="sailorTable">
+                            <table class="table table-striped table-bordered" id="yesterday">
                                 <thead>
                                   <tr>
                                     <th>PTTT</th>
@@ -109,7 +120,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                <?php
-                                $date = date('2020/08/29');$total = 0;
+                                $total = 0;
                                 $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
                                 while( $r = sqlsrv_fetch_array( $payment_method_details_by_date ) ) {  ?>
                                 <tr>
@@ -132,8 +143,9 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab3primary">
+                          
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                            <table class="table table-striped table-bordered" id="sailorTable">
+                            <table class="table table-striped table-bordered" id="this_month">
                                 <thead>
                                   <tr>
                                     <th>PTTT</th>
@@ -144,7 +156,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $this_month = date('2020/08');
+                                $this_month = date('2016/03');
                                 $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
                                 $k=0;
                                 $total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
@@ -209,7 +221,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                               </form>
                             </div>
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                            <table class="table table-striped table-bordered" id="sailorTable">
+                            <table class="table table-striped table-bordered" id="custom_month">
                                 <thead>
                                   <tr>
                                     <th>PTTT</th>
@@ -290,8 +302,8 @@ $('.navbar-toggle').on('click', function() {
    
 });
 
-$('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
-$('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "dd.mm.yyyy"}); 
+$('#tu-ngay').datepicker({ uiLibrary: 'bootstrap',format: "mm.yyyy"}); 
+$('#den-ngay').datepicker({  uiLibrary: 'bootstrap',format: "mm.yyyy"}); 
 
 
 </script>

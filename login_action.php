@@ -41,7 +41,7 @@ from [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] a, [GOLDENLOTUS_Q3].[dbo].[tblDMNhanV
 				$_SESSION['NhomNhanVien']=$manhomnhanvien;
 				$_SESSION['BaoCaoDuocXem']=$bao_cao_duoc_xem;
 			
-				header('location:thaydoi-matkhau.php');
+				header('location:account.php');
 			}//end if dung mat khau
 			else
 			{

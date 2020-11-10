@@ -163,8 +163,12 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldThisMonth ($thang_nay, &$total = null ) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2015/08' and SoLuong >0";
-		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2015/08' and SoLuong >0";
+		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
+					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
+					 FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] 
+					 where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_nay' and SoLuong >0
+					 Group By TenHangBan, MaDVT, DonGia ) t1 ";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_nay' and SoLuong >0";
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
 
@@ -183,8 +187,12 @@ class GoldenLotus extends DbConnection{
 
 	public function getFoodSoldLastMonth ($thang_truoc, &$total = null) {
 
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/09' and SoLuong >0";
-		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/09' and SoLuong >0";
+		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
+					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
+					 FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] 
+					 where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_truoc' and SoLuong >0
+					 Group By TenHangBan, MaDVT, DonGia ) t1 ";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_truoc' and SoLuong >0";
 
 		try{
 			$rs = sqlsrv_query($this->conn, $sql);
@@ -204,8 +212,12 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function getFoodSoldAnotherMonth ($thang_khac, &$total = null) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/10' and SoLuong >0";
-		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2016/09' and SoLuong >0";
+		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
+					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
+					 FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] 
+					 where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_khac' and SoLuong >0
+					 Group By TenHangBan, MaDVT, DonGia ) t1 ";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_khac' and SoLuong >0";
 
 		try{
 
@@ -213,7 +225,7 @@ class GoldenLotus extends DbConnection{
 			$row_rs = sqlsrv_fetch_array( $rs_1 );
 			$total=$row_rs[0];
 
-			$rs = sqlsrv_query($this->conn, $sql);
+			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
 			if( $rs != false) 
 				return $rs;
@@ -224,9 +236,20 @@ class GoldenLotus extends DbConnection{
 		}
 	}
 
-	public function getFoodSoldToday($hom_nay) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_nay' and SoLuong >0";
+	public function getFoodSoldToday($hom_nay, &$total) {
+		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
+					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
+					 FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] 
+					 where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_nay' and SoLuong >0
+					 Group By TenHangBan, MaDVT, DonGia ) t1 ";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_nay' and SoLuong >0";
+
 		try{
+
+			$rs_1 = sqlsrv_query($this->conn, $sql_1);
+			$row_rs = sqlsrv_fetch_array( $rs_1 );
+			$total=$row_rs[0];
+
 			$rs = sqlsrv_query($this->conn, $sql);
 			
 			if( $rs != false) 
@@ -238,9 +261,20 @@ class GoldenLotus extends DbConnection{
 		}
 	}
 
-	public function getFoodSoldYesterday($hom_truoc) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_truoc' and SoLuong >0";
+	public function getFoodSoldYesterday($hom_truoc, &$total = null) {
+		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
+					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
+					 FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] 
+					 where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_truoc' and SoLuong >0
+					 Group By TenHangBan, MaDVT, DonGia ) t1 ";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_truoc' and SoLuong >0";
+
 		try{
+
+			$rs_1 = sqlsrv_query($this->conn, $sql_1);
+			$row_rs = sqlsrv_fetch_array( $rs_1 );
+			$total=$row_rs[0];
+
 			$rs = sqlsrv_query($this->conn, $sql);
 			//$r=sqlsrv_fetch_array($rs); 
 			if( $rs != false)  
@@ -252,10 +286,21 @@ class GoldenLotus extends DbConnection{
 		}
 	}
 
-	public function getFoodSoldAnotherDay($hom_khac) {
-		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_khac' and SoLuong >0";
+	public function getFoodSoldAnotherDay($hom_khac, &$total = null) {
+		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
+					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
+					 FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] 
+					 where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_khac' and SoLuong >0
+					 Group By TenHangBan, MaDVT, DonGia ) t1 ";
+		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$hom_khac' and SoLuong >0";
+
 		try{
-			$rs = sqlsrv_query($this->conn, $sql);
+
+			$rs_1 = sqlsrv_query($this->conn, $sql_1);
+			$row_rs = sqlsrv_fetch_array( $rs_1 );
+			$total=$row_rs[0];
+
+			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
 			if( $rs != false) 
 				return $rs;
@@ -296,7 +341,7 @@ class GoldenLotus extends DbConnection{
 
 
 	public function getDatesHasBillOfThisMonth( $this_month ) {
-		  $sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='2020/08' and SoLuong >0 GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 ) ";
+		  $sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$this_month' and SoLuong >0 GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 ) ";
 		try{
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
@@ -340,7 +385,9 @@ class GoldenLotus extends DbConnection{
 
 	public function getPayMethodDetailsByDate( $date ){
 		$sql = "SELECT  b.*, c.[MaLoaiThe] FROM  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) ='$date' ";
+
 		try{
+			
 			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
 			//$r=sqlsrv_fetch_array($rs); 
 			if( $rs != false) 

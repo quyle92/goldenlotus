@@ -10,7 +10,7 @@ $user = sqlsrv_fetch_array($user);
 }
 $thanhcong="";
 $loi=array();
-if($_POST['submit']){
+if(isset($_POST['submit'])){
 
   $maNV= $_POST['id'];
   $password= $_POST['pass'];

@@ -57,6 +57,16 @@ justify-content: center;
         $target.slideToggle();
     });
 });
+
+  $(document).ready(function() {
+    $('#all').DataTable();
+} );
+  $(document).ready(function() {
+    $('#occupied').DataTable();
+} );
+  $(document).ready(function() {
+    $('#empty').DataTable();
+} );
 </script>
 </head>
 <body>
@@ -77,79 +87,114 @@ justify-content: center;
                 </div>
                 <div class="panel-body">
                     <div class="tab-content">
-                        <div class="tab-pane fade in active" id="tab1primary">
+
+                      <div class="tab-pane fade active in" id="tab1primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
-                             <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Danh sách bàn + doanh thu</h3>
-                                </div>
-                                <?php
-                                $date = date('2015/08/19');
-                                $occupation = null;
-                                $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
-                                $i = 1;
-                                while( $r = sqlsrv_fetch_array($sales_by_table) )
-                                { ?>
-                                <ul class="list-group danh-sach-ban">
-                                    <li class="list-group-item">
-                                        <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="all-<?=(( $r['DoanhThu'] )) ? $i : ''?>">
-                                            <div class="col-xs-10">
-                                              <div style="display:flex">
-                                                <div class="tbl-image">
-                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQAgbGp_MVun_RilsfDj3AAdrunFZXZAWkQPQ&usqp=CAU"  width="60" height="60">
-                                                  </div> 
-                                                  <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
-                                                    <strong>TABLE: <?=$r['MaBan']?></strong>
-                                                    <br>
-                                                    <span>Doanh thu: <?=( $r['DoanhThu'] ) ? number_format($r['DoanhThu'],0,",",".") : 0?><sup>đ</sup></span>
-                                                  </div>
-                                              </div>
-                                            </div>
-                                            <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
-                                        </div>
-                                        <div id="all-<?=$i?>" aria-expanded="false" style="display:none;">
-                                            <hr></hr>
-                                            
-                                            <?php
-                                           // var_dump($occupation);
-                                            $table_id = $r['MaBan'];
-                                            $sales_details = $goldenlotus->getSalesByFoodNames ( $date, $table_id, $occupation);
-                                            //var_dump($sales_details);
-                                            while( $r1 = sqlsrv_fetch_array( $sales_details ) )
-                                            { ?>
-                                              <div class="container">
-                                                <div class="fluid-row">
-                                                    <div class="col-xs-1">
-                                                       <div class="soluong">
-                                                           <?=$r1['SoLuong']?>
-                                                       </div>
-                                                    </div>
-                                                    <div class="col-xs-5">
-                                                       <strong><?=$r1['MaHangBan']?>.  <?=$r1['TenHangBan']?> (<?=$r1['MaDVT']?>)</strong>
-                                                       <br>
-                                                       <span><?=( $r1['DoanhThu'] ) ? number_format($r1['DoanhThu'],0,",",".") : 0?> <sup>đ</sup></span>
-                                                    </div>
-                                                </div>
-                                              </div>
-                                               <hr>
-                                            <?php 
-                                            } $i++; ?>
-                                           
-                                        </div>
-                                    </li>
-                                </ul>
-                                <?php
-                                }
-                                ?>
-                             </div>
+                            <div class="panel panel-default">
+
+                              <table id="all" class="display" style="width:100%">
+                              <thead>
+                                  <tr>
+                                      <th></th>
+
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  
+                                    <?php
+                                    $date = date('2015/08/19');
+                                    $occupation = null;
+                                    $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
+                                    $i = 1;
+                                    while( $r = sqlsrv_fetch_array($sales_by_table) )
+                                    { ?>
+                                    <tr>
+                                      <td>
+                                                                                    
+                                                <ul class="list-group danh-sach-ban">
+                                                    <li class="list-group-item">
+                                                        <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="all-<?=(( $r['DoanhThu'] )) ? $i : ''?>">
+                                                            <div class="col-xs-10">
+                                                              <div style="display:flex">
+                                                                <div class="tbl-image">
+                                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQAgbGp_MVun_RilsfDj3AAdrunFZXZAWkQPQ&usqp=CAU"  width="60" height="60">
+                                                                  </div> 
+                                                                  <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
+                                                                    <strong>TABLE: <?=$r['MaBan']?></strong>
+                                                                    <br>
+                                                                    <span>Doanh thu: <?=( $r['DoanhThu'] ) ? number_format($r['DoanhThu'],0,",",".") : 0?><sup>đ</sup></span>
+                                                                  </div>
+                                                              </div>
+                                                            </div>
+                                                            <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
+                                                        </div>
+                                                        <div id="all-<?=$i?>" aria-expanded="false" style="display:none;">
+                                                            <hr></hr>
+                                                            
+                                                            <?php
+                                                           // var_dump($occupation);
+                                                            $table_id = $r['MaBan'];
+                                                            $sales_details = $goldenlotus->getSalesByFoodNames ( $date, $table_id, $occupation);
+                                                            //var_dump($sales_details);
+                                                            while( $r1 = sqlsrv_fetch_array( $sales_details ) )
+                                                            { ?>
+                                                              <div class="container" style="width:100%">
+                                                                <div class="fluid-row">
+                                                                    <div class="col-xs-3">
+                                                                       <div class="soluong">
+                                                                           <?=$r1['SoLuong']?>
+                                                                       </div>
+                                                                    </div>
+                                                                    <div class="col-xs-9">
+                                                                       <strong><?=$r1['MaHangBan']?>.  <?=$r1['TenHangBan']?> (<?=$r1['MaDVT']?>)</strong>
+                                                                       <br>
+                                                                       <span><?=( $r1['DoanhThu'] ) ? number_format($r1['DoanhThu'],0,",",".") : 0?> <sup>đ</sup></span>
+                                                                    </div>
+                                                                </div>
+                                                              </div>
+                                                               <hr>
+                                                            <?php 
+                                                            } $i++; ?>
+                                                           
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                
+                                             
+                                     </td>
+                                    </tr>
+                                   <?php
+                                    }
+                                    ?>
+
+                                
+
+                                     
+                                </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                              </div>
                            </div>
-                      </div>
+                        </div>
                         <div class="tab-pane fade" id="tab2primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <div class="panel panel-default">
-                                <div class="panel-heading">
+                                <!-- <div class="panel-heading">
                                     <h3 class="panel-title">Danh sách bàn + doanh thu</h3>
-                                </div>   
+                                </div>    -->
+                                <table id="occupied" class="display" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 <?php
                                 //$date = date('2020/08/26');
                                 $occupation = '1';
@@ -157,6 +202,8 @@ justify-content: center;
                                 $i = 1;
                                 while( $r = sqlsrv_fetch_array($sales_by_table) )
                                 { ?>
+                              <tr>
+                               <td>
                                 <ul class="list-group danh-sach-ban">
                                     <li class="list-group-item">
                                         <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="occupied-<?=(( $r['DoanhThu'] )) ? $i : ''?>">
@@ -184,14 +231,14 @@ justify-content: center;
                                             //var_dump($sales_details);
                                             while( $r1 = sqlsrv_fetch_array( $sales_details ) )
                                             { ?>
-                                              <div class="container">
+                                              <div class="container" style="width:100%">
                                                 <div class="fluid-row">
-                                                    <div class="col-xs-1">
+                                                    <div class="col-xs-3">
                                                        <div class="soluong">
                                                            <?=$r1['SoLuong']?>
                                                        </div>
                                                     </div>
-                                                    <div class="col-xs-5">
+                                                    <div class="col-xs-9">
                                                        <strong><?=$r1['MaHangBan']?>.  <?=$r1['TenHangBan']?> (<?=$r1['MaDVT']?>)</strong>
                                                        <br>
                                                        <span><?=( $r1['DoanhThu'] ) ? number_format($r1['DoanhThu'],0,",",".") : 0?> <sup>đ</sup></span>
@@ -205,18 +252,37 @@ justify-content: center;
                                         </div>
                                     </li>
                                 </ul>
+                               </td>
+                              </tr>
                                 <?php
                                 }
                                 ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+
+                                    </tr>
+                                </tfoot>
+                            </table>
+
                              </div>
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab3primary">
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <div class="panel panel-default">
-                                <div class="panel-heading">
+                                <!-- <div class="panel-heading">
                                     <h3 class="panel-title">Danh sách bàn + doanh thu</h3>
-                                </div>   
+                                </div> -->   
+                                <table id="empty" class="display" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 <?php
                                 //$date = date('2020/08/26');
                                 $occupation = '0';
@@ -224,57 +290,70 @@ justify-content: center;
                                 $i = 1;
                                 while( $r = sqlsrv_fetch_array($sales_by_table) )
                                 { ?>
-                                <ul class="list-group danh-sach-ban">
-                                    <li class="list-group-item">
-                                        <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="vacant-<?=(( $r['DoanhThu'] )) ? $i : ''?>">
-                                            <div class="col-xs-10">
-                                              <div style="display:flex">
-                                                <div class="tbl-image">
-                                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQAgbGp_MVun_RilsfDj3AAdrunFZXZAWkQPQ&usqp=CAU"  width="60" height="60">
-                                                  </div> 
-                                                  <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
-                                                    <strong>TABLE: <?=$r['MaBan']?></strong>
-                                                    <br>
-                                                    <span>Doanh thu: <?=( $r['DoanhThu'] ) ? number_format($r['DoanhThu'],0,",",".") : 0?><sup>đ</sup></span>
-                                                  </div>
-                                              </div>
-                                            </div>
-                                            <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
-                                        </div>
-                                        <div id="vacant-<?=$i?>" aria-expanded="false" style="display:none;">
-                                            <hr></hr>
-                                            
-                                            <?php
-                                           // var_dump($occupation);
-                                            $table_id = $r['MaBan'];
-                                            $sales_details = $goldenlotus->getSalesByFoodNames ( $date, $table_id, $occupation);
-                                            //var_dump($sales_details);
-                                            while( $r1 = sqlsrv_fetch_array( $sales_details ) )
-                                            { ?>
-                                              <div class="container">
-                                                <div class="fluid-row">
-                                                    <div class="col-xs-1">
-                                                       <div class="soluong">
-                                                           <?=$r1['SoLuong']?>
-                                                       </div>
-                                                    </div>
-                                                    <div class="col-xs-5">
-                                                       <strong><?=$r1['MaHangBan']?>.  <?=$r1['TenHangBan']?> (<?=$r1['MaDVT']?>)</strong>
-                                                       <br>
-                                                       <span><?=( $r1['DoanhThu'] ) ? number_format($r1['DoanhThu'],0,",",".") : 0?> <sup>đ</sup></span>
+                             <tr>
+                              <td>
+                                  <ul class="list-group danh-sach-ban">
+                                      <li class="list-group-item">
+                                          <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="vacant-<?=(( $r['DoanhThu'] )) ? $i : ''?>">
+                                              <div class="col-xs-10">
+                                                <div style="display:flex">
+                                                  <div class="tbl-image">
+                                                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQAgbGp_MVun_RilsfDj3AAdrunFZXZAWkQPQ&usqp=CAU"  width="60" height="60">
+                                                    </div> 
+                                                    <div class="tlb-text" style="padding-left: 15px;padding-top: 5px;">
+                                                      <strong>TABLE: <?=$r['MaBan']?></strong>
+                                                      <br>
+                                                      <span>Doanh thu: <?=( $r['DoanhThu'] ) ? number_format($r['DoanhThu'],0,",",".") : 0?><sup>đ</sup></span>
                                                     </div>
                                                 </div>
                                               </div>
-                                               <hr>
-                                            <?php 
-                                            } $i++; ?>
-                                           
-                                        </div>
-                                    </li>
-                                </ul>
+                                              <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
+                                          </div>
+                                          <div id="vacant-<?=$i?>" aria-expanded="false" style="display:none;">
+                                              <hr></hr>
+                                              
+                                              <?php
+                                             // var_dump($occupation);
+                                              $table_id = $r['MaBan'];
+                                              $sales_details = $goldenlotus->getSalesByFoodNames ( $date, $table_id, $occupation);
+                                              //var_dump($sales_details);
+                                              while( $r1 = sqlsrv_fetch_array( $sales_details ) )
+                                              { ?>
+                                                <div class="container" style="width:100%">
+                                                  <div class="fluid-row">
+                                                      <div class="col-xs-3">
+                                                         <div class="soluong">
+                                                             <?=$r1['SoLuong']?>
+                                                         </div>
+                                                      </div>
+                                                      <div class="col-xs-9">
+                                                         <strong><?=$r1['MaHangBan']?>.  <?=$r1['TenHangBan']?> (<?=$r1['MaDVT']?>)</strong>
+                                                         <br>
+                                                         <span><?=( $r1['DoanhThu'] ) ? number_format($r1['DoanhThu'],0,",",".") : 0?> <sup>đ</sup></span>
+                                                      </div>
+                                                  </div>
+                                                </div>
+                                                 <hr>
+                                              <?php 
+                                              } $i++; ?>
+                                             
+                                          </div>
+                                      </li>
+                                  </ul>
+                                </td>
+                              </tr>
                                 <?php
                                 }
                                 ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+
+                                    </tr>
+                                </tfoot>
+                            </table>
+
                              </div>
                           </div>
                         </div>

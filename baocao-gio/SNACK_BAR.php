@@ -1,5 +1,5 @@
 <?php
-$ajax_dir = "baocao-gio/ajax-call/process-";
+$ajax_dir = "../baocao-gio/ajax-call/process-";
 $ajax_url = $ajax_dir . $nhom_hang_ban_ten . ".php";;
 ?>
 <div class="tab-pane fade in" id="<?=$nhom_hang_ban_id?>">
