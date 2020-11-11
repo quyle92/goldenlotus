@@ -15,7 +15,7 @@ $result = array();
 /****************** Qty *********************/
 ${'qty_chart_' . $nhom_hang_ban_ten} = $goldenlotus->getFoodSoldQtyByHour( $date, $nhom_hang_ban_id  );
 
-while($r = sqlsrv_fetch_array( ${'qty_chart_'. $nhom_hang_ban_ten} ) )
+foreach ( ${'qty_chart_'. $nhom_hang_ban_ten} as $r )
 {
   ${'qty_sum_arr_' . $nhom_hang_ban_ten} = array();
   foreach ($r as $k => $v)

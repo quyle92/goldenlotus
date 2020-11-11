@@ -61,15 +61,17 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $today = date("2020/08/26");
+                                //$today = date("2020/08/26");
+                                $today = date('yy/m/d');
                                 $nhom_hang_ban_arr = array();
                                 $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $today, $nhom_hang_ban_arr );
                                                                
                                 foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
                                 { 
                                   $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $today, $nhom_hang_ban_arr, $nhom_hang_ban);
-                                  for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) {
-                                  $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                   $i = 0;
+                                  foreach ( $food_sold_by_group as $r ) {
+                                 
                                   ?>
                                     <tr>
                                       <td><?=($i==0) ? $r['Ten'] : ""?></td>
@@ -88,6 +90,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                           $total = $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
                                     </tr>
                                   <?php 
+                                  $i++;
                                   } 
                                 }?>
                               </tbody>
@@ -115,15 +118,17 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $yesterday = date("2020/08/29");
+                               // $yesterday = date("2020/08/29");
+                                $yesterday = date('yy/m/d',strtotime("-1 days"));
                                 $nhom_hang_ban_arr = array();
                                 $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $yesterday, $nhom_hang_ban_arr );
-                                                               
+                                                        
                                 foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
                                 { 
                                   $food_sold_by_group = $goldenlotus->getFoodSoldByGroup( $today, $nhom_hang_ban_arr, $nhom_hang_ban);
-                                  for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) {
-                                  $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                   $i = 0;
+                                  foreach ( $food_sold_by_group as $r )  {
+                                   
                                   ?>
                                     <tr>
                                       <td><?=($i==0) ? $r['Ten'] : ""?></td>
@@ -142,6 +147,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                           $total = $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
                                     </tr>
                                   <?php 
+                                  $i++;
                                   } 
                                 }?>
                               </tbody>
@@ -170,15 +176,17 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $this_month = date('2020/08');
+                                //$this_month = date('2016/03');
+                                $this_month = date('yy/m');
                                 $nhom_hang_ban_arr = array();
                                 $food_sold_by_group = $goldenlotus->getFoodSoldByGroup_Month( $this_month, $nhom_hang_ban_arr);
-                                                               
+                                                             
                                 foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
                                 { 
                                   $food_sold_by_group = $goldenlotus->getFoodSoldByGroup_Month( $this_month, $nhom_hang_ban_arr, $nhom_hang_ban);
-                                  for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) {
-                                  $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                  $i = 0;
+                                  foreach ( $food_sold_by_group as $r )  {
+                                  
                                   ?>
                                     <tr>
                                       <td><?=($i==0) ? $r['Ten'] : ""?></td>
@@ -197,6 +205,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                           $total = $r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'] ?><sup>đ</sup></td>
                                     </tr>
                                   <?php 
+                                  $i++
                                   } 
                                 }?>
                               </tbody>

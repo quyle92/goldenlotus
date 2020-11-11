@@ -72,14 +72,15 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = ('2020/08/26');
+                                //$today = ('2020/08/26');
+                                $today = date('yy/m/d');
                                 $total_SLOrder = 0;
                                 $total_SLBan = 0;
                                 $total_SLBo = 0;
-                                $doi_chieu_so_luong = $goldenlotus->getSoldvsCancelledItemsByDate( $date );
-                                for ($i = 0; $i < sqlsrv_num_rows($doi_chieu_so_luong); $i++) 
+                                $doi_chieu_so_luong = $goldenlotus->getSoldvsCancelledItemsByDate( $today );
+                                foreach ( $doi_chieu_so_luong as $r ) 
                                 { 
-                                  $r = sqlsrv_fetch_array($doi_chieu_so_luong, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                  
                                   ?>
                                   <tr>
                                     <td><?=$r['TenHangBan']?></td>
@@ -113,11 +114,12 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = ('2020/08/29');
-                                $doi_chieu_so_luong = $goldenlotus->getSoldvsCancelledItemsByDate( $date );
-                                for ($i = 0; $i < sqlsrv_num_rows($doi_chieu_so_luong); $i++) 
+                                //$date = ('2020/08/29');
+                                $yesterday = date('yy/m/d',strtotime("-1 days"));
+                                $doi_chieu_so_luong = $goldenlotus->getSoldvsCancelledItemsByDate( $yesterday );
+                                foreach ( $doi_chieu_so_luong as $r ) 
                                 { 
-                                  $r = sqlsrv_fetch_array($doi_chieu_so_luong, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                  
                                   ?>
                                   <tr>
                                     <td><?=$r['TenHangBan']?></td>
@@ -150,11 +152,12 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $month = ('2020/08');
-                                $doi_chieu_so_luong = $goldenlotus->getSoldvsCancelledItemsByMonth( $month );
-                                for ($i = 0; $i < sqlsrv_num_rows($doi_chieu_so_luong); $i++) 
+                                //$this_month = date('2016/03');
+                                $this_month = date('yy/m');
+                                $doi_chieu_so_luong = $goldenlotus->getSoldvsCancelledItemsByMonth( $this_month );
+                                foreach ( $doi_chieu_so_luong as $r ) 
                                 { 
-                                  $r = sqlsrv_fetch_array($doi_chieu_so_luong, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                 
                                   ?>
                                   <tr>
                                     <td><?=$r['TenHangBan']?></td>

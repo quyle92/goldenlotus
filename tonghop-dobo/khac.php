@@ -13,7 +13,7 @@ $denngay = substr($denngay,6) . "/" . substr($denngay,3,2) . "/" . substr($denng
 $output = "";
 $total = 0;
 $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledBySelection ( $tungay, $denngay );
-while( $r = sqlsrv_fetch_array($tong_hop_do_bo) )
+foreach ( $tong_hop_do_bo as $r ) 
 { 
 $output .= ' <tr>
               <td>' . $r['TenHangBan'] . '</td>

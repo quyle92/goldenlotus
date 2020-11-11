@@ -83,9 +83,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = date('2016/03/13');$total = 0;
-                                $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
-                                while( $r = sqlsrv_fetch_array( $payment_method_details_by_date ) ) {  ?>
+                                //$today = date('2016/03/13');
+                                $today = date('yy/m/d');
+                                $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $today );
+                                foreach ( $payment_method_details_by_date as $r ) { ?>
                                 <tr>
                                   <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
                                   <td><?=$r['GioVao']->format('d-m-Y')?></td>
@@ -120,9 +121,11 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                <?php
+                               //$yesterday = date('2016/03/13');
+                                $yesterday = date('yy/m/d',strtotime("-1 days"));
                                 $total = 0;
-                                $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
-                                while( $r = sqlsrv_fetch_array( $payment_method_details_by_date ) ) {  ?>
+                                $payment_method_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $yesterday );
+                                foreach ( $payment_method_details_by_date as $r ) { ?>
                                 <tr>
                                   <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>
                                   <td><?=$r['GioVao']->format('d-m-Y')?></td>
@@ -156,21 +159,22 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $this_month = date('2016/03');
-                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
+                                //$this_month = date('2016/03');
+                                $this_month = date('yy/m');
+                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month, $total_count );
                                 $k=0;
-                                $total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
-                                $grand_total = 0;settype($total,"integer");
-                                while ( $rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ) )
+                                //$total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
+                                $grand_total = 0;settype($grand_total,"integer");
+                                foreach ( $dates_has_bill_of_this_month as $rs ) 
                                 {
                                 $date = $rs['NgayCoBill'];
                                 $payment_details_by_date = $goldenlotus->getPayMethodDetailsByDate( $date );
                                 $count = sqlsrv_num_rows($payment_details_by_date);
                                 $total = 0;settype($total,"integer");
                                
-                                for ($i = 0; $i < sqlsrv_num_rows($payment_details_by_date); $i++) 
+                                foreach ( $dates_has_bill_by_selection as $r )
                                 {
-                                $r = sqlsrv_fetch_array($payment_details_by_date, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                
                                 ?>
                                   <tr>
                                   <td><?=( !empty( $r['MaLoaiThe'] ) ? $r['MaLoaiThe'] : "Tiền Mặt" )?></td>

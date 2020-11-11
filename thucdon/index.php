@@ -48,10 +48,13 @@ if($denngay == "")
                   <select name="matrungtam" id="matrungtam" value="Tat ca">
                     <?php 
                     $chi_nhanh = $goldenlotus->getChiNhanh();
-                    while ( $r = sqlsrv_fetch_array($chi_nhanh) )
+                    foreach ( $chi_nhanh as $r ) 
                     { if($matrungtam == $r['MaTrungTam']) ?>
                       <option value="<?php echo $r['MaTrungTam'];?>" selected="selected"><?php echo $r['TenTrungTam'];?></option>
-                    <?php }
+                    <?php 
+                      else ?>
+                      <option value="<?php echo $r['MaTrungTam'];?>" ><?php echo $r['TenTrungTam'];?></option>
+                    }
                     ?>
                   </select>
                 </div>
@@ -67,7 +70,7 @@ if($denngay == "")
                             <li class="active"><a href="#tab1primary" data-toggle="tab">TẤT CẢ</a></li>
                             <?php 
                             $all_food_items = $goldenlotus->getAllFoodGroups();
-                            for ($i = 0; $i < sqlsrv_num_rows($all_food_items); $i++) 
+                            foreach ( $all_food_items as $r ) 
                             {  $r = sqlsrv_fetch_array($all_food_items) ?>
                             <li><a href="#<?=$r['Ma']?>" data-toggle="tab"><?=$r['Ten']?></a></li>
                             <?php }
@@ -79,8 +82,9 @@ if($denngay == "")
                       <div class="tab-pane fade in active" id="tab1primary">
                       <?php 
                       $all_food_items = $goldenlotus->getAllFoodItems();
-                      for ($i = 0; $i < sqlsrv_num_rows($all_food_items); $i++) 
-                      { $r = sqlsrv_fetch_array($all_food_items, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i); ?>
+                      $i = 0;
+                      foreach ( $all_food_items as $r ) 
+                      { ?>
                           <div class="panel panel-default col-md-5" >
                             <div style="display:flex;white-space: nowrap;overflow: hidden;">
                                 <div class="tbl-image">
@@ -95,20 +99,21 @@ if($denngay == "")
                                 </div>
                               </div>
                           </div>
-                          <?php if( !($i % 2) ) echo '<div class="col-md-2" ></div>'; ?>
+                          <?php if( !($i % 2) ) echo '<div class="col-md-2" ></div>';  $i++;?>
                       <?php } ?>
                       </div>
 
                       <?php
                       $all_food_items = $goldenlotus->getAllFoodGroups();
-                      while( $r = sqlsrv_fetch_array($all_food_items) )
+                      foreach ( $all_food_items as $r ) 
                       { ?>
                       <div class="tab-pane fade" id="<?=$r['Ma']?>">
                         <?php 
                         $food_group = $r['Ma'];
                         $food_items_by_group = $goldenlotus->getFoodItemsByGroup( $food_group );
-                        for ($i = 0; $i < sqlsrv_num_rows($food_items_by_group); $i++) 
-                        { $r1 = sqlsrv_fetch_array($food_items_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i); ?>
+                        $i = 0;
+                        foreach ( $food_items_by_group as $r1 )  
+                        { ?>
                             <div class="panel panel-default col-md-5" >
                               <div style="display:flex;white-space: nowrap;overflow: hidden;">
                                   <div class="tbl-image">
@@ -123,7 +128,7 @@ if($denngay == "")
                                   </div>
                                 </div>
                             </div>
-                            <?php if( !($i % 2) ) echo '<div class="col-md-2" ></div>'; ?>
+                            <?php if( ($i % 2) == 0  ) echo '<div class="col-md-2" ></div>'; $i++;?>
                           <?php 
                         } ?>
                       </div>

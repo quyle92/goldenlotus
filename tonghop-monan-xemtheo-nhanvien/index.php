@@ -72,11 +72,15 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                             </thead>
                             <tbody>
                             <?php
-                            $date = date('2020/08 /26');$total = 0;
-                            $food_sold_by_staff = $goldenlotus->getBillDetailsToday( $date );
-                            for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_staff); $i++) {
-                                $r = sqlsrv_fetch_array($food_sold_by_staff, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
-                            { ?>
+                            //$today = date('2020/08/26');
+                            $today = date('yy/m/d');
+                            $total = 0;
+                            $food_sold_by_staff = $goldenlotus->getBillDetailsToday( $today );
+                            $i = 0;
+                            foreach ( $food_sold_by_staff as $r )  
+                            {
+                             
+                            ?>
                               <tr>
                                 <td><?= ($i==0) ? $r['GioVao']->format('d-m-Y') : ""?></td>
                                 <td><?=$r['MaNhanVien']?></td>
@@ -85,8 +89,11 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 <td><?php echo number_format($r['DonGia']*$r['SoLuong'],0,",",".");
                                     $total += $r['DonGia']*$r['SoLuong'] ?><sup>đ</sup></td>
                               </tr>
-                            <?php } 
-                            } ?>
+                            <?php
+                            $i++;  
+                            }
+                            ?>
+                            
                             <tr>
                                 <td>Tổng</td>
                                 <td></td>
@@ -110,11 +117,15 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                             </thead>
                             <tbody>
                             <?php
-                            $date = date('2020/08/29');$total = 0;
-                            $food_sold_by_staff = $goldenlotus->getBillDetailsToday( $date );
-                            for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_staff); $i++) {
-                                $r = sqlsrv_fetch_array($food_sold_by_staff, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
-                            { ?>
+                            //$yesterday  = ('2020/08/29');
+                            $yesterday = date('yy/m/d',strtotime("-1 days"));
+                            $total = 0;
+                            $i = 0;
+                            $food_sold_by_staff = $goldenlotus->getBillDetailsToday( $yesterday );
+                            foreach ( $food_sold_by_staff as $r )  
+                            {
+                   
+                            ?>
                               <tr>
                                 <td><?= ($i==0) ? $r['GioVao']->format('d-m-Y') : ""?></td>
                                 <td><?=$r['MaNhanVien']?></td>
@@ -123,8 +134,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 <td><?php echo number_format($r['DonGia']*$r['SoLuong'],0,",",".");
                                     $total += $r['DonGia']*$r['SoLuong'] ?><sup>đ</sup></td>
                               </tr>
-                            <?php } 
-                            } ?>
+                            <?php
+                            $i++;  
+                            } 
+                            ?>
                             <tr>
                                 <td>Tổng</td>
                                 <td></td>
@@ -149,20 +162,19 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                             <tbody>
                                <?php
                                 $this_month = date('2020/08');
-                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
+                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month, $total_count );
                                 $k = 0;
-                                $total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
-                                $grand_total = 0;settype($total,"integer");
-                                while ( $rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ) )
+                                //$total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
+                                $grand_total = 0;settype($grand_total,"integer");
+                                foreach ( $dates_has_bill_of_this_month as $rs ) 
                                 {
                                 $date = $rs['NgayCoBill'];
-                                $payment_details_by_date = $goldenlotus->getBillDetailsByDayOfMonth( $date );
-                                $count = sqlsrv_num_rows($payment_details_by_date);
-                                $total = 0;settype($total,"integer");
+                                $payment_details_by_date = $goldenlotus->getBillDetailsByDayOfMonth( $date, $count );
                                
-                                for ($i = 0; $i < sqlsrv_num_rows($payment_details_by_date); $i++) 
-                                {
-                                $r = sqlsrv_fetch_array($payment_details_by_date, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                $total = 0;settype($total,"integer");
+                                $i = 0;
+                                foreach ( $payment_details_by_date as $r )
+                                { 
                                 ?>
                                   <tr>
                                     <td><?= ($i==0) ? $r['GioVao']->format('d-m-Y') : ""?></td>
@@ -194,7 +206,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                   <?php }
                                 }
       
-                                    }
+                                  $i++;  }
                                     $k++;  
                                 } 
                                 

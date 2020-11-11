@@ -13,7 +13,7 @@ $denngay = substr($denngay,6) . "/" . substr($denngay,3,2) . "/" . substr($denng
 $output = "";
 
 $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemBySelection ( $tungay, $denngay );
-while( $r = sqlsrv_fetch_array($nhat_ky_bo_mon) )
+foreach ( $nhat_ky_bo_mon as $r )
 { 
 $output .= ' <tr>
                 <td>' . ( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('d-m-yy') : "" ) . '</td>

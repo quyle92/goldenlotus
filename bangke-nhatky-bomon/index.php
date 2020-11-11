@@ -73,9 +73,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = date('2020/08/26');
-                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByDate( $date );
-                                while( $r = sqlsrv_fetch_array( $nhat_ky_bo_mon) )
+                                //$today = date('2020/08/26');
+                                $today = date('yy/m/d');
+                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByDate( $today );
+                                foreach ( $nhat_ky_bo_mon as $r )
                                 { ?>
                                 <tr>
                                   <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('d-m-yy') : "" )?></td>
@@ -110,9 +111,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 <tbody>
                                 <tr>
                                 <?php
-                                $date = date('2020/08/28');
-                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByDate( $date );
-                                while( $r = sqlsrv_fetch_array( $nhat_ky_bo_mon) )
+                                //$yesterday = date('2016/03/13');
+                                $yesterday = date('yy/m/d',strtotime("-1 days"));
+                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByDate( $yesterday );
+                                foreach ( $nhat_ky_bo_mon as $r )
                                 { ?>
                                 <tr>
                                   <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('d-m-yy') : "" )?></td>
@@ -146,9 +148,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $month = date('2020/08');
-                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByMonth( $month );
-                                while( $r = sqlsrv_fetch_array( $nhat_ky_bo_mon) )
+                                //$this_month = date('2016/03');
+                                $this_month = date('yy/m');
+                                $nhat_ky_bo_mon = $goldenlotus->getCancelledFoodItemByMonth( $this_month );
+                                foreach ( $nhat_ky_bo_mon as $r )
                                 { ?>
                                 <tr>
                                   <td><?=( isset( $r['ThoiGianBan'] ) ? $r['ThoiGianBan']->format('d-m-yy') : "" )?></td>

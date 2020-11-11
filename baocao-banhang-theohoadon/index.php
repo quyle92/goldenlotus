@@ -8,8 +8,6 @@ $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
-$today  = date('Y/m/d',strtotime("-1 month"));
-$yesterday  = date('Y/m/d',strtotime("-1 month"));
 
 $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
 $page_name = "BaoCaoBanHang";
@@ -63,12 +61,13 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $bill_details_today = $goldenlotus->getBillDetailsToday( $today );
-                                $count = sqlsrv_num_rows($bill_details_today);
+                                //$today = date('2020/08/26');
+                                $today = date('yy/m/d');
+                                $bill_details_today = $goldenlotus->getBillDetailsToday( $today, $count );
+                 
                                 $total = 0;settype($total,"integer");
 
-                                for ($i = 0; $i < sqlsrv_num_rows($bill_details_today); $i++) {
-                                $r = sqlsrv_fetch_array($bill_details_today, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                foreach ( $bill_details_today as $r ) {
                                 ?>
                                   <tr>
                                     <td><?=($i==0)?$r['ThoiGianBan']->format('d-m-Y'):""?></td>
@@ -133,12 +132,14 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $bill_details_yesterday = $goldenlotus->getBillDetailsYesterday( $yesterday );
-                                $count = sqlsrv_num_rows($bill_details_yesterday);
+                                //$yesterday = date('2020/08/26');
+                                $yesterday  = date('Y/m/d',strtotime("-1 day"));
+                                $bill_details_yesterday = $goldenlotus->getBillDetailsYesterday( $yesterday, $count );
+                                
                                 $total = 0;settype($total,"integer");
 
-                                for ($i = 0; $i < sqlsrv_num_rows($bill_details_yesterday); $i++) {
-                                $r = sqlsrv_fetch_array($bill_details_yesterday, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                                foreach ( $bill_details_yesterday as $r ) {
+                                
                                 ?>
                                   <tr>
                                     <td><?=($i==0)?$r['ThoiGianBan']->format('d-m-Y'):""?></td>
@@ -203,21 +204,22 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
+                                //$this_month = date('2020/08');
                                 $this_month = date('Y/m');
-                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month );
+                                $dates_has_bill_of_this_month = $goldenlotus->getDatesHasBillOfThisMonth( $this_month ,$total_count  );
                                 $k = 0;
-                                $total_count = sqlsrv_num_rows($dates_has_bill_of_this_month);
-                                $grand_total = 0;settype($total,"integer");
-                                while ($rs = sqlsrv_fetch_array( $dates_has_bill_of_this_month ))
+              
+                                $grand_total = 0;settype($grand_total,"integer");
+                                foreach ( $dates_has_bill_of_this_month as $rs )
                                 {
                                   $date = $rs['NgayCoBill'];
-                                  $bill_details_by_date_of_month = $goldenlotus->getBillDetailsByDayOfMonth( $date );
-                                  $count = sqlsrv_num_rows($bill_details_by_date_of_month);
+                                  $bill_details_by_date_of_month = $goldenlotus->getBillDetailsByDayOfMonth( $date, $count );
+                                  
                                   $total = 0;settype($total,"integer");
                                  
-                                  for ($i = 0; $i < sqlsrv_num_rows($bill_details_by_date_of_month); $i++) 
+                                  foreach ( $bill_details_by_date_of_month as $r )
                                   {
-                                  $r = sqlsrv_fetch_array($bill_details_by_date_of_month, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
+                               
                                   ?>
                                     <tr>
                                       <td><?=($i==0)?$r['ThoiGianBan']->format('d-m-Y'):""?></td>

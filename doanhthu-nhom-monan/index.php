@@ -56,12 +56,12 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
   try
   {
     //lay ket qua query tong gia tri the
-    $result_tt = sqlsrv_query( $conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-    if($result_tt != false)
+    $rs = $dbCon->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    if($rs != false)
     {
       //show the results
     
-      while ($r=sqlsrv_fetch_array($result_tt))
+      foreach ( $rs as $r ) 
       {
       
 ?>

@@ -17,9 +17,8 @@ $total_SLBan = 0;
 $total_SLBo = 0;
 $output = "";
 
-for ($i = 0; $i < sqlsrv_num_rows($doi_chieu_so_luong); $i++) 
+foreach ( $doi_chieu_so_luong as $r ) 
 { 
-  $r = sqlsrv_fetch_array($doi_chieu_so_luong, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
   //var_dump($r);
   $output .= '<tr>
     <td>' . $r['TenHangBan'] . '</td>

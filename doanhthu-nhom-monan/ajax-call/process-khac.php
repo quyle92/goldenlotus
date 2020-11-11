@@ -13,7 +13,7 @@ $denngay = substr($denngay,6) . "/" . substr($denngay,3,2) . "/" . substr($denng
 $nhb_doanh_thu_arr = array();
 
 $sales_by_food_group = $goldenlotus->getSalesByFoodGroupBySelection( $tungay, $denngay );
-while( $r = sqlsrv_fetch_array($sales_by_food_group) )
+foreach ( $sales_by_food_group as $r ) 
 {
 	$doanh_thu = $r['DoanhThu']; settype($doanh_thu, 'integer');
   	$nhb_doanh_thu_arr[] = !empty( $doanh_thu ) ? $doanh_thu : 0;

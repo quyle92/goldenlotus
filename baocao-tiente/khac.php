@@ -13,7 +13,7 @@ $denngay = substr($denngay,6) . "/" . substr($denngay,3,2) . "/" . substr($denng
 $output = "";
 
 $currency_report = $goldenlotus->getCurrencyReportBySelection( $tungay, $denngay );
-while( $r = sqlsrv_fetch_array($currency_report) )
+foreach ( $currency_report as $r ) 
 { 
 $output .= '<tr>
   <td>' . $r['MaTienTe'] . '</td>

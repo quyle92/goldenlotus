@@ -13,7 +13,7 @@ $denngay = substr($denngay,6) . "/" . substr($denngay,3,2) . "/" . substr($denng
 $output = "";
 
 $bill_edit = $goldenlotus->getBillEditDetailsBySelection( $tungay, $denngay );
-while( $r = sqlsrv_fetch_array($bill_edit) )
+foreach ( $bill_edit as $r )
 { 
 $output .= '<tr>
       <td>' . ( ( $r['ThoiGianSuaPhieu'] ) ? $r['ThoiGianSuaPhieu']->format('d-m-yy') : "" ). '</td>

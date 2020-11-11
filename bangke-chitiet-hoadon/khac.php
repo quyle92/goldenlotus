@@ -12,25 +12,23 @@ $denngay = substr($denngay,6) . "/" . substr($denngay,3,2) . "/" . substr($denng
 
 $output = "";
 $grand_total = 0;settype($total,"integer");
-$dates_has_bill_by_selection = $goldenlotus->getDatesHasBillBySelection( $tungay, $denngay  );
+$dates_has_bill_by_selection = $goldenlotus->getDatesHasBillBySelection( $tungay, $denngay, $total_count  );
 $k = 0;
-$total_count = sqlsrv_num_rows($dates_has_bill_by_selection);
 
 $grand_total_tong_tien = 0;
 $grand_total_giam_gia_mon = 0;
 $grand_total_thuc_thu = 0;
-while ($rs = sqlsrv_fetch_array( $dates_has_bill_by_selection ))
+foreach ( $dates_has_bill_by_selection as $rs ) {
 {
   $date = $rs['NgayCoBill'];
   $bill_details_by_date_of_month = $goldenlotus->getBillDetailsByDayOfMonth( $date );
-  $count = sqlsrv_num_rows($bill_details_by_date_of_month);// $a= 0 ;$a += $count; echo "+". $a;
+
   $total_tong_tien = 0;
   $total_giam_gia_mon = 0;
   $total_thuc_thu = 0;
 
-  for ($i = 0; $i < sqlsrv_num_rows($bill_details_by_date_of_month); $i++) 
+  foreach ( $bill_details_by_date_of_month as $r ) {
   {
-	$r = sqlsrv_fetch_array($bill_details_by_date_of_month, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
 	$output .='
 	     <tr>
 	          <td> ' . $r['MaLichSuPhieu'] . '</td>

@@ -13,7 +13,7 @@ $date = substr($date,6) . "/" . substr($date,3,2) . "/" . substr($date,0,2);
 //$date = date('2020/08/26');
 $qty_chart = $goldenlotus->getFoodSoldQtyByHour( $date, $nhom_hang_ban = null );
 
-while($r = sqlsrv_fetch_array( $qty_chart))
+foreach ( $qty_chart as $r )
 {
   $qty_sum_arr = array();
   $hour_block = array();
@@ -33,7 +33,7 @@ $max_value_qty = max($qty_sum_arr_new);
 
 $sales_chart = $goldenlotus->getSalesAmountByHour( $date, $nhom_hang_ban  );
 $sales_sum_arr = array();
-while($r1 = sqlsrv_fetch_array( $sales_chart))
+foreach ( $sales_chart as $r1 )
 {
   $sales_sum_arr = array();
   foreach ($r1 as $k=>$v)
@@ -108,7 +108,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                         <li class="active"><a href="#tatca" data-toggle="tab">Tất cả</a></li>
                         <?php 
                         $nhom_hang_ban = $goldenlotus->getNDMNhomHangBan();//var_dump(sqlsrv_fetch_array($nhom_hang_ban));
-                        while( $r = sqlsrv_fetch_array($nhom_hang_ban) )
+                        foreach ( $nhom_hang_ban as $r )
                         { ?>
                         <li><a href="#<?=$r['Ma']?>" data-toggle="tab"><?=$r['Ten']?></a></li>
                         <?php
@@ -137,7 +137,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                         
                         <?php 
                         $nhom_hang_ban = $goldenlotus->getNDMNhomHangBan();
-                        while( $r = sqlsrv_fetch_array($nhom_hang_ban) )
+                        foreach ( $nhom_hang_ban as $r )
                         {
                           $nhom_hang_ban_id = $r['Ma']; 
                           $nhom_hang_ban_ten = stripSpecial(stripUnicode(($r['Ten'])));

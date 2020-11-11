@@ -1,9 +1,10 @@
 <?php
-$date = date("2020/08/29");
+//$yesterday = ('2020/08/29');
+$yesterday = date('yy/m/d',strtotime("-1 days"));
 $nhb_doanh_thu_arr = array();
 
-$sales_by_food_group = $goldenlotus->getSalesByFoodGroup( $date );
-while( $r = sqlsrv_fetch_array($sales_by_food_group) )
+$sales_by_food_group = $goldenlotus->getSalesByFoodGroup( $yesterday );
+foreach ( $sales_by_food_group as $r ) 
 {
   $nhb_doanh_thu_arr[] = !empty( $r['DoanhThu'] ) ? $r['DoanhThu'] : 0;
 }

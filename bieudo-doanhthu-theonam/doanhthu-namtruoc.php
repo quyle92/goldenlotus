@@ -30,12 +30,11 @@ SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) = '".substr($tungay,6).
     where a.DangNgoi = 0 and a.PhieuHuy = 0 and a.DaTinhTien = 1";
   try
   {
-    $result_dt = sqlsrv_query( $conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-    if($result_dt != false)
+    $rs = $dbCon->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    if($rs != false)
     {
-      for ($i = 0; $i < sqlsrv_num_rows($result_dt); $i++)
+      foreach ( $rs as $r ) 
       {
-        $r1 = sqlsrv_fetch_array($result_dt, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
         $r1['DoanhThuT1'];
         $r1['DoanhThuT2'];
         $r1['DoanhThuT3'];

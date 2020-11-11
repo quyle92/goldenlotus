@@ -1,9 +1,10 @@
 <?php
-$date = date("2020/08/26");
+//$date = date("2020/08/26");
+$today = date('yy/m/d');
 $nhb_doanh_thu_arr = array();
 
-$sales_by_food_group = $goldenlotus->getSalesByFoodGroup( $date );
-while( $r = sqlsrv_fetch_array($sales_by_food_group) )
+$sales_by_food_group = $goldenlotus->getSalesByFoodGroup( $today   );
+foreach ( $sales_by_food_group as $r ) 
 {
   settype($r['DoanhThu'],'integer');
 	$nhb_doanh_thu_arr[] = !empty( $r['DoanhThu'] ) ? $r['DoanhThu'] : 0;

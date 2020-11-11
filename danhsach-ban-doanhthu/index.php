@@ -106,7 +106,7 @@ justify-content: center;
                                     $occupation = null;
                                     $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
                                     $i = 1;
-                                    while( $r = sqlsrv_fetch_array($sales_by_table) )
+                                    foreach ( $sales_by_table as $r ) 
                                     { ?>
                                     <tr>
                                       <td>
@@ -136,7 +136,7 @@ justify-content: center;
                                                             $table_id = $r['MaBan'];
                                                             $sales_details = $goldenlotus->getSalesByFoodNames ( $date, $table_id, $occupation);
                                                             //var_dump($sales_details);
-                                                            while( $r1 = sqlsrv_fetch_array( $sales_details ) )
+                                                            foreach ( $sales_details as $r1 ) 
                                                             { ?>
                                                               <div class="container" style="width:100%">
                                                                 <div class="fluid-row">
@@ -200,7 +200,7 @@ justify-content: center;
                                 $occupation = '1';
                                 $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
                                 $i = 1;
-                                while( $r = sqlsrv_fetch_array($sales_by_table) )
+                                foreach ( $sales_by_table as $r ) 
                                 { ?>
                               <tr>
                                <td>
@@ -229,7 +229,7 @@ justify-content: center;
                                             $table_id = $r['MaBan'];
                                             $sales_details = $goldenlotus->getSalesByFoodNames ( $date, $table_id, $occupation);
                                             //var_dump($sales_details);
-                                            while( $r1 = sqlsrv_fetch_array( $sales_details ) )
+                                            foreach ( $sales_details as $r1 ) 
                                             { ?>
                                               <div class="container" style="width:100%">
                                                 <div class="fluid-row">
@@ -288,7 +288,7 @@ justify-content: center;
                                 $occupation = '0';
                                 $sales_by_table = $goldenlotus->getSalesByTableID ( $date, $occupation );
                                 $i = 1;
-                                while( $r = sqlsrv_fetch_array($sales_by_table) )
+                                foreach ( $sales_by_table as $r ) 
                                 { ?>
                              <tr>
                               <td>
@@ -317,7 +317,7 @@ justify-content: center;
                                               $table_id = $r['MaBan'];
                                               $sales_details = $goldenlotus->getSalesByFoodNames ( $date, $table_id, $occupation);
                                               //var_dump($sales_details);
-                                              while( $r1 = sqlsrv_fetch_array( $sales_details ) )
+                                              foreach ( $sales_details as $r1 ) 
                                               { ?>
                                                 <div class="container" style="width:100%">
                                                   <div class="fluid-row">

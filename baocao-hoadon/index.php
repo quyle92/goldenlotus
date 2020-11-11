@@ -7,7 +7,7 @@ $goldenlotus = new GoldenLotus;
 $date = date('2020/08/26');
 $qty_chart = $goldenlotus-> getQtyOrderSummary( $date );
 //$qty_sum_arr = array();
-while($r = sqlsrv_fetch_array( $qty_chart))
+foreach ( $qty_chart as $r )
 {
   $qty_sum_arr = array();
   foreach ($r as $k=>$v)
@@ -26,8 +26,7 @@ for ( $i = 1; $i < count($qty_sum_arr); $i++)
 
 $sales_chart = $goldenlotus-> getSalesAmountSummary( $date );
 $sales_sum_arr = array();
-while($r1 = sqlsrv_fetch_array( $sales_chart))
-{
+foreach ( $sales_chart as $r ){
   $sales_sum_arr = array();
   foreach ($r1 as $k=>$v)
   {

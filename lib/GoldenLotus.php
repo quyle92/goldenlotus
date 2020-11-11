@@ -1,25 +1,29 @@
 <?php
-class DbConnection {
+ini_set('mssql.charset', 'UTF-8');
+$opt = [
+    \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+    \PDO::ATTR_EMULATE_PREPARES   => false,
+];
+$dbCon = new PDO('odbc:Driver=FreeTDS; Server=14.161.35.228; Port=14330; Database=SPA_HOANGSENQ3; TDS_Version=8.0; Client Charset=UTF-8', 'hoangsen', 'hoangsen@123', $opt);
 
-	protected $serverName = "DELL-PC\SQLEXPRESS";
-	protected $connectionInfo = array( "Database"=>"GOLDENLOTUS_Q3","CharacterSet" => "UTF-8", "UID"=>"sa", "PWD"=>"123");
-	protected $conn;
+class GoldenLotus{
 
-	function __construct() {
-			$this->conn =  sqlsrv_connect( $this->serverName, $this->connectionInfo) or die("Database Connection Error"."<br>". mssql_get_last_message()); 
-    }
-}
+	/* Properties */
+    private $conn;
 
-class GoldenLotus extends DbConnection{
+    /* Get database access */
+    public function __construct(\PDO $dbCon) {
+        $this->conn = $dbCon;
 
 	public function layMaNV() {
 		$sql = "SELECT *  FROM [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien]";
 		try{
-			$rs = sqlsrv_query($this->conn, $sql);
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 			//$r=sqlsrv_fetch_array($rs); 
-			if(sqlsrv_has_rows($rs) != false) 
+			
 				return $rs;
-			else throw new \Exception('Sth wrong. Please try again.');
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -29,10 +33,10 @@ class GoldenLotus extends DbConnection{
 	public function layTatCaBaoCao(){
 		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblDMBaoCao] ";
 		try {
-			$rs = sqlsrv_query($this->conn, $sql); 
-			if(sqlsrv_has_rows($rs) != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC); 
+			
 				return $rs;
-			else throw new \Exception('Sth wrong. Please try again.');
+			
 		}
 		catch ( PDOException $error ) {
 			echo $error->getMessage();
@@ -42,11 +46,11 @@ class GoldenLotus extends DbConnection{
 	public function layDanhSachUsers() {
 		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] a,  [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV 		";
 		try{
-			$rs = sqlsrv_query($this->conn, $sql);
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 			//$r=sqlsrv_fetch_array($rs); 
-			if(sqlsrv_has_rows($rs) != false) 
+			
 				return $rs;
-			else throw new \Exception('Sth wrong. Please try again.');
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -56,11 +60,10 @@ class GoldenLotus extends DbConnection{
 	public function layBaoCao( $ma_bao_cao ){
 		$sql = "SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblDMBaoCao] WHERE [MaBaoCao] = '$ma_bao_cao' ";
 		try {
-			$rs = sqlsrv_query($this->conn, $sql);
-			$r=sqlsrv_fetch_array($rs); 
-			if(sqlsrv_has_rows($rs) != false) 
-				return $r['TenBaoCao'];
-			else throw new \Exception('Sth wrong. Please try again.');
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+						
+				return $rs['TenBaoCao'];
+			
 		}
 		catch ( PDOException $error ) {
 			echo $error->getMessage();
@@ -70,11 +73,10 @@ class GoldenLotus extends DbConnection{
 	public function layTenUser($maNV) {
 		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] a,  [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV ='$maNV'	";
 		try{
-			$rs = sqlsrv_query($this->conn, $sql);
-			//$r=sqlsrv_fetch_array($rs); 
-			if(sqlsrv_has_rows($rs) != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+			
 				return $rs;
-			else throw new \Exception('Sth wrong. Please try again.');
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -99,7 +101,7 @@ class GoldenLotus extends DbConnection{
 			$sql = "UPDATE [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] SET [MatKhau] = PWDENCRYPT('$password') where MaNV ='$maNV'";
 			try
 			{
-				$rs = sqlsrv_query($this->conn, $sql);
+				$rs = $this->conn->query($sql);
 				
 			}
 
@@ -115,7 +117,7 @@ class GoldenLotus extends DbConnection{
 	public function xoaUser( $maNV ){
 		$sql = "DELETE FROM  [GOLDENLOTUS_Q3].[dbo].[tblDSNguoiSD] where [MaNhanVien] = '$maNV'";
 		try{
-			$rs = sqlsrv_query($this->conn, $sql);
+			$rs = $this->conn->query($sql);
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -124,16 +126,12 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function countOccupiedTables() : int {
-		$sql = "SELECT * FROM  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] where [ThoiGianDongPhieu] IS NULL";
+		$sql = "SELECT count(*) FROM  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] where [ThoiGianDongPhieu] IS NULL";
 		try 
 		{
-			$rs = sqlsrv_query($this->conn, $sql, array(), array( "Scrollable" => 'static' ));
+			$nRows = $this->conn->query($sql)->fetchColumn();
 
-			if( sqlsrv_fetch( $rs ) === false) {
-			     die( print_r( sqlsrv_errors(), true));
-			}
-
-			return $count = sqlsrv_num_rows($rs);
+			return $nRows;
 
 		}
 		catch ( PDOException $error ){
@@ -143,16 +141,12 @@ class GoldenLotus extends DbConnection{
 	}
 
 	public function countTotalTables() : int {
-		$sql = "SELECT * FROM  [GOLDENLOTUS_Q3].[dbo].[tblDMBan]";
+		$sql = "SELECT count(*) FROM  [GOLDENLOTUS_Q3].[dbo].[tblDMBan]";
 		try 
 		{
-			$rs = sqlsrv_query($this->conn, $sql, array(), array( "Scrollable" => 'static' ));
-			
-			if( sqlsrv_fetch( $rs ) === false) {
-			     die( print_r( sqlsrv_errors(), true));
-			}
+			$nRows = $this->conn->query($sql)->fetchColumn();
 
-			return $count = sqlsrv_num_rows($rs);
+			return $nRows;
 
 		}
 		catch ( PDOException $error )
@@ -170,15 +164,12 @@ class GoldenLotus extends DbConnection{
 					 Group By TenHangBan, MaDVT, DonGia ) t1 ";
 		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_nay' and SoLuong >0";
 		try{
-			$rs = sqlsrv_query($this->conn, $sql);
+			$rs_1 = $this->conn->query($sql)->fetchColumn();
+			$total=$rs_1[0];
 
-			$rs_1 = sqlsrv_query($this->conn, $sql_1);
-			$row_rs = sqlsrv_fetch_array( $rs_1 );
-			$total=$row_rs[0];
-
-			if(sqlsrv_has_rows($rs) != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else die( print_r( sqlsrv_errors(), true ) );
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -195,15 +186,13 @@ class GoldenLotus extends DbConnection{
 		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$thang_truoc' and SoLuong >0";
 
 		try{
-			$rs = sqlsrv_query($this->conn, $sql);
+			
+			$rs_1 = $this->conn->query($sql)->fetchColumn();
+			$total=$rs_1[0];
 
-			$rs_1 = sqlsrv_query($this->conn, $sql_1);
-			$row_rs = sqlsrv_fetch_array( $rs_1 );
-			$total=$row_rs[0];
-
-			if($rs != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else die( print_r( sqlsrv_errors(), true ) );
+
 		}
 
 		catch ( PDOException $error ){
@@ -221,15 +210,12 @@ class GoldenLotus extends DbConnection{
 
 		try{
 
-			$rs_1 = sqlsrv_query($this->conn, $sql_1);
-			$row_rs = sqlsrv_fetch_array( $rs_1 );
-			$total=$row_rs[0];
+			$rs_1 = $this->conn->query($sql)->fetchColumn();
+			$total=$rs_1[0];
 
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else throw new \Exception('Sth wrong. Please try again.');
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -246,15 +232,11 @@ class GoldenLotus extends DbConnection{
 
 		try{
 
-			$rs_1 = sqlsrv_query($this->conn, $sql_1);
-			$row_rs = sqlsrv_fetch_array( $rs_1 );
-			$total=$row_rs[0];
-
-			$rs = sqlsrv_query($this->conn, $sql);
+			$rs_1 = $this->conn->query($sql)->fetchColumn();
+			$total=$rs_1[0];
 			
-			if( $rs != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else   die(print_r(sqlsrv_errors(), true));
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -271,15 +253,11 @@ class GoldenLotus extends DbConnection{
 
 		try{
 
-			$rs_1 = sqlsrv_query($this->conn, $sql_1);
-			$row_rs = sqlsrv_fetch_array( $rs_1 );
-			$total=$row_rs[0];
-
-			$rs = sqlsrv_query($this->conn, $sql);
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false)  
+			$rs_1 = $this->conn->query($sql)->fetchColumn();
+			$total=$rs_1[0];
+			
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -296,43 +274,47 @@ class GoldenLotus extends DbConnection{
 
 		try{
 
-			$rs_1 = sqlsrv_query($this->conn, $sql_1);
-			$row_rs = sqlsrv_fetch_array( $rs_1 );
-			$total=$row_rs[0];
-
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+			$rs_1 = $this->conn->query($sql)->fetchColumn();
+			$total=$rs_1[0];
+			
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
 		}
 	}
 
-	public function getBillDetailsToday($today){
+	public function getBillDetailsToday($today, &$count = null){
 		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$today' and SoLuong >0 ";
 		try{
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+
+			$stmt = $this->conn->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$count = (int) $stmt->rowCount();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
 		}
 	}
 
-	public function getBillDetailsYesterday( $yesterday ){
+	public function getBillDetailsYesterday( $yesterday, &$count = null){
 		 $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$yesterday' and SoLuong >0"; 
 		try{
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+
+			$stmt = $this->conn->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$count = (int) $stmt->rowCount();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -340,14 +322,18 @@ class GoldenLotus extends DbConnection{
 	}
 
 
-	public function getDatesHasBillOfThisMonth( $this_month ) {
+	public function getDatesHasBillOfThisMonth( $this_month, &$total_count = null ) {
 		  $sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$this_month' and SoLuong >0 GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 ) ";
 		try{
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+
+			$stmt = $this->conn->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$total_count = (int) $stmt->rowCount();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -355,28 +341,36 @@ class GoldenLotus extends DbConnection{
 	}
 
 
-	public function getDatesHasBillBySelection( $tungay, $denngay  ){
+	public function getDatesHasBillBySelection( $tungay, $denngay, &$total_count = null   ){
 		$sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, count( * ) FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a , [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b, [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' AND SoLuong >0 AND a.MaLichSuPhieu=b.MaLichSuPhieu  GROUP BY substring( Convert(varchar,ThoiGianBan,111),0,11 )";
 		try{
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+
+			$stmt = $this->conn->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$total_count = (int) $stmt->rowCount();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
 		}
 	}
 
-	public function getBillDetailsByDayOfMonth( $date ){
+	public function getBillDetailsByDayOfMonth( $date, &$count ){
 		$sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a JOIN  [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 ";
 		try{
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+
+			$stmt = $this->conn->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$total_count = (int) $stmt->rowCount();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -388,11 +382,8 @@ class GoldenLotus extends DbConnection{
 
 		try{
 			
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			//$r=sqlsrv_fetch_array($rs); 
-			if( $rs != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -404,11 +395,8 @@ class GoldenLotus extends DbConnection{
  LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 group by Ten";
 		try{
-			$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-			
-			if( $rs != false) 
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 				return $rs;
-			else die(print_r(sqlsrv_errors(), true));
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -421,15 +409,15 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 		 LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 group by Ten";
 			try{
-				$rs_2 = sqlsrv_query( $this->conn, $sql_2, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				$rs_2 = $this->conn->query($sql_2)->fetchAll(PDO::FETCH_ASSOC);
 				
 				if( $rs_2 != false) 
 					{
 						//$nhom_hang_ban_arr = sqlsrv_fetch_array( $rs_2 );
-						while( $row = sqlsrv_fetch_array( $rs_2, SQLSRV_FETCH_ASSOC ) )
+						foreach( $rs_2 as $row )
 							$nhom_hang_ban_arr[] = $row['Ten'];
 					}
-				else die(print_r(sqlsrv_errors(), true));
+				
 			}
 			catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -453,13 +441,10 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 		  ) y Order by Ten
 		 ";
 
-
 			try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 					return $rs;
-				else die(print_r(sqlsrv_errors(), true));
+				
 			}
 			catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -472,16 +457,14 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 		 LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) ='$month' and SoLuong >0 group by Ten";
 			try{
-				$rs_2 = sqlsrv_query( $this->conn, $sql_2, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				$rs_2 = $this->conn->query($sql_2)->fetchAll(PDO::FETCH_ASSOC);
 				
 				if( $rs_2 != false) 
 					{
-						//$nhom_hang_ban_arr = sqlsrv_fetch_array( $rs_2 );
-						while( $row = sqlsrv_fetch_array( $rs_2, SQLSRV_FETCH_ASSOC ) )
+						foreach( $rs_2 as $row )
 							$nhom_hang_ban_arr[] = $row['Ten'];
-					}
-				else die(print_r(sqlsrv_errors(), true));
 			}
+						
 			catch ( PDOException $error ){
 				echo $error->getMessage();
 			}
@@ -506,12 +489,11 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 
 
 			try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die(print_r(sqlsrv_errors(), true));
 			}
+
 			catch ( PDOException $error ){
 				echo $error->getMessage();
 			}
@@ -523,15 +505,12 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 		 LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] c 
 		ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay' and SoLuong >0 group by Ten";
 			try{
-				$rs_2 = sqlsrv_query( $this->conn, $sql_2, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
+				$rs_2 = $this->conn->query($sql_2)->fetchAll(PDO::FETCH_ASSOC);
 				
 				if( $rs_2 != false) 
 					{
-						//$nhom_hang_ban_arr = sqlsrv_fetch_array( $rs_2 );
-						while( $row = sqlsrv_fetch_array( $rs_2, SQLSRV_FETCH_ASSOC ) )
+						foreach( $rs_2 as $row )
 							$nhom_hang_ban_arr[] = $row['Ten'];
-					}
-				else die(print_r(sqlsrv_errors(), true));
 			}
 			catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -557,11 +536,9 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 
 
 			try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die(print_r(sqlsrv_errors(), true));
 			}
 			catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -583,12 +560,10 @@ right Join
 ) y
 ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 
-		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+			try{
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 			catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -611,11 +586,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -632,11 +605,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) = '$date' group by TenHangBan";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -653,11 +624,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] WHERE substring( Convert(varchar,ThoiGianBan,111),0,8 ) = '$month' group by TenHangBan";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -678,7 +647,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 				
 				if( $rs != false) 
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
+				
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -690,11 +659,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'   group by [MaTienTe]";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -706,11 +673,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  group by [MaTienTe]";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -722,11 +687,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' group by [MaTienTe]";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -739,11 +702,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'  " ;
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -756,11 +717,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  " ;
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -773,11 +732,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' " ;
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -788,11 +745,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		$sql = "SELECT a.*, b.*,c.* FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' ";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -803,11 +758,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		$sql = "SELECT a.*, b.*,c.* FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month' ";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -817,11 +770,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getCancelledFoodItemBySelection ( $tungay, $denngay ) {
 		$sql = "SELECT a.*, b.*,c.* FROM [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] a LEFT JOIN [GOLDENLOTUS_Q3].[dbo].[tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay' " ;
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -832,11 +783,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' group by TenHangBan ";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -847,11 +796,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month'  group by TenHangBan";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -861,11 +808,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getSumFoodCancelledBySelection ( $tungay, $denngay ) {
 		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [GOLDENLOTUS_Q3].[dbo].[tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay'  group by TenHangBan " ;
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -892,11 +837,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		}
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -945,11 +888,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 		}
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -971,11 +912,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 				group by a.MaLichSuPhieu) t1";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -999,11 +938,9 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 				";
 
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -1084,12 +1021,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 				";
 		}
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
-		}
+			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 	
@@ -1174,12 +1109,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 				";
 		}
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
-		}
+			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 	
@@ -1190,12 +1123,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getNDMNhomHangBan() {
 		$sql = "select * from [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan] order By Ten";
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
-		}
+			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 	
@@ -1209,7 +1140,7 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 				
 				if( $rs != false) 
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
+				
 		}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -1220,12 +1151,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getAllFoodItems(){
 		$sql=" SELECT a.MaHangBan, a.TenHangBan , b.MaHangBan, b.Gia FROM [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] a   join [GOLDENLOTUS_Q3].[dbo].[tblGiaBanHang] b ON a.[MaHangBan] = b.[MaHangBan] WHERE MaNhomHangBan IS NOT NULL";
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
-		}
+			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 	
@@ -1235,12 +1164,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getAllFoodGroups(){
 		$sql="SELECT * FROM [GOLDENLOTUS_Q3].[dbo].[tblDMNhomHangBan]  order by ten";
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
-		}
+			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 	
@@ -1250,12 +1177,10 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getFoodItemsByGroup( $food_group ) {
 		$sql=" SELECT a.MaHangBan, a.TenHangBan , b.MaHangBan, b.Gia FROM [GOLDENLOTUS_Q3].[dbo].[tblDMHangBan] a   join [GOLDENLOTUS_Q3].[dbo].[tblGiaBanHang] b ON a.[MaHangBan] = b.[MaHangBan] AND MaNhomHangBan = '$food_group' AND MaNhomHangBan IS NOT NULL";
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				
-				if( $rs != false) 
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
 					return $rs;
-				else die( print_r( sqlsrv_errors(), true ) );
-		}
+			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 	
@@ -1265,13 +1190,11 @@ ON x.Ma = y.[MaNhomHangBan] group by Ma, Ten";
 	public function getTotalSales( $today ) {
 		$sql="select sum(TienThucTra) as TienThucTra from [GOLDENLOTUS_Q3].[dbo].[tblLichSuPhieu] where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],111),0,11 ) =  '$today'";
 		try{
-				$rs = sqlsrv_query( $this->conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );
-				//while
-				$r = sqlsrv_fetch_array( $rs );
-
-				if( $rs != false) 
-					return $r;
-				else die( print_r( sqlsrv_errors(), true ) );
+				$rs_1 = $this->conn->query($sql)->fetchColumn();
+				$total = $rs_1[0];
+				
+				return $total;
+				
 		}
 		catch ( PDOException $error ){
 				echo $error->getMessage();

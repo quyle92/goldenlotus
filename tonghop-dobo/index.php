@@ -70,10 +70,11 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 <tbody>
                                 </tbody>
                                 <?php
-                                $date = date('2020/08/26');
+                                //$today = date('2020/08/26');
+                                $today = date('yy/m/d');
                                 $total = 0;
-                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByDate( $date );
-                                while( $r = sqlsrv_fetch_array( $tong_hop_do_bo) )
+                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByDate( $today );
+                                foreach ( $tong_hop_do_bo as $r ) 
                                 { ?>
                                 <tr>
                                   <td><?=$r['TenHangBan']?></td>
@@ -101,9 +102,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = date('2020/08/28');
-                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByDate( $date );
-                                while( $r = sqlsrv_fetch_array( $tong_hop_do_bo) )
+                                //$yesterday  = ('2020/08/29');
+                                $yesterday = date('yy/m/d',strtotime("-1 days"));
+                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByDate( $yesterday );
+                                foreach ( $tong_hop_do_bo as $r ) 
                                 { ?>
                                 <tr>
                                   <td><?=$r['TenHangBan']?></td>
@@ -131,9 +133,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $month = date('2020/08');
-                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByMonth( $month );
-                                while( $r = sqlsrv_fetch_array( $tong_hop_do_bo) )
+                                //$this_month = date('2016/03');
+                                $this_month = date('yy/m');
+                                $tong_hop_do_bo = $goldenlotus->getSumFoodCancelledByMonth( $this_month );
+                                foreach ( $tong_hop_do_bo as $r ) 
                                 { ?>
                                 <tr>
                                   <td><?=$r['TenHangBan']?></td>

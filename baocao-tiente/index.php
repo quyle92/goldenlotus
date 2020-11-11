@@ -69,9 +69,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = ('2020/08/26');
-                                $currency_report = $goldenlotus->getCurrencyReportByDate( $date );
-                                while( $r = sqlsrv_fetch_array($currency_report) )
+                                //$today = ('2020/08/26');
+                                $today = date('yy/m/d');
+                                $currency_report = $goldenlotus->getCurrencyReportByDate( $today );
+                                foreach ( $currency_report as $r ) 
                                 { ?>
                                 <tr>
                                   <td><?=$r['MaTienTe']?></td>
@@ -99,9 +100,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = ('2020/08/29');
-                                $currency_report = $goldenlotus->getCurrencyReportByDate( $date );
-                                while( $r = sqlsrv_fetch_array($currency_report) )
+                                //$date = ('2020/08/29');
+                                $yesterday = date('yy/m/d',strtotime("-1 days"));;
+                                $currency_report = $goldenlotus->getCurrencyReportByDate( $yesterday );
+                                foreach ( $currency_report as $r ) 
                                 { ?>
                                 <tr>
                                   <td><?=$r['MaTienTe']?></td>
@@ -131,7 +133,7 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 <?php
                                 $month = ('2020/08');
                                 $currency_report = $goldenlotus->getCurrencyReportByMonth( $month );
-                                while( $r = sqlsrv_fetch_array($currency_report) )
+                                foreach ( $currency_report as $r ) 
                                 { ?>
                                 <tr>
                                   <td><?=$r['MaTienTe']?></td>

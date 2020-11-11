@@ -17,10 +17,10 @@ $food_sold_by_group = $goldenlotus->getFoodSoldByGroup_DateSelected( $tungay, $d
 foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
 { 
   $food_sold_by_group = $goldenlotus->getFoodSoldByGroup_DateSelected( $tungay, $denngay, $nhom_hang_ban_arr, $nhom_hang_ban);
-  for ($i = 0; $i < sqlsrv_num_rows($food_sold_by_group); $i++) 
+  $i = 0;
+  foreach ( $food_sold_by_group as $r ) 
   {
-  $r = sqlsrv_fetch_array($food_sold_by_group, SQLSRV_FETCH_ASSOC , SQLSRV_SCROLL_ABSOLUTE, $i);
- 
+     
   $output .=' <tr>
       <td>' . ( ($i==0) ? $r['Ten'] : "" ) . '</td>
       <td>' . $r['MaHangBan'] . '</td>
@@ -37,7 +37,8 @@ foreach ( $nhom_hang_ban_arr as $nhom_hang_ban)
       <td>' . number_format($r['DonGia']*$r['SoLuong']-$r['TienGiamGia']+$r['SoTienDVPhi']+$r['SoTienVAT'],0,",",".") . '
           <sup>đ</sup></td>
     </tr>';
-
+    
+  $i++; 
   } 
 }
 

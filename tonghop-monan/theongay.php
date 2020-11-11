@@ -13,10 +13,8 @@ $data = array();
 $data[] = 'Tổng doanh thu: ' . number_format($total,0,",",".")  . '<sup>đ</sup>';
 
 
-for ($i = 0; $i < sqlsrv_num_rows($hang_ban); $i++) 
+foreach ( $hang_ban as $r ) 
 { 
-	$r=sqlsrv_fetch_array($hang_ban);
-	
    	$data []= '<tr>
     <td class="sorting_1">' . $r["TenHangBan"]  .' </td>
     <td>'. $r["MaDVT"] . '</td>

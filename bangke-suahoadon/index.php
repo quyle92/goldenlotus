@@ -78,9 +78,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = date('2020/08/26');
-                                $bill_edit =$goldenlotus->getBillEditDetailsByDate( $date );
-                                while( $r = sqlsrv_fetch_array($bill_edit ) )
+                                //$today = date('2020/08/26');
+                                $today = date('yy/m/d');
+                                $bill_edit =$goldenlotus->getBillEditDetailsByDate( $today );
+                                foreach ( $bill_edit as $r )
                                 { ?>  
                                 <tr>
                                   <td><?=( $r['ThoiGianSuaPhieu'] ) ? $r['ThoiGianSuaPhieu']->format('d-m-yy') : ""?></td>
@@ -120,9 +121,9 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $date = date('2020/08/29');
-                                $bill_edit =$goldenlotus->getBillEditDetailsByDate( $date );
-                                while( $r = sqlsrv_fetch_array($bill_edit ) )
+                                //$yesterday = date('2016/03/13');
+                                $yesterday = date('yy/m/d',strtotime("-1 days"));
+                                foreach ( $bill_edit as $r )
                                 { ?>  
                                 <tr>
                                   <td><?=( $r['ThoiGianSuaPhieu'] ) ? $r['ThoiGianSuaPhieu']->format('d-m-yy') : ""?></td>
@@ -161,9 +162,10 @@ if( $_SESSION['MaNV'] != 'HDQT' && !in_array($page_name, $bao_cao_duoc_xem) )
                                 </thead>
                                 <tbody>
                                 <?php
-                                $month = date('2020/08');
+                                //$this_month = date('2016/03');
+                                $this_month = date('yy/m');
                                 $bill_edit =$goldenlotus->getBillEditDetailsByMonth( $month );
-                                while( $r = sqlsrv_fetch_array($bill_edit ) )
+                                foreach ( $bill_edit as $r )
                                 { ?>  
                                 <tr>
                                   <td><?=( $r['ThoiGianSuaPhieu'] ) ? $r['ThoiGianSuaPhieu']->format('d-m-yy') : ""?></td>
