@@ -1,0 +1,1 @@
+var labels = require(chartjs-plugin-labels);
