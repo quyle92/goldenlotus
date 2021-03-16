@@ -20,10 +20,13 @@ class GoldenLotus extends General{
 		$this->general = new General($dbCon);
 	}
 
-	
-	
 	public function includeFile() {
 		include_once(__DIR__ . '/../helper/custom-function.php');
+	}
+
+	public function layView( $ma_quay  )
+	{
+		$this->general->taoView($ma_quay);
 	}
 	
 	public function layMaNV() {
@@ -127,9 +130,23 @@ class GoldenLotus extends General{
 	}
 
 	public function layTenUser($maNV) {
-		 $sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [tblDSNguoiSD] a,  [tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV ='$maNV'";
+		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [tblDSNguoiSD] a,  [tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV ='$maNV'";
 		try{
 			$rs = $this->conn->query($sql)->fetch();
+			
+				return $rs;
+			
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getTenQuay()
+	{
+		$sql = "SELECT distinct TenQuay  FROM [SPA_HOANGSENQ3].[dbo].[tblDMNhomHangBan] ";
+		try{
+			$rs = $this->conn->query($sql)->fetchAll();
 			
 				return $rs;
 			
@@ -181,8 +198,17 @@ class GoldenLotus extends General{
 
 	}
 
-	public function countOccupiedTables() : int {
-		$sql = "SELECT count(*) FROM  [tblLichSuPhieu] where  substring(Convert(varchar,GioVao,111),0,11) =  convert(varchar, getdate(), 111) and [ThoiGianDongPhieu] IS NULL";
+	public function countOccupiedTables( $tenQuay, $tuNgay ) : int {
+		$sql = "SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
+		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
+		where  substring(Convert(varchar,GioVao,126),0,11) = '$tuNgay' and [ThoiGianDongPhieu] IS NULL";
+
+		if ( ! empty($tenQuay) )
+		{	
+			 $sql .= " AND c.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
 		try 
 		{
 			$nRows = $this->conn->query($sql)->fetchColumn();
@@ -212,10 +238,7 @@ class GoldenLotus extends General{
 
 	}
 
-	public function layView( $ma_quay  )
-	{
-		$this->general->taoView($ma_quay);
-	}
+	
 
 	public function getFoodSoldThisMonth (  &$total = null, $ma_quay = '' ) 
 	{
@@ -2084,15 +2107,15 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		$sql = "
   SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
+  where d.TenQuay = 'SPA' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
 
     SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
+  where d.TenQuay = 'SPA' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
 
       SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
+  where d.TenQuay = 'SPA' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
   		try{
 
 			$rs = $this->conn->query($sql);
@@ -2119,15 +2142,15 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		$sql = "
   SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
+  where d.TenQuay = 'SNACKBAR' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
 
     SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
+  where d.TenQuay = 'SNACKBAR' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
 
       SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
+  where d.TenQuay = 'SNACKBAR' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
   		try{
 
 			$rs = $this->conn->query($sql);
@@ -2154,15 +2177,15 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		$sql = "
   SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
+  where d.TenQuay = 'CAFE' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
 
     SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
+  where d.TenQuay = 'CAFE' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
 
       SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
+  where d.TenQuay = 'CAFE' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
   		try{
 
 			$rs = $this->conn->query($sql);
@@ -2189,15 +2212,15 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		$sql = "
   SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
+  where d.TenQuay = 'GAME' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
 
     SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
+  where d.TenQuay = 'RESTAURANT' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
 
       SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
+  where d.TenQuay = 'RESTAURANT' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
   		try{
 
 			$rs = $this->conn->query($sql);
@@ -2224,15 +2247,16 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		$sql = "
   SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
+  where d.TenQuay = 'RESTAURANT' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,GETDATE() ,126),0,11 )
 
     SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
+  where d.TenQuay = 'RESTAURANT' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -1, GETDATE()),126),0,11 )
 
       SELECT  ISNULL( sum(a.TienThucTra), 0 ) as DoanhThu from tblLichSuPhieu a  JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
   JOIN tblDMHangBan c on b.MaHangBan = c.MaHangBan join [tblDMNhomHangBan] d on c.MaNhomHangBan = d.Ma
-  where d.Ma = '1410219' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
+  where d.TenQuay = 'RESTAURANT' and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = substring( Convert(varchar,DATEADD(day, -7, GETDATE()),126),0,11 )";
+
   		try{
 
 			$rs = $this->conn->query($sql);

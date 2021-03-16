@@ -20,12 +20,12 @@ class General {
 		call_user_func_array( array( $this, $ma_quay ), [] );
 	}
 
-	protected function Spa() {
+	protected function SPA() {
 
-		$sql = "IF OBJECT_ID('[SpaView]','v') IS NOT NULL BEGIN DROP view  [SpaView] END ;";//(1)
-		$sql_1 = "CREATE VIEW  [SpaView] AS 
+		$sql = "IF OBJECT_ID('[SPAView]','v') IS NOT NULL BEGIN DROP view  [SpaView] END ;";//(1)
+		$sql_1 = "CREATE VIEW  [SPAView] AS 
 				SELECT TenHangBan FROM [tblDMHangBan] a JOIN [tblDMNhomHangBan] b ON a.MaNhomHangBan = b.Ma
-				WHERE Ma = '2014201'
+				WHERE TenQuay = 'SPA'
 				";//(1)
 		try
 		{
@@ -37,11 +37,11 @@ class General {
 		}
 	}
 
-	protected function createSnackBarView() {
-		$sql = "IF OBJECT_ID('[SnackBarView]','v') IS NOT NULL BEGIN DROP view  [SnackBarView] END ;";
-		$sql_1 = "CREATE VIEW  [SnackBarView] AS 
+	protected function SNACKBAR() {
+		$sql = "IF OBJECT_ID('[SNACKBARView]','v') IS NOT NULL BEGIN DROP view  [SNACKBARView] END ;";
+		$sql_1 = "CREATE VIEW  [SNACKBARView] AS 
 				SELECT TenHangBan FROM [tblDMHangBan] a JOIN [tblDMNhomHangBan] b ON a.MaNhomHangBan = b.Ma
-				WHERE Ma = '2014201'
+				WHERE TenQuay = 'SNACKBAR'
 				";
 		try
 		{
@@ -53,11 +53,11 @@ class General {
 		}
 	}
 
-	protected function createCafeteriaView() {
-		$sql = "IF OBJECT_ID('[CafeteriaView]','v') IS NOT NULL BEGIN DROP view  [CafeteriaView] END ;";
-		$sql_1 = "CREATE VIEW  [CafeteriaView] AS 
+	protected function CAFE() {
+		$sql = "IF OBJECT_ID('[CAFEView]','v') IS NOT NULL BEGIN DROP view  [CAFEView] END ;";
+		$sql_1 = "CREATE VIEW  [CAFEView] AS 
 				SELECT TenHangBan FROM [tblDMHangBan] a JOIN [tblDMNhomHangBan] b ON a.MaNhomHangBan = b.Ma
-				WHERE Ma = '2014201'
+				WHERE TenQuay = 'CAFE'
 				";
 		try
 		{
@@ -69,11 +69,11 @@ class General {
 		}
 	}
 
-	protected function createGameView() {
-		$sql = "IF OBJECT_ID('[GameView]','v') IS NOT NULL BEGIN DROP view  [GameView] END ;";
-		$sql_1 = "CREATE VIEW  [GameView] AS 
+	protected function GAME() {
+		$sql = "IF OBJECT_ID('[GAMEView]','v') IS NOT NULL BEGIN DROP view  [GAMEView] END ;";
+		$sql_1 = "CREATE VIEW  [GAMEView] AS 
 				SELECT TenHangBan FROM [tblDMHangBan] a JOIN [tblDMNhomHangBan] b ON a.MaNhomHangBan = b.Ma
-				WHERE Ma = '2014201'
+				WHERE TenQuay = 'GAME'
 				";
 		try
 		{
@@ -85,11 +85,11 @@ class General {
 		}
 	}
 
-	protected function createNhaHangView() {
-		$sql = "IF OBJECT_ID('[NhaHangView]','v') IS NOT NULL BEGIN DROP view  [NhaHangView] END ;";
-		$sql_1 = "CREATE VIEW  [NhaHangView] AS 
+	protected function RESTAURANT() {
+		$sql = "IF OBJECT_ID('[RESTAURANTView]','v') IS NOT NULL BEGIN DROP view  [RESTAURANTView] END ;";
+		$sql_1 = "CREATE VIEW  [RESTAURANTView] AS 
 				SELECT TenHangBan FROM [tblDMHangBan] a JOIN [tblDMNhomHangBan] b ON a.MaNhomHangBan = b.Ma
-				WHERE Ma = '2014201'
+				WHERE TenQuay = 'RESTAURANT'
 				";
 		try
 		{
