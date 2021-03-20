@@ -14,7 +14,7 @@ if( ! empty($tenQuay))
 
 $output = [];
 $tong_so_ban = $goldenlotus->countTotalTables();
-$co_nguoi = $goldenlotus->countOccupiedTables( $tenQuay, $tuNgay );
+$co_nguoi = $goldenlotus->countOccupiedTables_Day( $tenQuay, $tuNgay );
 $ban_trong = $tong_so_ban - $co_nguoi;
 echo json_encode(
 	 $output = [

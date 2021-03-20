@@ -44,7 +44,9 @@ $paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$
  * [$sqlRec description]
  * @var string
  */
-$sqlRec = $goldenlotus->getPayMethodDetailsByMonthRange_Rec_Month( $tenQuay, $tuThang,  $where , $paginating); 
+var_dump($where);
+var_dump($paginating);
+$sqlRec = $goldenlotus->getPayMethodDetails_Rec_Month( $tenQuay, $tuThang,  $where , $paginating); 
 //var_dump($sqlRec);die;
     
 $tong_tien = 0;
@@ -72,7 +74,7 @@ foreach( $sqlRec as $r )
 /**
  * $sqlTot
  */
-$nRows = $goldenlotus->getPayMethodDetailsByMonthRange_Tot_Month(  $tenQuay, $tuThang,  $where ); 
+$nRows = $goldenlotus->getPayMethodDetails_Tot_Month(  $tenQuay, $tuThang,  $where ); 
 
 
 

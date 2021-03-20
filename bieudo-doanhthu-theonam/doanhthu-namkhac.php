@@ -5,10 +5,11 @@
 </script>
 <div class="container">
 	  <div class="row">
-		<form method="POST" action="">
+		<form method="POST" action="" id="namKhac">
 		 <div class="col-md-4 form-group">
 			<label for="tu-ngay">Từ:</label>
 			<div class="input-group date" style="margin-bottom:5px">
+        <input type='hidden' class="form-control" name="tenQuay" value="<?=isset($tenQuay ) ? $tenQuay  : ""?>"/>
 			  <input name="year" type='text' class="form-control" id="tu-ngay" />
 			  <span class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
@@ -42,7 +43,7 @@
 //var ctx = document.getElementById('myChart').getContext('2d');
 
 
-  $('form').on('submit', function (event){
+  $('form#namKhac').on('submit', function (event){
     event.preventDefault();
     var formValues= $(this).serialize();
     $.ajax({

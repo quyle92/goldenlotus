@@ -2,7 +2,7 @@
 require('../../lib/db.php');
 @session_start();
 if($_POST['year'] != "") $year_selected = $_POST['year'];
-
+$tenQuay = isset( $_POST['tenQuay'] ) ? $_POST['tenQuay'] : "";
   //
   //---thang
   //
@@ -24,8 +24,13 @@ for ( $i = 1; $i <= 12; $i++ ){
   
   $sql = rtrim($sql, ", ");
 
- $sql .=" FROM [tblLichSuPhieu]
-    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1";
+  $sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+  if( ! empty($tenQuay) )
+  {
+      $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+  }
+
   try
   {
     //$result_dt = sqlsrv_query( $conn, $sql, array(), array("Scrollable" => SQLSRV_CURSOR_KEYSET) );

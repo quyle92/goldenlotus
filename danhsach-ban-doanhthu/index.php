@@ -10,8 +10,8 @@ $goldenlotus = new GoldenLotus($dbCon);
 $id=isset($_SESSION['MaNV'])?$_SESSION['MaNV']:"";
 $ten=isset($_SESSION['TenNV'])?$_SESSION['TenNV']:"";
 
-$matrungtam=isset($_SESSION['MaTrungTam'])?$_SESSION['MaTrungTam']:"";
-$trungtam=isset($_SESSION['TenTrungTam'])?$_SESSION['TenTrungTam']:"";
+$matrungtam = isset($_SESSION['MaTrungTam'])?$_SESSION['MaTrungTam']:"";
+$trungtam = isset($_SESSION['TenTrungTam'])?$_SESSION['TenTrungTam']:"";
 
 
 ?>
@@ -114,6 +114,7 @@ justify-content: center;
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
             <h3 class="title">Danh Sách Bàn + Doanh Thu (Nhà Hàng)</h3>
 
+  
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
@@ -126,6 +127,9 @@ justify-content: center;
                     <div class="tab-content">
 
                       <div class="tab-pane fade active in" id="tab1primary">
+                        <?php
+                          require('../datetimepicker-day.php');
+                        ?>
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <div class="panel panel-default">
 
@@ -139,21 +143,24 @@ justify-content: center;
                               <tbody>
                                   
                                     <?php
-                                    $date = date('2015/08/26');
-                                   // $date = date('yy/m/d');
-                                  
-                                    $sales_by_table = $goldenlotus->getTablesAndBills( $date );
+                                    if( ! empty($tenQuay))
+                                    {
+                                      $goldenlotus->layView( $tenQuay  );
+                                    }
+
+                                    $tenQuay = isset($_POST['tenQuay']) ? $_POST['tenQuay'] : "";
+                                    $tuNgay = isset( $_POST['tuNgay'] ) ?  date_format( date_create( $_POST['tuNgay'] ) , 'Y-m-d' ) : "";
+                                    $sales_by_table = $goldenlotus->getTablesAndBills( $tuNgay, $tenQuay );
                                     $sales_by_table = customizeArray_TablesBills( $sales_by_table );
                                     //var_dump($sales_by_table);//die;
-                                    $i = 1;
+                                    $q = 1;
                                     foreach ( $sales_by_table as $table ) 
-                                    { ?>
+                                    {?>
                                     <tr>
                                       <td>
-                                                                                    
                                           <ul class="list-group danh-sach-ban">
                                               <li class="list-group-item">
-                                                  <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="all-<?=(( $table->TongDoanhThu )) ? $i : ''?>">
+                                                  <div class="row toggle" id="dropdown-detail-<?=$q?>" data-toggle="all-<?=(( $table->TongDoanhThu )) ? str_replace('.','',$table->MaBan ) : ''?>">
                                                       <div class="col-xs-10">
                                                         <div style="display:flex">
                                                           <div class="tbl-image">
@@ -168,7 +175,7 @@ justify-content: center;
                                                       </div>
                                                       <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
                                                   </div>
-                                                  <div id="all-<?=$i?>" aria-expanded="false" style="display:none;">
+                                                  <div id="all-<?=str_replace('.','',$table->MaBan )?>" aria-expanded="false" style="display:none;">
                                                       <hr></hr>
                                                         
                                                      
@@ -253,7 +260,7 @@ justify-content: center;
 
                                                               <?php 
                                                               } 
-                                                              $i++; ?>
+                                                               ?>
                                                      
                                                               </tbody>
                                                             </table>
@@ -269,7 +276,7 @@ justify-content: center;
                                      </td>
                                     </tr>
                                    <?php
-                                    }
+                                    $q++;}
                                     ?>
 
                                 
@@ -301,10 +308,7 @@ justify-content: center;
                               <tbody>
                                   
                                     <?php
-                                    $date = date('2015/08/26');
-                                   // $date = date('yy/m/d');
-                                  
-                                    $sales_by_table = $goldenlotus->getTablesAndBills_Occupied( $date );
+                                    $sales_by_table = $goldenlotus->getTablesAndBills_Occupied( $tuNgay , $tenQuay  );
                                     $sales_by_table = customizeArray_TablesBills( $sales_by_table );
                                     //var_dump($sales_by_table);//die;
                                     $i = 1;
@@ -315,7 +319,7 @@ justify-content: center;
                                                                                     
                                           <ul class="list-group danh-sach-ban">
                                               <li class="list-group-item">
-                                                  <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="occupied-<?=(( $table->TongDoanhThu )) ? $i : ''?>">
+                                                  <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="occupied-<?=(( $table->TongDoanhThu )) ? str_replace('.','',$table->MaBan ) : ''?>">
                                                       <div class="col-xs-10">
                                                         <div style="display:flex">
                                                           <div class="tbl-image">
@@ -330,7 +334,7 @@ justify-content: center;
                                                       </div>
                                                       <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
                                                   </div>
-                                                  <div id="occupied-<?=$i?>" aria-expanded="false" style="display:none;">
+                                                  <div id="occupied-<?=str_replace('.','',$table->MaBan )?>" aria-expanded="false" style="display:none;">
                                                       <hr></hr>
                                                         
                                                      
@@ -466,7 +470,7 @@ justify-content: center;
                                     $date = date('2015/08/26');
                                    // $date = date('yy/m/d');
                                   
-                                    $sales_by_table = $goldenlotus->getTablesAndBills_Empty( $date );
+                                    $sales_by_table = $goldenlotus->getTablesAndBills_Empty(  $tuNgay , $tenQuay );
                                     $sales_by_table = customizeArray_TablesBills( $sales_by_table );
                                     //var_dump($sales_by_table);//die;
                                     $i = 1;
@@ -477,7 +481,7 @@ justify-content: center;
                                                                                     
                                           <ul class="list-group danh-sach-ban">
                                               <li class="list-group-item">
-                                                  <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="empty-<?=(( $table->TongDoanhThu )) ? $i : ''?>">
+                                                  <div class="row toggle" id="dropdown-detail-<?=$i?>" data-toggle="empty-<?=(( $table->TongDoanhThu )) ? str_replace('.','',$table->MaBan ) : ''?>">
                                                       <div class="col-xs-10">
                                                         <div style="display:flex">
                                                           <div class="tbl-image">
@@ -492,7 +496,7 @@ justify-content: center;
                                                       </div>
                                                       <div class="col-xs-2"><i class="fa fa-chevron-down pull-right"></i></div>
                                                   </div>
-                                                  <div id="empty-<?=$i?>" aria-expanded="false" style="display:none;">
+                                                  <div id="empty-<?=str_replace('.','',$table->MaBan )?>" aria-expanded="false" style="display:none;">
                                                       <hr></hr>
                                                         
                                                      
@@ -625,24 +629,4 @@ justify-content: center;
       <!-- /#page-wrapper -->
 </div>
 </body>
-
-<script>
-
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var i;
-console.log(dropdown);  
-for (i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function() {
-    //this.classList.toggle("active");
-    var dropdownContent = this.nextElementSibling;
-    if (dropdownContent.style.display === "block") {
-      dropdownContent.style.display = "none";
-    } else {
-      dropdownContent.style.display = "block";
-    }
-  });
-}
-
-
-</script>
 

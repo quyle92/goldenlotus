@@ -28,7 +28,7 @@ require('../datetimepicker-month.php');
     $('form#customMonth').on('submit', function (event){
     event.preventDefault();
     var tuThang = $('#tuThang').val();
-    var tenQuay = $('#tenQuay').val();
+    var tenQuay = $('form#customMonth #tenQuay').val();
     
     $('#month').DataTable({
             columns: [

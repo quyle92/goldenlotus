@@ -4,12 +4,12 @@
           <label for="tenQuay" class="col-md-3 control-label">Quầy:</label>
           <div class="input-group col-md-9" >
             <select name="tenQuay" id="tenQuay"  class="form-control" >
-              <option selected>Tất cả</option>
+              <option selected value="">Tất cả</option>
                 <?php
                 $rs = $goldenlotus->getTenQuay();
                 foreach ( $rs as $r )
                 { ?>
-                   <option ><?=$r['TenQuay']?></option>
+                   <option <?=isset($_POST['tenQuay']) && $r['TenQuay'] == $_POST['tenQuay'] ? "selected" : "" ?>><?=$r['TenQuay']?></option>
                 <?php 
                 }
                 ?>

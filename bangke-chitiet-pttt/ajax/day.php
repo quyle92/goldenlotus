@@ -43,7 +43,7 @@ $paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$
  * [$sqlRec description]
  * @var string
  */
-$sqlRec = $goldenlotus->getPayMethodDetailsByMonthRange_Rec_Day( $tenQuay, $tungay,  $where , $paginating); 
+$sqlRec = $goldenlotus->getPayMethodDetails_Rec_Day( $tenQuay, $tungay,  $where , $paginating); 
 //var_dump($sqlRec);die;
     
 $tong_tien = 0;
@@ -71,15 +71,13 @@ foreach( $sqlRec as $r )
 /**
  * $sqlTot
  */
-$nRows = $goldenlotus->getPayMethodDetailsByMonthRange_Tot_Day(  $tenQuay, $tungay,  $where ); 
-
-
+$nRows = $goldenlotus->getPayMethodDetails_Tot_Day(  $tenQuay, $tungay,  $where ); 
 
 $json_data = array(
-        "draw"            => intval( $params['draw'] ),
-        "recordsTotal"    => intval( $nRows ),
-        "recordsFiltered" => intval($nRows),
-        "data"            => $data   // total data array
-        );
+    "draw"            => intval( $params['draw'] ),
+    "recordsTotal"    => intval( $nRows ),
+    "recordsFiltered" => intval($nRows),
+    "data"            => $data   // total data array
+);
 
 echo json_encode($json_data);  // send data as json format

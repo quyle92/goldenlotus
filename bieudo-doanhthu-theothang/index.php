@@ -2,7 +2,10 @@
 $page_name = "BieuDoDoanhThu";
 require_once('../helper/security.php');
 require('../lib/db.php');
+require('../lib/goldenlotus.php');
 @session_start();
+$goldenlotus = new GoldenLotus($dbCon);
+$tenQuay = isset( $_POST['tenQuay'] ) ? $_POST['tenQuay'] : "";
 $id=$_SESSION['MaNV'];
 $ten=$_SESSION['TenNV'];
 
@@ -78,7 +81,28 @@ $denngay=@$_POST['denngay'];
 		<div class="col-md-2" style="margin-bottom:5px"></div>
 	 </div>
 
+    <div class="row">
+    <div class="col-md-2" style="margin-bottom:5px">Quầy:</div>
+    <div class="col-md-3" style="margin-bottom:5px">
+      <select name="tenQuay" id="tenQuay" >
+        <option selected value=''>Tất cả</option>
+            <?php
+            $rs = $goldenlotus->getTenQuay();
+            foreach ( $rs as $r )
+            { ?>
+               <option <?=isset($_POST['tenQuay']) && $r['TenQuay'] == $_POST['tenQuay'] ? "selected" : "" ?> ><?=$r['TenQuay']?></option>
+            <?php 
+            }
+            ?>
+      </select>
+    </div>
+    <div class="col-md-3" style="margin-bottom:5px"></div>
+    <div class="col-md-2" style="margin-bottom:5px"></div>
+   </div>
+<button class="btn btn-primary" type="submit" style="margin-bottom: 10px "> Submit </button>
+
      </form>
+
      <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
@@ -90,17 +114,17 @@ $denngay=@$_POST['denngay'];
                 <div class="panel-body">
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="tab1primary">
-                          <div class="col-xs-12 col-sm-12 table-responsive">
+                          <div class="col-xs-12 col-sm-12">
                           	<?php require('../bieudo-doanhthu-theothang/doanhthu-thangnay.php'); ?>
                            </div>
                       </div>
                         <div class="tab-pane fade" id="tab2primary">
-                          <div class="col-xs-12 col-sm-12 table-responsive">
+                          <div class="col-xs-12 col-sm-12">
                           	<?php require('../bieudo-doanhthu-theothang/doanhthu-thangtruoc.php'); ?>
                           </div>
                         </div>
                         <div class="tab-pane fade" id="tab3primary">
-                          <div class="col-xs-12 col-sm-12 table-responsive">
+                          <div class="col-xs-12 col-sm-12">
                           	<?php require('../bieudo-doanhthu-theothang/doanhthu-thangkhac.php');  ?>
                           </div>
                         </div>
@@ -120,32 +144,6 @@ $denngay=@$_POST['denngay'];
    </div>
     <!-- /#wrapper -->
 <!-- Nav CSS -->
-<script>
-	/* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var i;
-
-for (i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function() {
-  	//this.classList.toggle("active");
-  	var dropdownContent = this.nextElementSibling;
-  	if (dropdownContent.style.display === "block") {
-  		dropdownContent.style.display = "none";
-  	} else {
-  		dropdownContent.style.display = "block";
-  	}
-  });
-}
-
-//dropdown[0].click();
-
-</script>
-<script>
-$('.navbar-toggle').on('click', function() {
-  $('.sidebar-nav').toggleClass('block');  
-   
-});
-</script>
 
 
 </body>

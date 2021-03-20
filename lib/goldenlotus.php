@@ -198,11 +198,59 @@ class GoldenLotus extends General{
 
 	}
 
-	public function countOccupiedTables( $tenQuay, $tuNgay ) : int {
+	public function countOccupiedTables_Day( $tenQuay = null , $tuNgay ) : int {
 		$sql = "SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
 		where  substring(Convert(varchar,GioVao,126),0,11) = '$tuNgay' and [ThoiGianDongPhieu] IS NULL";
+
+		if ( ! empty($tenQuay) )
+		{	
+			 $sql .= " AND c.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try 
+		{
+			$nRows = $this->conn->query($sql)->fetchColumn();
+
+			return $nRows;
+
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+
+	}
+
+	public function countOccupiedTables_Month( $tenQuay, $tuThang ) : int {
+		$sql = "SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
+		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
+		where  substring(Convert(varchar,GioVao,126),0,8) = '$tuThang' and [ThoiGianDongPhieu] IS NULL";
+
+		if ( ! empty($tenQuay) )
+		{	
+			 $sql .= " AND c.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try 
+		{
+			$nRows = $this->conn->query($sql)->fetchColumn();
+
+			return $nRows;
+
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+
+	}
+
+	public function countOccupiedTables_Year( $tenQuay, $tuNam ) : int {
+		$sql = "SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
+		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
+		where  substring(Convert(varchar,GioVao,126),0,5) = '$tuNam' and [ThoiGianDongPhieu] IS NULL";
 
 		if ( ! empty($tenQuay) )
 		{	
@@ -387,41 +435,6 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getBillDetailsToday($today, &$count = null ){
-		  $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [tblLSPhieu_HangBan] a JOIN  [tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$today' and SoLuong >0 ";
-		 $sql_1 = "SELECT count(*) FROM ( SELECT  c.[MaLoaiThe] FROM [tblLSPhieu_HangBan] a JOIN  [tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$today' and SoLuong >0) t1 ";
-		try{
-
-			$rs_1 = $this->conn->query($sql_1)->fetchColumn();
-			$count = $rs_1;
-			
-			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-				return $rs;
-			
-		}
-		catch ( PDOException $error ){
-			echo $error->getMessage();
-		}
-	}
-
-	public function getBillDetailsYesterday( $yesterday, &$count = null){
-		   $sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [tblLSPhieu_HangBan] a JOIN  [tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$yesterday' and SoLuong >0 ";
-		 $sql_1 = "SELECT count(*) FROM ( SELECT  c.[MaLoaiThe] FROM [tblLSPhieu_HangBan] a JOIN  [tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$yesterday' and SoLuong >0) t1 ";
-		try{
-
-			$rs_1 = $this->conn->query($sql_1)->fetchColumn();
-			$count = $rs_1;
-			
-			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-				return $rs;
-			
-		}
-		catch ( PDOException $error ){
-			echo $error->getMessage();
-		}
-	}
-
-
 	public function getDatesHasBillOfThisMonth( $this_month, &$total_count = null ) {
 		 $sql = "SELECT substring( Convert(varchar,GioVao,111),0,11 ) as NgayCoBill , count(*) as total
      FROM [tblLichSuPhieu] a
@@ -496,26 +509,30 @@ class GoldenLotus extends General{
 		}
 	}
 	
-	public function getBillDetailsByMonthRange_Rec( $tungay, $denngay, $where , $paginating ){
+	public function getBillDetails_Rec_Day( $tenQuay, $tuNgay, $where , $paginating ){
 
-		   $sql = "WITH cte_1 AS ( SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, a.MaLichSuPhieu,b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien = DonGia * SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
-		   	   Tongtien =  DonGia * SoLuong
+		   $sql = "WITH cte_1 AS ( SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, a.MaLichSuPhieu,b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
+		   	   Tongtien =  DonGia * b.SoLuong
 			FROM [tblLichSuPhieu] a 
 			JOIN [tblLSPhieu_HangBan] b
 			ON a.MaLichSuPhieu=b.MaLichSuPhieu  
 			JOIN [tblLSPhieu_CTThanhToan] c
 			ON b.MaLichSuPhieu=c.MaLichSuPhieu 
-			WHERE substring( Convert(varchar,ThoiGianBan,111),0,11) between '$tungay' and '$denngay' and SoLuong >0 )
+			WHERE substring( Convert(varchar,b.ThoiGianBan,126),0,11) = '$tuNgay' and b.SoLuong > 0
 			 ";
+		if ( ! empty($tenQuay) )
+		{	
+			$sql .= " AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
 
 		if ( $where == '')
 	    {
-	    	$sql .= 'SELECT * FROM   cte_1';
+	    	$sql .= ' ) SELECT * FROM   cte_1';
 	    	$sql .= " WHERE ". $paginating ;
 	    } 
 	    else
 	    {	
-	    	$sql .= ' ,
+	    	$sql .= '  ) ,
 	cte_2 as (
 		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien , Tongtien
 		FROM cte_1 
@@ -542,24 +559,199 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getBillDetailsByMonthRange_Tot( $tungay, $denngay, $where ){
+	public function getBillDetails_Tot_Day(  $tenQuay, $tuNgay, $where ){
 	
 		$sql = "WITH cte AS ( SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, a.MaLichSuPhieu,b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien = DonGia * SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, Tongtien,  RowNum = row_number() over (order by a.MaLichSuPhieu)
 			FROM [tblLichSuPhieu] a 
 			JOIN [tblLSPhieu_HangBan] b
 			ON a.MaLichSuPhieu=b.MaLichSuPhieu  
 			JOIN [tblLSPhieu_CTThanhToan] c
-			ON b.MaLichSuPhieu=c.MaLichSuPhieu 
-			WHERE substring( Convert(varchar,ThoiGianBan,111),0,11) between '$tungay' and '$denngay' and SoLuong >0 )
+			ON b.MaLichSuPhieu=c.MaLichSuPhieu
+			WHERE substring( Convert(varchar, b.ThoiGianBan,126),0,11) = '$tuNgay' and SoLuong >0 
+			";
 
-			SELECT count(*) FROM   cte  ";
+		if ( ! empty($tenQuay) )
+		{	
+			 $sql .= " AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		 $sql .= " ) SELECT count(*) FROM   cte  ";
 
 		if( $where != "" ){
 
-	     	//if( stripos($sql, 'WHERE') !== false )  $sql .= "AND";  else  
 	     	$sql .= " WHERE ";
 
-	     	 $sql .= $where;
+	     	$sql .= $where;
+
+     	}
+
+		try{ //var_dump($sql);die;
+
+	     	$rs = $this->conn->query($sql)->fetchColumn();
+	       		
+	       		return $rs;;
+			
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getBillDetails_Rec_Month( $tenQuay, $tuThang, $where , $paginating ){
+
+		   $sql = "WITH cte_1 AS ( SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, a.MaLichSuPhieu,b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
+		   	   Tongtien =  DonGia * b.SoLuong
+			FROM [tblLichSuPhieu] a 
+			JOIN [tblLSPhieu_HangBan] b
+			ON a.MaLichSuPhieu=b.MaLichSuPhieu  
+			JOIN [tblLSPhieu_CTThanhToan] c
+			ON b.MaLichSuPhieu=c.MaLichSuPhieu 
+			WHERE substring( Convert(varchar,b.ThoiGianBan,126),0,8) = '$tuThang' and b.SoLuong > 0
+			 ";
+		if ( ! empty($tenQuay) )
+		{	
+			$sql .= " AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		if ( $where == '')
+	    {
+	    	$sql .= ' ) SELECT * FROM   cte_1';
+	    	$sql .= " WHERE ". $paginating ;
+	    } 
+	    else
+	    {	
+	    	$sql .= '  ) ,
+	cte_2 as (
+		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien , Tongtien
+		FROM cte_1 
+		WHERE ' . $where . '
+	)
+
+	SELECT * FROM   cte_2';
+
+	    	$sql .= " WHERE " .  $paginating ;
+	    }
+	  
+		try{
+
+	     	$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+	       		
+	       		return $rs;;
+			
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getBillDetails_Tot_Month(  $tenQuay, $tuThang, $where ){
+	
+		$sql = "WITH cte AS ( SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, a.MaLichSuPhieu,b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien = DonGia * SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, Tongtien,  RowNum = row_number() over (order by a.MaLichSuPhieu)
+			FROM [tblLichSuPhieu] a 
+			JOIN [tblLSPhieu_HangBan] b
+			ON a.MaLichSuPhieu=b.MaLichSuPhieu  
+			JOIN [tblLSPhieu_CTThanhToan] c
+			ON b.MaLichSuPhieu=c.MaLichSuPhieu
+			WHERE substring( Convert(varchar, b.ThoiGianBan,126),0,8) = '$tuThang' and SoLuong >0 
+			";
+
+		if ( ! empty($tenQuay) )
+		{	
+			 $sql .= " AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		 $sql .= " ) SELECT count(*) FROM   cte  ";
+
+		if( $where != "" ){
+
+	     	$sql .= " WHERE ";
+
+	     	$sql .= $where;
+
+     	}
+
+		try{ //var_dump($sql);die;
+
+	     	$rs = $this->conn->query($sql)->fetchColumn();
+	       		
+	       		return $rs;;
+			
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getBillDetails_Rec_Year( $tenQuay, $tuNam, $where , $paginating ){
+
+		   $sql = "WITH cte_1 AS ( SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, a.MaLichSuPhieu,b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
+		   	   Tongtien =  DonGia * b.SoLuong
+			FROM [tblLichSuPhieu] a 
+			JOIN [tblLSPhieu_HangBan] b
+			ON a.MaLichSuPhieu=b.MaLichSuPhieu  
+			JOIN [tblLSPhieu_CTThanhToan] c
+			ON b.MaLichSuPhieu=c.MaLichSuPhieu 
+			WHERE substring( Convert(varchar,b.ThoiGianBan,126),0,5) = '$tuNam' and b.SoLuong > 0
+			 ";
+		if ( ! empty($tenQuay) )
+		{	
+			$sql .= " AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		if ( $where == '')
+	    {
+	    	$sql .= ' ) SELECT * FROM   cte_1';
+	    	$sql .= " WHERE ". $paginating ;
+	    } 
+	    else
+	    {	
+	    	$sql .= '  ) ,
+	cte_2 as (
+		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien , Tongtien
+		FROM cte_1 
+		WHERE ' . $where . '
+	)
+
+	SELECT * FROM   cte_2';
+
+	    	$sql .= " WHERE " .  $paginating ;
+	    }
+	  
+		try{
+
+	     	$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+	       		
+	       		return $rs;;
+			
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
+	public function getBillDetails_Tot_Year(  $tenQuay, $tuNam, $where ){
+	
+		$sql = "WITH cte AS ( SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, a.MaLichSuPhieu,b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien = DonGia * SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, Tongtien,  RowNum = row_number() over (order by a.MaLichSuPhieu)
+			FROM [tblLichSuPhieu] a 
+			JOIN [tblLSPhieu_HangBan] b
+			ON a.MaLichSuPhieu=b.MaLichSuPhieu  
+			JOIN [tblLSPhieu_CTThanhToan] c
+			ON b.MaLichSuPhieu=c.MaLichSuPhieu
+			WHERE substring( Convert(varchar, b.ThoiGianBan,126),0,5) = '$tuNam' and SoLuong >0 
+			";
+
+		if ( ! empty($tenQuay) )
+		{	
+			 $sql .= " AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		 $sql .= " ) SELECT count(*) FROM   cte  ";
+
+		if( $where != "" ){
+
+	     	$sql .= " WHERE ";
+
+	     	$sql .= $where;
 
      	}
 
@@ -653,21 +845,26 @@ class GoldenLotus extends General{
     }
   }
 	
-	 public function getPayMethodDetailsByMonthRange_Rec(  $tungay, $denngay, $where , $paginating ){
+	 public function getPayMethodDetails_Rec_Day( $tenQuay, $tungay,  $where , $paginating ){
 
   	$sql = "";
-    $sql .= "With cte_1 as 
-	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) between '$tungay' and '$denngay'
-	)  ";
-    
+     $sql .= "With cte_1 as 
+	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,11 ) = '$tungay' 
+	  ";
+
+    if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
     if ( $where == '')
     {	
-    	$sql .= 'SELECT * FROM   cte_1';
-    	$sql .= " WHERE " . $paginating ;
+    	$sql .= ' ) SELECT * FROM   cte_1';
+    	 $sql .= " WHERE " . $paginating ;
     } 
     else
     {	
-    	$sql .= ' ,
+    	$sql .= ' ) ,
 	cte_2 as (
 		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), MaLichSuPhieu, MaKhachHang , TongTien , MaKhu, MaBan, TienGiamGia , SoTienDVPhi , SoTienVAT , GioVao,ThoiGianDongPhieu, TienThucTra, [MaLoaiThe] 
 		FROM cte_1 
@@ -676,7 +873,7 @@ class GoldenLotus extends General{
 
 	SELECT * FROM   cte_2';
 
-    	$sql .= " WHERE " . $paginating;
+    	  $sql .= " WHERE " . $paginating;
 
    }
       
@@ -691,12 +888,19 @@ class GoldenLotus extends General{
     }
   }
 
-  public function getPayMethodDetailsByMonthRange_Tot(  $params, $tungay, $denngay, $where ){
+  public function getPayMethodDetails_Tot_Day(  $tenQuay, $tungay,  $where ){
 
   	$sql = "";
     $sql .= "With cte as 
-	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) between '$tungay' and '$denngay'
-	) 
+	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu WHERE substring( Convert(varchar,GioVao,126),0,11 ) = '$tungay' 
+	";
+
+	if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+	$sql .= " ) 
 	SELECT count(*) FROM   cte";
 
      if( $where != "" ){
@@ -719,6 +923,162 @@ class GoldenLotus extends General{
     }
   }
 
+  	public function getPayMethodDetails_Rec_Month( $tenQuay, $tuThang,  $where , $paginating ){
+
+  	$sql = "";
+    $sql .= "With cte_1 as 
+	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,8 ) = '$tuThang' 
+	 ";
+
+    if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+    if ( $where == '')
+    {	
+    	$sql .= ') SELECT * FROM   cte_1';
+    	 $sql .= " WHERE " . $paginating ;
+    } 
+    else
+    {	
+    	$sql .= ' ),
+	cte_2 as (
+		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), MaLichSuPhieu, MaKhachHang , TongTien , MaKhu, MaBan, TienGiamGia , SoTienDVPhi , SoTienVAT , GioVao,ThoiGianDongPhieu, TienThucTra, [MaLoaiThe] 
+		FROM cte_1 
+		WHERE ' . $where . '
+	)
+
+	SELECT * FROM  cte_2';
+
+    	$sql .= " WHERE " . $paginating;
+
+   }
+      
+    try{//var_dump($sql);die;
+      
+      	$rs = $this->conn->query($sql)->fetchAll();
+      	return $rs;
+
+    }
+    catch ( PDOException $error ){
+      echo $error->getMessage();
+    }
+  }
+
+  public function getPayMethodDetails_Tot_Month(  $tenQuay, $tuThang,  $where ){
+
+  	$sql = "";
+    $sql .= "With cte as 
+	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu WHERE substring( Convert(varchar,GioVao,126),0,8 ) = '$tuThang' 
+	";
+
+	if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+	$sql .= " ) 
+	SELECT count(*) FROM   cte";
+
+     if( $where != "" ){
+
+     	//if( stripos($sql, 'WHERE') !== false )  $sql .= "AND";  else  
+     	$sql .= " WHERE ";
+
+     	$sql .= $where;
+
+     }
+
+    try{
+      
+      $rs = $this->conn->query($sql)->fetchColumn();
+      return $rs;
+
+    }
+    catch ( PDOException $error ){
+      echo $error->getMessage();
+    }
+  }
+
+
+	public function getPayMethodDetails_Rec_Year( $tenQuay, $tuNam,  $where , $paginating ){
+
+  	$sql = "";
+    $sql .= "With cte_1 as 
+	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,5 ) = '$tuNam' 
+	 ";
+
+    if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+    if ( $where == '')
+    {	
+    	$sql .= ') SELECT * FROM   cte_1';
+    	 $sql .= " WHERE " . $paginating ;
+    } 
+    else
+    {	
+    	$sql .= ' ),
+	cte_2 as (
+		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), MaLichSuPhieu, MaKhachHang , TongTien , MaKhu, MaBan, TienGiamGia , SoTienDVPhi , SoTienVAT , GioVao,ThoiGianDongPhieu, TienThucTra, [MaLoaiThe] 
+		FROM cte_1 
+		WHERE ' . $where . '
+	)
+
+	SELECT * FROM  cte_2';
+
+    	$sql .= " WHERE " . $paginating;
+
+   }
+      
+    try{//var_dump($sql);die;
+      
+      	$rs = $this->conn->query($sql)->fetchAll();
+      	return $rs;
+
+    }
+    catch ( PDOException $error ){
+      echo $error->getMessage();
+    }
+  }
+
+  public function getPayMethodDetails_Tot_Year(  $tenQuay, $tuNam,  $where ){
+
+  	$sql = "";
+    $sql .= "With cte as 
+	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu WHERE substring( Convert(varchar,GioVao,126),0,5 ) = '$tuNam' 
+	";
+
+	if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+	$sql .= " ) 
+	SELECT count(*) FROM   cte";
+
+     if( $where != "" ){
+
+     	//if( stripos($sql, 'WHERE') !== false )  $sql .= "AND";  else  
+     	$sql .= " WHERE ";
+
+     	$sql .= $where;
+
+     }
+
+    try{
+      
+      $rs = $this->conn->query($sql)->fetchColumn();
+      return $rs;
+
+    }
+    catch ( PDOException $error ){
+      echo $error->getMessage();
+    }
+  }
 
 	 public function getFoodGroupsByDate( $date ){
 		$sql = "select Ten from  [tblLSPhieu_HangBan] a 
@@ -1324,7 +1684,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 	
 	
 
-	public function getQtyOrderSummary( $date ) {
+	public function getQtyOrderSummary_Day( $date, $tenQuay ) {
 		 $sql = " SELECT SUM(CASE WHEN SoLuong<=1 THEN 1 ELSE 0 END) as LessThanOrEqualTo1,
 			 SUM(CASE WHEN SoLuong between 1 and 2 THEN 1 ELSE 0 END) as From1To2,
 			 SUM(CASE WHEN SoLuong between 2 and 3 THEN 1 ELSE 0 END) as From2To3,
@@ -1335,11 +1695,18 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 				from [tblLichSuPhieu] a Join
 				[tblLSPhieu_HangBan] b
 				on   a.MaLichSuPhieu = b.MaLichSuPhieu Where 
-				substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date'
-				group by a.MaLichSuPhieu) t1";
+				substring( Convert(varchar,ThoiGianBan,126),0,11 ) ='$date'
+				";
+
+	if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+		$sql .= " group by a.MaLichSuPhieu) t1";
 
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
 		
 					return $rs;
 			}
@@ -1348,7 +1715,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSalesAmountSummary( $date ) {
+	public function getSalesAmountSummary_Day( $date, $tenQuay ) {
 		$sql = "SELECT SUM(CASE WHEN TienThucTra<=500000 THEN 1 ELSE 0 END) as LessThanOrEqualToHalfMil,
 				 SUM(CASE WHEN TienThucTra between 500000 and 1000000 THEN 1 ELSE 0 END) as FromHalfMilTo1,
 				 SUM(CASE WHEN TienThucTra between 1000000 and 2000000 THEN 1 ELSE 0 END) as From1To2,
@@ -1359,13 +1726,17 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 					(
 					select a.MaLichSuPhieu, sum (TienThucTra) as TienThucTra
 					from [tblLichSuPhieu] a  Where 
-					substring( Convert(varchar,ThoiGianTaoPhieu,111),0,11 ) ='$date'
-					group by a.MaLichSuPhieu
-					) t1
+					substring( Convert(varchar,ThoiGianTaoPhieu,126),0,11 ) ='$date'
 				";
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		$sql .= " group by a.MaLichSuPhieu) t1";
 
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
 		
 					return $rs;
 			}
@@ -1374,93 +1745,175 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getFoodSoldQtyByHour( $date, $nhom_hang_ban = null ){
+	public function getQtyOrderSummary_Month( $date, $tenQuay ) {
+		 $sql = " SELECT SUM(CASE WHEN SoLuong<=1 THEN 1 ELSE 0 END) as LessThanOrEqualTo1,
+			 SUM(CASE WHEN SoLuong between 1 and 2 THEN 1 ELSE 0 END) as From1To2,
+			 SUM(CASE WHEN SoLuong between 2 and 3 THEN 1 ELSE 0 END) as From2To3,
+			 SUM(CASE WHEN SoLuong between 2 and 3 THEN 1 ELSE 0 END) as From3To4,
+			 SUM(CASE WHEN SoLuong >=4 THEN 1 ELSE 0 END) as GreaterThan4
+			 from
+				(select a.MaLichSuPhieu, sum (SoLuong) as SoLuong
+				from [tblLichSuPhieu] a Join
+				[tblLSPhieu_HangBan] b
+				on   a.MaLichSuPhieu = b.MaLichSuPhieu Where 
+				substring( Convert(varchar,ThoiGianBan,126),0,8 ) ='$date'
+				";
 
-		if( $nhom_hang_ban == null)
-		{
-			 $sql = "select
-				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '09:00:00' and '09:59:59' THEN SoLuong ELSE 0 END) as '09h-10h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '10:00:00' and '10:59:59' THEN SoLuong ELSE 0 END) as '10h-11h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '11:00:00' and '11:59:59' THEN SoLuong ELSE 0 END) as '11h-12h',	
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '12:00:00' and '12:59:59' THEN SoLuong ELSE 0 END) as '12h-13h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '13:00:00' and '13:59:59' THEN SoLuong ELSE 0 END) as '13h-14h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '14:00:00' and '14:59:59' THEN SoLuong ELSE 0 END) as '14h-15h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '15:00:00' and '15:59:59' THEN SoLuong ELSE 0 END) as '15h-16h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '16:00:00' and '16:59:59' THEN SoLuong ELSE 0 END) as '16h-17h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '17:00:00' and '17:59:59' THEN SoLuong ELSE 0 END) as '17h-18h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '18:00:00' and '18:59:59' THEN SoLuong ELSE 0 END) as '18h-19h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '21h-22h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '22h-23h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
-				from [tblLSPhieu_HangBan]
-				where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
-				";
-		}
-		else 
-		{
-			 $sql = "select
-				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '09:00:00' and '09:59:59' THEN SoLuong ELSE 0 END) as '09h-10h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '10:00:00' and '10:59:59' THEN SoLuong ELSE 0 END) as '10h-11h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '11:00:00' and '11:59:59' THEN SoLuong ELSE 0 END) as '11h-12h',	
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '12:00:00' and '12:59:59' THEN SoLuong ELSE 0 END) as '12h-13h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '13:00:00' and '13:59:59' THEN SoLuong ELSE 0 END) as '13h-14h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '14:00:00' and '14:59:59' THEN SoLuong ELSE 0 END) as '14h-15h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '15:00:00' and '15:59:59' THEN SoLuong ELSE 0 END) as '15h-16h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '16:00:00' and '16:59:59' THEN SoLuong ELSE 0 END) as '16h-17h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '17:00:00' and '17:59:59' THEN SoLuong ELSE 0 END) as '17h-18h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '18:00:00' and '18:59:59' THEN SoLuong ELSE 0 END) as '18h-19h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '21h-22h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '22h-23h',
-					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-					between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
-				from [tblLSPhieu_HangBan] a
-					Left join [tblDMHangBan] b
-					on a.MaHangBan = b.MaHangBan
-					left join [tblDMNhomHangBan] c
-					on b.[MaNhomHangBan] = c.[Ma]
-					where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
-					and b.[MaNhomHangBan]='$nhom_hang_ban'
-				";
-		}
+	if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+		 $sql .= " group by a.MaLichSuPhieu) t1";
+
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSalesAmountSummary_Month( $date, $tenQuay ) {
+		$sql = "SELECT SUM(CASE WHEN TienThucTra<=500000 THEN 1 ELSE 0 END) as LessThanOrEqualToHalfMil,
+				 SUM(CASE WHEN TienThucTra between 500000 and 1000000 THEN 1 ELSE 0 END) as FromHalfMilTo1,
+				 SUM(CASE WHEN TienThucTra between 1000000 and 2000000 THEN 1 ELSE 0 END) as From1To2,
+				 SUM(CASE WHEN TienThucTra between 2000000 and 3000000 THEN 1 ELSE 0 END) as From2To3,
+				 SUM(CASE WHEN TienThucTra between 3000000 and 4000000 THEN 1 ELSE 0 END) as From3To4,
+				 SUM(CASE WHEN TienThucTra >=4000000 THEN 1 ELSE 0 END) as GreaterThan4
+				 from
+					(
+					select a.MaLichSuPhieu, sum (TienThucTra) as TienThucTra
+					from [tblLichSuPhieu] a  Where 
+					substring( Convert(varchar,ThoiGianTaoPhieu,126),0,8 ) ='$date'
+				";
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		$sql .= " group by a.MaLichSuPhieu) t1";
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getQtyOrderSummary_Year( $date, $tenQuay ) {
+		 $sql = " SELECT SUM(CASE WHEN SoLuong<=1 THEN 1 ELSE 0 END) as LessThanOrEqualTo1,
+			 SUM(CASE WHEN SoLuong between 1 and 2 THEN 1 ELSE 0 END) as From1To2,
+			 SUM(CASE WHEN SoLuong between 2 and 3 THEN 1 ELSE 0 END) as From2To3,
+			 SUM(CASE WHEN SoLuong between 2 and 3 THEN 1 ELSE 0 END) as From3To4,
+			 SUM(CASE WHEN SoLuong >=4 THEN 1 ELSE 0 END) as GreaterThan4
+			 from
+				(select a.MaLichSuPhieu, sum (SoLuong) as SoLuong
+				from [tblLichSuPhieu] a Join
+				[tblLSPhieu_HangBan] b
+				on   a.MaLichSuPhieu = b.MaLichSuPhieu Where 
+				substring( Convert(varchar,ThoiGianBan,126),0,5 ) ='$date'
+				";
+
+	if( ! empty($tenQuay) )
+	{
+		$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}
+
+		 $sql .= " group by a.MaLichSuPhieu) t1";
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSalesAmountSummary_Year( $date, $tenQuay ) {
+		$sql = "SELECT SUM(CASE WHEN TienThucTra<=500000 THEN 1 ELSE 0 END) as LessThanOrEqualToHalfMil,
+				 SUM(CASE WHEN TienThucTra between 500000 and 1000000 THEN 1 ELSE 0 END) as FromHalfMilTo1,
+				 SUM(CASE WHEN TienThucTra between 1000000 and 2000000 THEN 1 ELSE 0 END) as From1To2,
+				 SUM(CASE WHEN TienThucTra between 2000000 and 3000000 THEN 1 ELSE 0 END) as From2To3,
+				 SUM(CASE WHEN TienThucTra between 3000000 and 4000000 THEN 1 ELSE 0 END) as From3To4,
+				 SUM(CASE WHEN TienThucTra >=4000000 THEN 1 ELSE 0 END) as GreaterThan4
+				 from
+					(
+					select a.MaLichSuPhieu, sum (TienThucTra) as TienThucTra
+					from [tblLichSuPhieu] a  Where 
+					substring( Convert(varchar,ThoiGianTaoPhieu,126),0,5 ) ='$date'
+				";
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		$sql .= " group by a.MaLichSuPhieu) t1";
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getFoodSoldQtyByHour_Day( $tenQuay, $date ){
+
+		 $sql = "select
+			SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '09:00:00' and '09:59:59' THEN SoLuong ELSE 0 END) as '09h-10h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '10:00:00' and '10:59:59' THEN SoLuong ELSE 0 END) as '10h-11h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '11:00:00' and '11:59:59' THEN SoLuong ELSE 0 END) as '11h-12h',	
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '12:00:00' and '12:59:59' THEN SoLuong ELSE 0 END) as '12h-13h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '13:00:00' and '13:59:59' THEN SoLuong ELSE 0 END) as '13h-14h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '14:00:00' and '14:59:59' THEN SoLuong ELSE 0 END) as '14h-15h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '15:00:00' and '15:59:59' THEN SoLuong ELSE 0 END) as '15h-16h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '16:00:00' and '16:59:59' THEN SoLuong ELSE 0 END) as '16h-17h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '17:00:00' and '17:59:59' THEN SoLuong ELSE 0 END) as '17h-18h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '18:00:00' and '18:59:59' THEN SoLuong ELSE 0 END) as '18h-19h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '21h-22h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '22h-23h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
+			from [tblLSPhieu_HangBan]
+			where substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = '$date'
+			";
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
 		
 					return $rs;
 			}
@@ -1471,96 +1924,54 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 	}
 
-	public function getSalesAmountByHour( $date, $nhom_hang_ban = null ){
+	public function getSalesAmountByHour_Day( $tenQuay, $date ){
 
-		if( $nhom_hang_ban == null)
-		{
-			$sql = "select
+		
+		$sql = "select
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
 						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '09:00:00' and '09:59:59' THEN ThanhTien ELSE 0 END) as '09h-10h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '10:00:00' and '10:59:59' THEN ThanhTien ELSE 0 END) as '10h-11h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '11:00:00' and '11:59:59' THEN ThanhTien ELSE 0 END) as '11h-12h',	
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '12:00:00' and '12:59:59' THEN ThanhTien ELSE 0 END) as '12h-13h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '13:00:00' and '13:59:59' THEN ThanhTien ELSE 0 END) as '13h-14h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '14:00:00' and '14:59:59' THEN ThanhTien ELSE 0 END) as '14h-15h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '15:00:00' and '15:59:59' THEN ThanhTien ELSE 0 END) as '15h-16h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '16:00:00' and '16:59:59' THEN ThanhTien ELSE 0 END) as '16h-17h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '17:00:00' and '17:59:59' THEN ThanhTien ELSE 0 END) as '17h-18h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '18:00:00' and '18:59:59' THEN ThanhTien ELSE 0 END) as '18h-19h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '19:00:00' and '19:59:59' THEN ThanhTien ELSE 0 END) as '19h-20h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '21h-22h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '22h-23h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '23h-24h'
-							
-						from [tblLSPhieu_HangBan]
+						between '09:00:00' and '09:59:59' THEN ThanhTien ELSE 0 END) as '09h-10h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '10:00:00' and '10:59:59' THEN ThanhTien ELSE 0 END) as '10h-11h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '11:00:00' and '11:59:59' THEN ThanhTien ELSE 0 END) as '11h-12h',	
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '12:00:00' and '12:59:59' THEN ThanhTien ELSE 0 END) as '12h-13h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '13:00:00' and '13:59:59' THEN ThanhTien ELSE 0 END) as '13h-14h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '14:00:00' and '14:59:59' THEN ThanhTien ELSE 0 END) as '14h-15h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '15:00:00' and '15:59:59' THEN ThanhTien ELSE 0 END) as '15h-16h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '16:00:00' and '16:59:59' THEN ThanhTien ELSE 0 END) as '16h-17h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '17:00:00' and '17:59:59' THEN ThanhTien ELSE 0 END) as '17h-18h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '18:00:00' and '18:59:59' THEN ThanhTien ELSE 0 END) as '18h-19h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '19:00:00' and '19:59:59' THEN ThanhTien ELSE 0 END) as '19h-20h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '21h-22h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '22h-23h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '23h-24h'
+						
+					from [tblLSPhieu_HangBan]
 
-						where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
-				";
-		}
-		else 
+					where substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = '$date'
+			";
+		if( ! empty($tenQuay) )
 		{
-			$sql = "select
-						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '09:00:00' and '09:59:59' THEN ThanhTien ELSE 0 END) as '09h-10h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '10:00:00' and '10:59:59' THEN ThanhTien ELSE 0 END) as '10h-11h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '11:00:00' and '11:59:59' THEN ThanhTien ELSE 0 END) as '11h-12h',	
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '12:00:00' and '12:59:59' THEN ThanhTien ELSE 0 END) as '12h-13h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '13:00:00' and '13:59:59' THEN ThanhTien ELSE 0 END) as '13h-14h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '14:00:00' and '14:59:59' THEN ThanhTien ELSE 0 END) as '14h-15h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '15:00:00' and '15:59:59' THEN ThanhTien ELSE 0 END) as '15h-16h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '16:00:00' and '16:59:59' THEN ThanhTien ELSE 0 END) as '16h-17h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '17:00:00' and '17:59:59' THEN ThanhTien ELSE 0 END) as '17h-18h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '18:00:00' and '18:59:59' THEN ThanhTien ELSE 0 END) as '18h-19h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '19:00:00' and '19:59:59' THEN ThanhTien ELSE 0 END) as '19h-20h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '21h-22h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '22h-23h',
-							SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
-							between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '23h-24h'
-							
-					from [tblLSPhieu_HangBan] b
-						Left join [tblDMHangBan] c
-						on b.MaHangBan = c.MaHangBan
-						left join [tblDMNhomHangBan] d
-						on c.[MaNhomHangBan] = d.[Ma]
-					where substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date'
-					and c.[MaNhomHangBan]='$nhom_hang_ban'
-				";
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
 		}
+	
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
 		
 					return $rs;
 			}
@@ -1570,6 +1981,237 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 
 	}
+
+	public function getFoodSoldQtyByHour_Month( $tenQuay, $date ){
+
+		$sql = "select
+			SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '09:00:00' and '09:59:59' THEN SoLuong ELSE 0 END) as '09h-10h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '10:00:00' and '10:59:59' THEN SoLuong ELSE 0 END) as '10h-11h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '11:00:00' and '11:59:59' THEN SoLuong ELSE 0 END) as '11h-12h',	
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '12:00:00' and '12:59:59' THEN SoLuong ELSE 0 END) as '12h-13h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '13:00:00' and '13:59:59' THEN SoLuong ELSE 0 END) as '13h-14h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '14:00:00' and '14:59:59' THEN SoLuong ELSE 0 END) as '14h-15h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '15:00:00' and '15:59:59' THEN SoLuong ELSE 0 END) as '15h-16h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '16:00:00' and '16:59:59' THEN SoLuong ELSE 0 END) as '16h-17h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '17:00:00' and '17:59:59' THEN SoLuong ELSE 0 END) as '17h-18h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '18:00:00' and '18:59:59' THEN SoLuong ELSE 0 END) as '18h-19h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '21h-22h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '22h-23h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
+			from [tblLSPhieu_HangBan]
+			where substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = '$date'
+			";
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+
+	}
+
+	public function getSalesAmountByHour_Month( $tenQuay, $date ){
+
+		
+		$sql = "select
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '09:00:00' and '09:59:59' THEN ThanhTien ELSE 0 END) as '09h-10h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '10:00:00' and '10:59:59' THEN ThanhTien ELSE 0 END) as '10h-11h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '11:00:00' and '11:59:59' THEN ThanhTien ELSE 0 END) as '11h-12h',	
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '12:00:00' and '12:59:59' THEN ThanhTien ELSE 0 END) as '12h-13h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '13:00:00' and '13:59:59' THEN ThanhTien ELSE 0 END) as '13h-14h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '14:00:00' and '14:59:59' THEN ThanhTien ELSE 0 END) as '14h-15h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '15:00:00' and '15:59:59' THEN ThanhTien ELSE 0 END) as '15h-16h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '16:00:00' and '16:59:59' THEN ThanhTien ELSE 0 END) as '16h-17h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '17:00:00' and '17:59:59' THEN ThanhTien ELSE 0 END) as '17h-18h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '18:00:00' and '18:59:59' THEN ThanhTien ELSE 0 END) as '18h-19h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '19:00:00' and '19:59:59' THEN ThanhTien ELSE 0 END) as '19h-20h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '21h-22h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '22h-23h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '23h-24h'
+						
+					from [tblLSPhieu_HangBan]
+
+					where substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = '$date'
+			";
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+	
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+
+	}
+
+	public function getFoodSoldQtyByHour_Year( $tenQuay, $date ){
+
+		 $sql = "select
+			SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '09:00:00' and '09:59:59' THEN SoLuong ELSE 0 END) as '09h-10h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '10:00:00' and '10:59:59' THEN SoLuong ELSE 0 END) as '10h-11h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '11:00:00' and '11:59:59' THEN SoLuong ELSE 0 END) as '11h-12h',	
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '12:00:00' and '12:59:59' THEN SoLuong ELSE 0 END) as '12h-13h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '13:00:00' and '13:59:59' THEN SoLuong ELSE 0 END) as '13h-14h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '14:00:00' and '14:59:59' THEN SoLuong ELSE 0 END) as '14h-15h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '15:00:00' and '15:59:59' THEN SoLuong ELSE 0 END) as '15h-16h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '16:00:00' and '16:59:59' THEN SoLuong ELSE 0 END) as '16h-17h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '17:00:00' and '17:59:59' THEN SoLuong ELSE 0 END) as '17h-18h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '18:00:00' and '18:59:59' THEN SoLuong ELSE 0 END) as '18h-19h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '19:00:00' and '19:59:59' THEN SoLuong ELSE 0 END) as '19h-20h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '20h-21h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '21h-22h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '22h-23h',
+				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
+			from [tblLSPhieu_HangBan]
+			where substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = '$date'
+			";
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+
+	}
+
+	public function getSalesAmountByHour_Year( $tenQuay, $date ){
+
+		
+		$sql = "select
+					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '09:00:00' and '09:59:59' THEN ThanhTien ELSE 0 END) as '09h-10h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '10:00:00' and '10:59:59' THEN ThanhTien ELSE 0 END) as '10h-11h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '11:00:00' and '11:59:59' THEN ThanhTien ELSE 0 END) as '11h-12h',	
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '12:00:00' and '12:59:59' THEN ThanhTien ELSE 0 END) as '12h-13h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '13:00:00' and '13:59:59' THEN ThanhTien ELSE 0 END) as '13h-14h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '14:00:00' and '14:59:59' THEN ThanhTien ELSE 0 END) as '14h-15h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '15:00:00' and '15:59:59' THEN ThanhTien ELSE 0 END) as '15h-16h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '16:00:00' and '16:59:59' THEN ThanhTien ELSE 0 END) as '16h-17h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '17:00:00' and '17:59:59' THEN ThanhTien ELSE 0 END) as '17h-18h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '18:00:00' and '18:59:59' THEN ThanhTien ELSE 0 END) as '18h-19h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '19:00:00' and '19:59:59' THEN ThanhTien ELSE 0 END) as '19h-20h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '20h-21h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '21h-22h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '22h-23h',
+						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
+						between '20:00:00' and '20:59:59' THEN ThanhTien ELSE 0 END) as '23h-24h'
+						
+					from [tblLSPhieu_HangBan]
+
+					where substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = '$date'
+			";
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+	
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+	
+		}
+
+	}
+
 
 	public function getNDMNhomHangBan() {
 		$sql = "select * from [tblDMNhomHangBan] order By Ten";
@@ -1697,9 +2339,10 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 	}
 	
-	public function getTablesAndBills( $date ){
+	public function getTablesAndBills( $date,  $tenQuay = null ){
 
-		$sql = "IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
+		$sql = "SET NOCOUNT ON;
+		IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
 			BEGIN
 			DROP TABLE #temp_t1
 			END
@@ -1718,13 +2361,15 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						on a.[MaKhu] = b.[MaKhu]
 						left join [tblLichSuPhieu] c
 						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'
+						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$date'
 						left JOIN [tblLSPhieu_HangBan] d
 						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
-						
-						where a.MaKhu = '04-NH'
-						--where b.MaBan='W.3' or b.MaBan='W.13'
-			) t1
+";
+	if( ! empty($tenQuay) )
+	{
+		$sql .=" WHERE  d.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+	}				
+	$sql .=" ) t1
 
 
 				select MaBan, case when i.rnk=1 THEN i.MaLichSuPhieu  ELSE ' ' 	END as MaLichSuPhieu, 
@@ -1745,9 +2390,10 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 	}
 
-	public function getTablesAndBills_Occupied( $date ){
-
-		$sql = "IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
+	public function getTablesAndBills_Occupied( $date, $tenQuay ){
+		echo $tenQuay ;
+		$sql = "SET NOCOUNT ON;
+		IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
 			BEGIN
 			DROP TABLE #temp_t1
 			END
@@ -1766,17 +2412,19 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						on a.[MaKhu] = b.[MaKhu]
 						left join [tblLichSuPhieu] c
 						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'
+						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$date'
 						left JOIN [tblLSPhieu_HangBan] d
 						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
-						
-						where a.MaKhu = '04-NH'
-						--where (b.MaBan='W.3' or b.MaBan='W.13')
-						and c.MaLichSuPhieu IS NOT NULL and [ThoiGianDongPhieu] IS NULL 
-			) t1
 
+						WHERE c.MaLichSuPhieu IS NOT NULL and [ThoiGianDongPhieu] IS NULL 
+			";
 
-				select MaBan, case when i.rnk=1 THEN i.MaLichSuPhieu  ELSE ' ' 	END as MaLichSuPhieu, 
+			if( ! empty($tenQuay) )
+			{
+				$sql .=" AND  d.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+			}
+
+			 $sql .= " ) t1 select MaBan, case when i.rnk=1 THEN i.MaLichSuPhieu  ELSE ' ' 	END as MaLichSuPhieu, 
 				GioVao,  TenHangBan, DonGia, SoLuong, ThanhTien, TongDoanhThu, MaNhanVien
 				FROM (
 					select *
@@ -1794,9 +2442,10 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 	}
 
-	public function getTablesAndBills_Empty( $date ){
+	public function getTablesAndBills_Empty( $date, $tenQuay ){
 
-		$sql = "IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
+		$sql = "SET NOCOUNT ON;
+		IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
 			BEGIN
 			DROP TABLE #temp_t1
 			END
@@ -1815,19 +2464,20 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						on a.[MaKhu] = b.[MaKhu]
 						left join [tblLichSuPhieu] c
 						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'
+						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$date'
 						left JOIN [tblLSPhieu_HangBan] d
 						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
-						
-						where a.MaKhu = '04-NH'
-						--where (b.MaBan='W.3' or b.MaBan='W.13')
-						and ( c.MaLichSuPhieu IS  NULL 
+
+						WHERE ( c.MaLichSuPhieu IS  NULL 
 							or ( c.MaLichSuPhieu IS  not NULL  and [ThoiGianDongPhieu] is not null )
 						)
-			) t1
+		";
 
-
-				select MaBan, case when i.rnk=1 THEN i.MaLichSuPhieu  ELSE ' ' 	END as MaLichSuPhieu, 
+			if( ! empty($tenQuay) )
+			{
+				$sql .="  AND  d.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] ) ";
+			}
+				$sql .= " ) t1 select MaBan, case when i.rnk=1 THEN i.MaLichSuPhieu  ELSE ' ' 	END as MaLichSuPhieu, 
 				GioVao, TenHangBan, DonGia, SoLuong, ThanhTien, TongDoanhThu, MaNhanVien
 				FROM (
 					select *

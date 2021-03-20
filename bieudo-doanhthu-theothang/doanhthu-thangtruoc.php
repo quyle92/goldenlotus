@@ -18,10 +18,16 @@
     }
   }
 
- $sql = rtrim($sql, ", ");
+  $sql = rtrim($sql, ", ");
 
-  $sql .=" FROM [tblLichSuPhieu]  
-    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1";
+  $sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+
+  if( ! empty($tenQuay) )
+  {
+     $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+  }
+
   try
   {
     $rs = $dbCon->query($sql)->fetchAll(PDO::FETCH_ASSOC);

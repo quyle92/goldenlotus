@@ -33,19 +33,23 @@ if($denngay == "")
 for ( $i = 1; $i <= 12; $i++ ){
 
     if($i <= 9){
-     $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '" . $this_year . "/0" . $i ."' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+     $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '" . $tungay . "/0" . $i ."' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
    }
 
     if($i > 9){
-      $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '" . $this_year . "/" . $i ."' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+      $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '" . $tungay . "/" . $i ."' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
     }
 }
   
  $sql = rtrim($sql, ", ");
 
-  $sql .=" FROM [tblLichSuPhieu]  
- 
-    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1";
+  $sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+  if( ! empty($tenQuay) )
+  {
+      $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+  }
+  
   try
   {
     $rs = $dbCon->query($sql)->fetchAll(PDO::FETCH_ASSOC);

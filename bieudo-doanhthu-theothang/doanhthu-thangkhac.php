@@ -5,9 +5,10 @@
 </script>
 	<div class="container">
 	  <div class="row">
-		<form method="POST" action="">
+		<form method="POST" action="" id="thangkhac">
 		 <div class="col-md-4 form-group">
 			<label for="tu-ngay">Từ:</label>
+      <input type='hidden' class="form-control" name="tenQuay" value="<?=isset($tenQuay ) ? $tenQuay  : ""?>"/>
 			<div class="input-group date" style="margin-bottom:5px">
 			  <input name="month-selected" type='text' class="form-control" id="tu-ngay" />
 			  <span class="input-group-addon">
@@ -39,11 +40,11 @@
          
 <?php require_once('../ajax-loading.php'); ?>
 <script>
-  $('form').on('submit', function (event){
+  $('form#thangkhac').on('submit', function (event){
     event.preventDefault();
-    var formValues= $(this).serialize();
+    var formValues= $(this).serialize();console.log(formValues)
     $.ajax({
-      url:"../bieudo-doanhthu-theothang/ajax-call/process-month.php",
+      url:"ajax-call/process-month.php",
       method:"POST",
       data:formValues,
       beforeSend :function(){
@@ -218,9 +219,10 @@
     });
   });
 
-$("#tu-ngay").datepicker({
-    format: "mm-yyyy",
-    viewMode: "years", 
-    minViewMode: "months"
-});
+ $('#tu-ngay').datetimepicker({
+     // viewMode: 'years',
+      //useCurrent: false,
+      format: 'MM-YYYY',
+      //defaultDate:dateNow
+   });
 </script>

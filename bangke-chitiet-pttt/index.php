@@ -60,9 +60,9 @@ $trungtam = isset($_SESSION['TenTrungTam'])? $_SESSION['TenTrungTam']:"";
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#tab1primary" data-toggle="tab">Hôm nay</a></li>
-                            <li><a href="#tab2primary" data-toggle="tab">Hôm qua</a></li>
-                            <li><a href="#tab3primary" data-toggle="tab">Tháng này</a></li>
+                            <li class="active"><a href="#tab1primary" data-toggle="tab">Ngày</a></li>
+                            <li><a href="#tab2primary" data-toggle="tab">Tháng</a></li>
+                            <li><a href="#tab3primary" data-toggle="tab">Năm</a></li>
                         </ul>
                 </div>
                 <div class="panel-body">

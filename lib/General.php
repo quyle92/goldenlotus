@@ -85,6 +85,22 @@ class General {
 		}
 	}
 
+	protected function GYM() {
+		$sql = "IF OBJECT_ID('[GYMView]','v') IS NOT NULL BEGIN DROP view  [GYMView] END ;";
+		 $sql_1 = "CREATE VIEW  [GYMView] AS 
+				SELECT TenHangBan FROM [tblDMHangBan] a JOIN [tblDMNhomHangBan] b ON a.MaNhomHangBan = b.Ma
+				WHERE TenQuay = 'GYM'
+				";
+		try
+		{
+			$this->conn->query($sql);
+			$this->conn->query($sql_1);
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
 	protected function RESTAURANT() {
 		$sql = "IF OBJECT_ID('[RESTAURANTView]','v') IS NOT NULL BEGIN DROP view  [RESTAURANTView] END ;";
 		$sql_1 = "CREATE VIEW  [RESTAURANTView] AS 

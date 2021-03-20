@@ -1,7 +1,7 @@
 <?php
-require('../lib/db.php');
-require('../lib/goldenlotus.php');
-require('../helper/custom-function.php');
+require('../../lib/db.php');
+require('../../lib/goldenlotus.php');
+require('../../helper/custom-function.php');
 @session_start();
 $goldenlotus = new GoldenLotus($dbCon);
 
@@ -9,8 +9,14 @@ $goldenlotus = new GoldenLotus($dbCon);
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 
-$tungay = dateConverter($params['tuNgay']);
-$denngay = dateConverter($params['denNgay']);
+$tuNgay = date('Y-m-d', strtotime($params['tuNgay']) );
+$tenQuay = isset( $params['tenQuay'] ) ? $params['tenQuay'] : "";
+
+if( ! empty($tenQuay))
+{
+    $goldenlotus->layView( $tenQuay  );
+}
+
 
 //define index of column name
 $columns = array(
@@ -58,7 +64,7 @@ $paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$
  * @var string
  */
 
-$sqlRec = $goldenlotus->getBillDetailsByMonthRange_Rec( $tungay, $denngay, $where , $paginating ); 
+$sqlRec = $goldenlotus->getBillDetails_Rec_Day( $tenQuay, $tuNgay, $where , $paginating ); 
 //var_dump($sqlRec);die;
 
 $tong_tien = 0;
@@ -96,9 +102,7 @@ foreach( $sqlRec as $r )
 /**
  * $sqlTot
  */
-$nRows = $goldenlotus->getBillDetailsByMonthRange_Tot(   $tungay, $denngay, $where ); 
-
-
+$nRows = $goldenlotus->getBillDetails_Tot_Day(  $tenQuay, $tuNgay, $where ); 
 
 $json_data = array(
         "draw"            => intval( $params['draw'] ),

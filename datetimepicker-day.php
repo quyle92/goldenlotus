@@ -23,7 +23,7 @@ $tuNgay =  isset( $_POST['tuNgay'] ) ? $_POST['tuNgay'] : '';
       <div class="form-group">
         <label for="tu-ngay" class="col-md-3 control-label">Ngày:</label><!--2020/12/01 -->
         <div class="col-md-9 input-group date">
-          <input name="tuNgay" type='text' class="form-control" id="tu-ngay" value="<?=isset($tuNgay) ? $tuNgay : date('d-m-y') ?>"/>
+          <input name="tuNgay" type='text' class="form-control" id="tu-ngay" value="<?=!empty($tuNgay) ? $tuNgay : date('d-m-y') ?>"/>
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
           </span>
