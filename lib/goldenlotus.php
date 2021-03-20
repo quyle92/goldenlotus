@@ -1431,10 +1431,15 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getBillEditDetailsBySelection( $tungay, $denngay ){
+	public function getBillEditDetailsBySelection_Day( $tuNgay, $tenQuay ){
 		$sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
-			ON a.[NVTaoMaNV] = b.MaNV
-  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' " ;
+			ON a.[NVTaoMaNV] = b.MaNV LEFT JOIN [tblLSPhieu_HangBan] c ON a.MaLichSuPhieu=c.MaLichSuPhieu
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$tuNgay' and suaPhieuIn <> 0 " ;
+
+  		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
 
 		try{
 				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -1445,6 +1450,47 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 				echo $error->getMessage();
 			}
 	}
+
+	public function getBillEditDetailsBySelection_Month( $tuThang, $tenQuay ){
+		$sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
+			ON a.[NVTaoMaNV] = b.MaNV LEFT JOIN [tblLSPhieu_HangBan] c ON a.MaLichSuPhieu=c.MaLichSuPhieu
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,8 ) = '$tuThang' and suaPhieuIn <> 0 " ;
+
+  		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getBillEditDetailsBySelection_Year( $tuNam, $tenQuay ){
+		$sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
+			ON a.[NVTaoMaNV] = b.MaNV LEFT JOIN [tblLSPhieu_HangBan] c ON a.MaLichSuPhieu=c.MaLichSuPhieu
+  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,5 ) = '$tuNam' and suaPhieuIn <> 0 " ;
+
+  		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
 
 	public function getCancelledFoodItemByDate( $date ) {
 		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' ";
@@ -1472,13 +1518,55 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getCancelledFoodItemBySelection ( $tungay, $denngay ) {
-		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay' " ;
+	public function getCancelledFoodItem_Day ( $tuNgay, $tenQuay ) {
+		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = '$tuNgay'  " ;
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-		
-					return $rs;
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+	
+				return $rs;
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
 			}
+	}
+
+	public function getCancelledFoodItem_Month ( $tuThang, $tenQuay ) {
+		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = '$tuThang' " ;
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+		
+		try{
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+	
+				return $rs;
+		}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getCancelledFoodItem_Year ( $tuNam, $tenQuay ) {
+		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = '$tuNam' " ;
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" AND TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+		
+		try{
+			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+	
+				return $rs;
+		}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 			}

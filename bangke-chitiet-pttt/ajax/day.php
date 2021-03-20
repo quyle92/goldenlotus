@@ -1,4 +1,4 @@
-<?php
+z<?php
 require('../../lib/db.php');
 require('../../lib/goldenlotus.php');
 require('../../helper/custom-function.php');

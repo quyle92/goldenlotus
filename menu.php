@@ -34,10 +34,6 @@
                     Báo cáo bán hàng chi tiết món theo từng hóa đơn</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-xemtheo-nhanvien/index.php"><i class="fas fa-user-tie"></i>
-                    Tổng hợp món ăn bán theo ngày (Xem theo nhân viên)</a>
-                </li>
-                <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-ban/index.php"><i class="fas fa-cloud-meatball"></i>
                     Tổng hợp món ăn bán</a>
                 </li>
@@ -68,15 +64,11 @@
                     Bảng kê nhật ký bỏ món</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-dobo/index.php"><i class="fas fa-recycle"></i>
-                    Tổng hợp đồ bỏ</a>
-                </li>
-                <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/danhsach-ban-doanhthu/index.php"><i class="fas fa-table"></i>
-                    Danh sách bàn - doanh thu (nhà hàng)</a>
+                    Danh sách bàn - doanh thu</a>
                 </li>
 				<li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus1" )?>/doanhthu-spa/index.php"><i class="fas fa-spa"></i>
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-spa/index.php"><i class="fas fa-spa"></i>
                     Doanh thu spa</a>
                 </li>
                 <li style="list-style-type: none;">
