@@ -14,6 +14,7 @@ if( ! empty($tenQuay))
 }
 
 $output = [];
+$totalQty = $totalRev = 0;
 
 $rs = $goldenlotus->getRevByGroup_Day( $tenQuay, $tenNhomHB, $tuNgay );
 $data = "";
@@ -28,6 +29,12 @@ $data .= '
       <td> ' . $r['SoLuong']. '</td>
       <td>' . number_format(intval($r['ThanhTien']),0,",","") . '</td>
     </tr>';
+$totalQty += intval($r['SoLuong']);
+$totalRev += intval($r['ThanhTien']);
 }
-
-echo json_encode($data);
+$output = [
+	'data' => $data,
+	'totalQty' => $totalQty,
+	'totalRev' => $totalRev,
+];
+echo json_encode($output);

@@ -9,7 +9,7 @@ $tuNgay =  isset( $_POST['tuNgay'] ) ? $_POST['tuNgay'] : '';
             <select name="tenQuay" id="tenQuay"  class="form-control" >
               <option selected value=''>Tất cả</option>
                 <?php
-                $rs = $goldenlotus->getTenQuay();
+                $rs = $goldenlotus->getTenQuayTemp();
                 foreach ( $rs as $r )
                 { ?>
                    <option <?=isset($_POST['tenQuay']) && $r['TenQuay'] == $_POST['tenQuay'] ? "selected" : "" ?>><?=$r['TenQuay']?></option>

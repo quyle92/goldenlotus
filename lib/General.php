@@ -20,6 +20,23 @@ class General {
 		call_user_func_array( array( $this, $ma_quay ), [] );
 	}
 
+	protected function SPA_ALL() {
+
+		$sql = "IF OBJECT_ID('[SPA_ALLView]','v') IS NOT NULL BEGIN DROP view  [SPA_ALLView] END ;";//(1)
+		$sql_1 = "CREATE VIEW  [SPA_ALLView] AS 
+				SELECT TenHangBan FROM [tblDMHangBan] a JOIN [tblDMNhomHangBan] b ON a.MaNhomHangBan = b.Ma
+				WHERE TenQuay IN ('SPA', 'CAFE', 'GAME', 'SNACKBAR')
+				";//(1)
+		try
+		{
+			$this->conn->query($sql);
+			$this->conn->query($sql_1);
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
 	protected function SPA() {
 
 		$sql = "IF OBJECT_ID('[SPAView]','v') IS NOT NULL BEGIN DROP view  [SpaView] END ;";//(1)

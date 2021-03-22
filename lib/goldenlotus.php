@@ -156,6 +156,37 @@ class GoldenLotus extends General{
 		}
 	}
 
+	public function getTenQuayTemp()
+	{
+		$sql = "SET NOCOUNT ON;
+		CREATE TABLE TenQuayTemp
+			(
+			   TenQuay VARCHAR(100)
+
+			) 
+		
+
+			INSERT INTO TenQuayTemp
+			VALUES
+			   ('SPA_ALL'),
+			   ('RESTAURANT')
+
+	
+
+			SELECT * FROM TenQuayTemp
+
+			DROP TAble TenQuayTemp";
+		try{
+			$rs = $this->conn->query($sql)->fetchAll();
+			
+				return $rs;
+			
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
+
 	public function changePassword( $maNV, $password, $repass, &$loi ) {
 
 		$thanhcong=true;
@@ -2722,7 +2753,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
 			where substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
 			between '$tungay' and '$denngay'  and  $makhu
-			 AND a.MaLichSuPhieu IS NOT NULL
+			 AND a.MaLichSuPhieu IS NOT NULL AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
 			)
 			 t1 
  
@@ -2782,7 +2813,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			left JOIN [tblLSPhieu_HangBan] b 
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
 			where substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
-			between '$tungay' and '$denngay' and  $makhu
+			between '$tungay' and '$denngay' and  $makhu  AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
 			AND a.MaLichSuPhieu IS NOT NULL ) t1 ;
 
  
@@ -2818,7 +2849,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			left JOIN [tblLSPhieu_HangBan] b 
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
 			where substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
-			between '$tungay' and '$denngay'  and $ma_khu
+			between '$tungay' and '$denngay'  and $ma_khu  AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
 			AND a.MaLichSuPhieu IS NOT NULL group by a.MaKhu";
 			
 		try{

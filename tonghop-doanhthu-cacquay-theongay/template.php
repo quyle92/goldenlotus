@@ -42,7 +42,11 @@ $tuNgay =  isset( $_POST['tuNgay'] ) ? $_POST['tuNgay'] : '';
   </form>
 </div>
 
-<div class="col-md-12" id="total_<?=$r['TenQuay']?>" style="margin-bottom: 10px">
+<div class="col-md-12" id="totalQty_<?=$r['TenQuay']?>" style="margin-bottom: 10px">
+  <strong class="text-danger"></strong>
+</div>
+
+<div class="col-md-12" id="totalRev_<?=$r['TenQuay']?>" style="margin-bottom: 10px">
   <strong class="text-danger"></strong>
 </div>
 
@@ -72,13 +76,14 @@ $('body').on('submit', 'form#customDate_<?=$r['TenQuay']?>', function (event){
     url: 'ajax/<?=$tenQuay?>.php',
     method:"POST",
     data:formValues,
-    // dataType:"json",
+    dataType:"json",
     success:function(response)
       { 
-        var result = JSON.parse(response);
-        var total = 0;
-        console.log(result)
-        
+        //var result = JSON.parse(response);
+        console.log(response);
+        var result = response['data'];
+        var totalQty = response['totalQty'];
+        var totalRev = response['totalRev'];
        
     if ($.fn.DataTable.isDataTable("table#<?=$r['TenQuay']?>")) {
       $("table#<?=$r['TenQuay']?>").dataTable().fnDestroy();
@@ -98,20 +103,20 @@ $('body').on('submit', 'form#customDate_<?=$r['TenQuay']?>', function (event){
      $('table#<?=$r['TenQuay']?> tbody tr td:nth-of-type(5)').each( function() {
            
           let value = $(this).html(); 
+          // totalRev += parseInt(value);
             $(this).html(addCommas(value));
       });
 
+      $('#totalRev_<?=$r['TenQuay']?> strong').html('Tổng doanh thu: ' + addCommas(totalRev) + '<sup>đ</sup>' );
+
      //output tổng số lượng
-      $('table#<?=$r['TenQuay']?> tbody tr td:nth-of-type(4)').each( function() {
+      // $('table#<?=$r['TenQuay']?> tbody tr td:nth-of-type(4)').each( function() {
          
-        let value = $(this).html(); 
-          total += parseInt(value);
+      //   let value = $(this).html(); 
+      //     totalQty += parseInt(value);
+      // });
 
-          //format number cho column ThanhTien
-          $(this).html(addCommas(value));
-      });
-
-      $('#total_<?=$r['TenQuay']?> strong').html('Tổng số lượng: ' + total);
+      $('#totalQty_<?=$r['TenQuay']?> strong').html('Tổng số lượng: ' + totalQty);
 
 
 
