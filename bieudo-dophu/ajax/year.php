@@ -5,7 +5,7 @@ require('../../lib/goldenlotus.php');
 $goldenlotus = new GoldenLotus($dbCon);
 
 $tenQuay = ( isset( $_POST['tenQuay'] ) && $_POST['tenQuay'] !== 'Tất cả') ? $_POST['tenQuay'] : "" ;
-$tuNam = isset( $_POST['tuNam'] ) ?  date_format( date_create( $_POST['tuNam'] ) , 'Y' ) : "";
+$tuNam = isset( $_POST['tuNam'] ) ?  $_POST['tuNam'] : "";
 
 if( ! empty($tenQuay))
 {

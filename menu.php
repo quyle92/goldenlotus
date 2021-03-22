@@ -22,6 +22,18 @@
                     Tổng hợp món ăn bán theo tháng</a>
                 </li>
                 <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp doanh thu các quầy (Ngày)</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theothang/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp doanh thu các quầy (Tháng)</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theonam/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp doanh thu các quầy (Năm)</a>
+                </li>
+                <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-theongay/index.php"><i class="fas fa-cookie"></i>
                     Tổng hợp món ăn bán theo ngày</a>
                 </li>

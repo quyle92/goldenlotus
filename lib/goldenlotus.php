@@ -1262,8 +1262,18 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getDMNhomHangBan(){
-		$sql="select * from [tblDMNhomHangBan] order by Ten";
+	public function getDMNhomHangBan( $tenQuay = null ){
+		
+		if( ! empty( $tenQuay ) )
+		{	
+			$sql="select * from [tblDMNhomHangBan] where [TenQuay] = '$tenQuay' order by Ten ";
+		}
+		else
+		{
+			$sql="select * from [tblDMNhomHangBan] order by Ten";
+		}
+		
+
 		try{
 				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 		
@@ -3016,6 +3026,74 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 	}
 
+	public function getRevByGroup_Day( $tenQuay, $tenNhom = null, $date )
+	{
+		 $sql = "  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
+  (DonGia * SUM(SoLuong) OVER(PARTITION BY a.TenHangBan)) as ThanhTien, [Ten] as TenNhom
+  FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan LEFT JOIN [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma 
+  WHERE substring( Convert(varchar,ThoiGianBan,126),0,11 ) = '$date' AND SoLuong > 0
+   AND a.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+
+		if( ! empty($tenNhom) )
+		{
+			 $sql .=" AND Ten ='$tenNhom' ";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getRevByGroup_Month( $tenQuay, $tenNhom = null, $date )
+	{
+		 $sql = "  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
+  (DonGia * SUM(SoLuong) OVER(PARTITION BY a.TenHangBan)) as ThanhTien, [Ten] as TenNhom
+  FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan LEFT JOIN [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma 
+  WHERE substring( Convert(varchar,ThoiGianBan,126),0,8 ) = '$date' AND SoLuong > 0
+   AND a.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+
+		if( ! empty($tenNhom) )
+		{
+			 $sql .=" AND Ten ='$tenNhom' ";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getRevByGroup_Year( $tenQuay, $tenNhom = null, $date )
+	{
+		 $sql = "  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
+  (DonGia * SUM(SoLuong) OVER(PARTITION BY a.TenHangBan)) as ThanhTien, [Ten] as TenNhom
+  FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan LEFT JOIN [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma 
+  WHERE substring( Convert(varchar,ThoiGianBan,126),0,5 ) = '$date' 
+   AND a.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] ) AND SoLuong > 0";
+
+		if( ! empty($tenNhom) )
+		{
+			 $sql .=" AND Ten ='$tenNhom' ";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
 
 
 

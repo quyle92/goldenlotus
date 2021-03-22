@@ -4,7 +4,7 @@ require("../../lib/goldenlotus.php");
 @session_start();
 $goldenlotus = new GoldenLotus($dbCon);
 
-$tuNam = isset( $_POST['tuNam']) ?  date_format( date_create( $_POST['tuNam'] ) , 'Y' ) : "";
+$tuNam = isset( $_POST['tuNam']) ? $_POST['tuNam'] : "";
 $tenQuay = isset( $_POST['tenQuay'] ) ? $_POST['tenQuay'] : "";
 //var_dump($tenQuay );die;
 if( ! empty($tenQuay))
