@@ -30,6 +30,10 @@
                     Tổng hợp doanh thu các quầy (Tháng)</a>
                 </li>
                 <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-soluong-over-sokey/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp số lượng quá số key</a>
+                </li>
+                <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theonam/index.php"><i class="fas fa-apple-alt"></i>
                     Tổng hợp doanh thu các quầy (Năm)</a>
                 </li>

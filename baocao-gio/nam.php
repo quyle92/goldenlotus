@@ -14,6 +14,8 @@ require('../datetimepicker-year.php');
 </div>
 <?php require_once('../ajax-loading.php'); ?>
 <script>
+  var mylineChart;
+  var myMoneyChart ;
 $(function () {  
   $('body').on('submit', 'form#customYear', function (event){
     event.preventDefault();
@@ -106,7 +108,13 @@ $(function () {
                }
             };
 
-          var mylineChart  = new Chart(QTY_CHART, {
+            ///this one is to fix chartjs show old data after 2nd ajax call
+             if(mylineChart != undefined)
+             {
+                mylineChart.destroy();
+             }
+
+           mylineChart  = new Chart(QTY_CHART, {
               type: 'line',
               data: dataQty,
               options: optionsQty,
@@ -201,7 +209,12 @@ $(function () {
           }
         };
 
-      var myMoneyChart  = new Chart(MONEY_CHART , {
+        if(myMoneyChart != undefined)
+       {
+          myMoneyChart.destroy();
+       }
+
+       myMoneyChart  = new Chart(MONEY_CHART , {
           type: 'line',
           data: dataMoney,
           options: optionsMoney

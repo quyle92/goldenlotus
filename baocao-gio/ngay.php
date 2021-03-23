@@ -6,17 +6,16 @@ require('../datetimepicker-day.php');
 				<div class="col-md-12" id="qtyDayContainer">
 					<canvas id="qtyDay" ></canvas>
 				</div>
-     <!--    <div class="col-md-12" >
+        <div class="col-md-12" >
           <canvas id="amtDay" ></canvas>
-        </div> -->
+        </div>
 			</div>
 
 </div>
 <?php require_once('../ajax-loading.php'); ?>
 <script>  
 //$(function () { 
-
-
+var myMoneyChart;
   $('body').on('submit', 'form#customDate', function (event){
     event.preventDefault();
 
@@ -30,8 +29,7 @@ require('../datetimepicker-day.php');
       {  
           var result = [];
           result = response;
-          //console.log(typeof (reponse) );//string
-          //console.log(typeof (result) );//object
+
          /****************** Qty *********************/   
           var qty_sum_arr = new Array();
           var maxValueQty = result.maxQty;
@@ -120,104 +118,105 @@ require('../datetimepicker-day.php');
                 options: optionsQty,
             });
 
-
-       
-        // console.log(test) ;
-        // let test = "test";
 /**************** Money *********************/
-      // var sales_sum_arr = new Array();
-      //   for (x in response.amt )
-      //   {
-      //     sales_sum_arr.push( parseInt(response.amt[x]) );
-      //   }
-      // var maxValueMoney = result.maxAmt;
+      var sales_sum_arr = new Array();
+        for (x in response.amt )
+        {
+          sales_sum_arr.push( parseInt(response.amt[x]) );
+        }
+      var maxValueMoney = result.maxAmt;
       
-      // const MONEY_CHART = document.getElementById("amtDay");
+      const MONEY_CHART = document.getElementById("amtDay");
         
-      //   var dataMoney = {
-      //     labels: ["8h-9h",  "9h-10h", "10h-11h", "11h-12h", "12h-13h","13h-14h","14h-15h","15h-16h","16h-17h","17h-18h","18h-19h","19h-20h","20h-21h","21h-22h","22h-23h","23h-24h"],
-      //     datasets: [
-      //       {
-      //         label: "Số Tiền",
-      //         data: sales_sum_arr,
-      //         fill: false,
-      //       // cubicInterpolationMode : 'monotone',
-      //       lineTension: 0,
-      //       borderColor: 'rgb(51, 153, 255)',
-      //       backgroundColor: 'rgb(51, 153, 255)',
-      //       pointBorderColor: 'rgb(255, 102, 0)',
-      //      // pointBackgroundColor: 'rgb(255, 102, 0)',
-      //       pointRadius: 5,
-      //       pointHoverRadius: 5,  
-      //       pointHitRadius: 30,
-      //       pointBorderWidth: 2,
-      //       pointStyle: 'rectRounded',
-      //       }
-      //     ]
-      //   };
+        var dataMoney = {
+          labels: ["8h-9h",  "9h-10h", "10h-11h", "11h-12h", "12h-13h","13h-14h","14h-15h","15h-16h","16h-17h","17h-18h","18h-19h","19h-20h","20h-21h","21h-22h","22h-23h","23h-24h"],
+          datasets: [
+            {
+              label: "Số Tiền",
+              data: sales_sum_arr,
+              fill: false,
+            // cubicInterpolationMode : 'monotone',
+            lineTension: 0,
+            borderColor: 'rgb(51, 153, 255)',
+            backgroundColor: 'rgb(51, 153, 255)',
+            pointBorderColor: 'rgb(255, 102, 0)',
+           // pointBackgroundColor: 'rgb(255, 102, 0)',
+            pointRadius: 5,
+            pointHoverRadius: 5,  
+            pointHitRadius: 30,
+            pointBorderWidth: 2,
+            pointStyle: 'rectRounded',
+            }
+          ]
+        };
 
-      //   var optionsMoney = {
-      //     legend: {
-      //       display: true,
-      //       position: 'top',
-      //       labels: {
-      //         boxWidth: 80,
-      //         fontColor: 'black'
-      //       }
-      //     },
-      //     plugins: {
-      //           datalabels: false
-      //     },
-      //     scales: {
-      //       yAxes: [{
-      //           ticks: {
-      //               beginAtZero: true,
-      //               max: Math.round( ( Math.ceil(maxValueMoney)/0.7 )/50000 ) * 50000,
-      //               callback: function(value, index, values) {
-      //               // Convert the number to a string and split the string every 3 charaters from the end
-      //               value = value.toString();
-      //               value = value.split(/(?=(?:...)*$)/);
+        var optionsMoney = {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              boxWidth: 80,
+              fontColor: 'black'
+            }
+          },
+          plugins: {
+                datalabels: false
+          },
+          scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    max: Math.round( ( Math.ceil(maxValueMoney)/0.7 )/50000 ) * 50000,
+                    callback: function(value, index, values) {
+                    // Convert the number to a string and split the string every 3 charaters from the end
+                    value = value.toString();
+                    value = value.split(/(?=(?:...)*$)/);
 
-      //               // Convert the array to a string and format the output
-      //               value = value.join('.');
-      //               return  value;
-      //               }
+                    // Convert the array to a string and format the output
+                    value = value.join('.');
+                    return  value;
+                    }
 
-      //           }
+                }
                
-      //       }]},
-      //     xAxes: [{
+            }]},
+          xAxes: [{
 
-      //           gridLines:{
+                gridLines:{
                    
-      //               offsetGridLines: true
-      //           }
-      //         }]
-      //      ,
-      //      title: {
-      //       display:false,
-      //       text:"Tất cả"
-      //      },
-      //      tooltips: {
-      //       callbacks: {
-      //           label: function(tooltipItem, data) {
-      //               var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                    offsetGridLines: true
+                }
+              }]
+           ,
+           title: {
+            display:false,
+            text:"Tất cả"
+           },
+           tooltips: {
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    var label = data.datasets[tooltipItem.datasetIndex].label || '';
 
-      //               if (label) {
-      //                   label += ': ';
-      //               }
-      //               label += addCommas(tooltipItem.yLabel) ;
-      //               return label;
-      //           }
-      //         }
-      //     }
-      //   };
+                    if (label) {
+                        label += ': ';
+                    }
+                    label += addCommas(tooltipItem.yLabel) ;
+                    return label;
+                }
+              }
+          }
+        };
 
-      // var myMoneyChart  = new Chart(MONEY_CHART , {
-      //     type: 'line',
-      //     data: dataMoney,
-      //     options: optionsMoney
-      // });
+        if(myMoneyChart != undefined)
+       {
+          myMoneyChart.destroy();
+       }
+
+       myMoneyChart  = new Chart(MONEY_CHART , {
+          type: 'line',
+          data: dataMoney,
+          options: optionsMoney
+      });
 
 
       },

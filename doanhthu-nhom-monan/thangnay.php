@@ -6,7 +6,7 @@ $nhb_doanh_thu_arr = array();
 $sales_by_food_group = $goldenlotus->getSalesByFoodGroup( $today   );
 foreach ( $sales_by_food_group as $r ) 
 {
-  	settype($r['DoanhThu'],'integer');
+  settype($r['DoanhThu'],'integer');
 	$nhb_doanh_thu_arr[]  = !empty( $r['DoanhThu'] ) ? $r['DoanhThu'] : 0;
   
 }
@@ -127,7 +127,7 @@ const REVENUE_BY_FOOD_GROUP_THIS_MONTH = document.getElementById('revenue-thismo
                   padding: 2,
                   display: function(context){
                           var index = context.dataIndex;
-                          var value = context.dataset.data[index];console.log(context.percent);
+                          var value = context.dataset.data[index];
                           return ( context.percent > 0.10 || context.percent ===0 ) ? false : true;
                           
 

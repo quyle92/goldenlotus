@@ -1473,9 +1473,23 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 	}
 
 	public function getBillEditDetailsBySelection_Day( $tuNgay, $tenQuay ){
-		$sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
-			ON a.[NVTaoMaNV] = b.MaNV LEFT JOIN [tblLSPhieu_HangBan] c ON a.MaLichSuPhieu=c.MaLichSuPhieu
-  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$tuNgay' and suaPhieuIn <> 0 " ;
+		$sql = "
+		with cte as 
+		( 
+		SELECT distinct a.MaLichSuPhieu, MaHangBan, TenHangBan ,ThoiGianSuaPhieu
+		,DonGia
+		, TenSuCo, NVTinhTienMaNV
+		 , PaybackQty =  sum(case when SoLuong < 0  then SoLuong else 0 end)  over ( partition by MaHangBan, TenHangBan, a.MaLichSuPhieu )
+		, InitalQty =  sum(case when SoLuong > 0   then SoLuong else 0 end)  over ( partition by MaHangBan, TenHangBan, a.MaLichSuPhieu  )
+		from [tblLSPhieu_HangBan] a LEFT JOIN tblDMSuCoBanHang b ON a.MaSuCo = b.MaSuCo 
+		LEFT JOIN tblLichSuPhieu c ON a.MaLichSuPhieu = c.MaLichSuPhieu
+		WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$tuNgay'
+		 )
+		 select distinct MaLichSuPhieu, TenSuCo, NVTinhTienMaNV,ThoiGianSuaPhieu,
+		 Payback  = PaybackQty * DonGia,
+		 Initial  = InitalQty * DonGia,
+		 Diff = InitalQty * DonGia - Abs(PaybackQty * DonGia)
+		 from cte where TenSuCo IS NOT NULL";
 
   		if( ! empty($tenQuay) )
 		{
@@ -1493,9 +1507,23 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 	}
 
 	public function getBillEditDetailsBySelection_Month( $tuThang, $tenQuay ){
-		$sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
-			ON a.[NVTaoMaNV] = b.MaNV LEFT JOIN [tblLSPhieu_HangBan] c ON a.MaLichSuPhieu=c.MaLichSuPhieu
-  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,8 ) = '$tuThang' and suaPhieuIn <> 0 " ;
+		$sql = "
+		with cte as 
+		( 
+		SELECT distinct a.MaLichSuPhieu, MaHangBan, TenHangBan, ThoiGianSuaPhieu
+		,DonGia
+		, TenSuCo, NVTinhTienMaNV
+		 , PaybackQty =  sum(case when SoLuong < 0  then SoLuong else 0 end)  over ( partition by MaHangBan, TenHangBan, a.MaLichSuPhieu )
+		, InitalQty =  sum(case when SoLuong > 0   then SoLuong else 0 end)  over ( partition by MaHangBan, TenHangBan, a.MaLichSuPhieu  )
+		from [tblLSPhieu_HangBan] a LEFT JOIN tblDMSuCoBanHang b ON a.MaSuCo = b.MaSuCo 
+		LEFT JOIN tblLichSuPhieu c ON a.MaLichSuPhieu = c.MaLichSuPhieu
+		WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,8 ) = '$tuThang'
+		 )
+		 select distinct MaLichSuPhieu, TenSuCo, NVTinhTienMaNV, ThoiGianSuaPhieu,
+		 Payback  = PaybackQty * DonGia,
+		 Initial  = InitalQty * DonGia,
+		 Diff = InitalQty * DonGia - Abs(PaybackQty * DonGia)
+		 from cte where TenSuCo IS NOT NULL";
 
   		if( ! empty($tenQuay) )
 		{
@@ -1513,9 +1541,23 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 	}
 
 	public function getBillEditDetailsBySelection_Year( $tuNam, $tenQuay ){
-		$sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
-			ON a.[NVTaoMaNV] = b.MaNV LEFT JOIN [tblLSPhieu_HangBan] c ON a.MaLichSuPhieu=c.MaLichSuPhieu
-  			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,5 ) = '$tuNam' and suaPhieuIn <> 0 " ;
+		$sql = "
+		with cte as 
+		( 
+		SELECT distinct a.MaLichSuPhieu, MaHangBan, TenHangBan , ThoiGianSuaPhieu
+		,DonGia
+		, TenSuCo, NVTinhTienMaNV
+		 , PaybackQty =  sum(case when SoLuong < 0  then SoLuong else 0 end)  over ( partition by MaHangBan, TenHangBan, a.MaLichSuPhieu )
+		, InitalQty =  sum(case when SoLuong > 0   then SoLuong else 0 end)  over ( partition by MaHangBan, TenHangBan, a.MaLichSuPhieu  )
+		from [tblLSPhieu_HangBan] a LEFT JOIN tblDMSuCoBanHang b ON a.MaSuCo = b.MaSuCo 
+		LEFT JOIN tblLichSuPhieu c ON a.MaLichSuPhieu = c.MaLichSuPhieu
+		WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,5 ) = '$tuNam'
+		 )
+		 select distinct MaLichSuPhieu, TenSuCo, NVTinhTienMaNV, ThoiGianSuaPhieu,
+		 Payback  = PaybackQty * DonGia,
+		 Initial  = InitalQty * DonGia,
+		 Diff = InitalQty * DonGia - Abs(PaybackQty * DonGia)
+		 from cte where TenSuCo IS NOT NULL";
 
   		if( ! empty($tenQuay) )
 		{
@@ -3118,6 +3160,75 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 		try{
 				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSoLuongVeKey_Day( $date, $tenQuay, $ma_khu)
+	{
+		$sql = "  SELECT  TotalKey = count(a.MaLichSuPhieu),
+		TotalVe = sum (SoLuong), 
+		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
+	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+	 where substring( Convert(varchar,ThoiGianBan,126),0,11 ) = '$date' and $ma_khu";
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .="  AND  TenHangBan IN ( SELECT * FROM [{$tenQuay}View] ) ";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSoLuongVeKey_Month( $date, $tenQuay, $ma_khu)
+	{
+		$sql = "  SELECT  TotalKey = count(a.MaLichSuPhieu),
+		TotalVe = sum (SoLuong), 
+		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
+	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+	 where substring( Convert(varchar,ThoiGianBan,126),0,8 ) = '$date' and $ma_khu";
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .="  AND  TenHangBan IN ( SELECT * FROM [{$tenQuay}View] ) ";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+		
+					return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSoLuongVeKey_Year( $date, $tenQuay, $ma_khu)
+	{
+		$sql = "  SELECT  TotalKey = count(a.MaLichSuPhieu),
+		TotalVe = sum (SoLuong), 
+		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
+	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+	 where substring( Convert(varchar,ThoiGianBan,126),0,5 ) = '$date' and $ma_khu";
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .="  AND  TenHangBan IN ( SELECT * FROM [{$tenQuay}View] ) ";
+		}
+
+		try{
+				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
 		
 					return $rs;
 			}

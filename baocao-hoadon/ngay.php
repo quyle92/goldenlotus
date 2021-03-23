@@ -20,10 +20,12 @@
 </div>
 
 <script>
+var qtyChart;
+var moneyChart;
 $(function () {  
   $('body').on('submit', 'form#customDate', function (event){
     event.preventDefault();
-    var formValues= $(this).serialize();console.log(formValues)
+    var formValues= $(this).serialize();
     $.ajax({
       url: 'ajax/day.php',
       method:"POST",
@@ -70,18 +72,33 @@ $(function () {
             },
               plugins: {
                 datalabels: {
-                    formatter: (value, QTY_CHART) => {
+                    formatter: (value, REVENUE_BY_FOOD_GROUP_THIS_MONTH) => {
+                      if(value>0)
+                      {
                         let sum = 0;
-                        let dataArr = QTY_CHART.chart.data.datasets[0].data;
+                        let dataArr = REVENUE_BY_FOOD_GROUP_THIS_MONTH.chart.data.datasets[0].data;
                         dataArr.map(data => {
                             sum += data;
                         });
                         let percentage = (value*100 / sum).toFixed(2)+"%";
-                        return percentage;
+                        //if( (value*100 / sum).toFixed(2) > 10 )
+                          return percentage;
+                        //else return "";
+                      }
+                      else
+                      {
+                        value = "";
+                        return value;
+                      }
                     },
                     color: '#fff',
+                     font: {
+                      weight: 'bold',
+                      size: 10,
+                    }
                     
-                }
+                },
+                outlabels: false
             },
             title: {
                 display:true,
@@ -91,7 +108,12 @@ $(function () {
 
           };
 
-        var myPieChart  = new Chart(QTY_CHART, {
+        if(qtyChart != undefined)
+       {
+          qtyChart.destroy();
+       }
+
+         qtyChart  = new Chart(QTY_CHART, {
             type: 'doughnut',
             data: data,
             options: options
@@ -139,27 +161,66 @@ $(function () {
             },
               plugins: {
                 datalabels: {
-                    formatter: (value, Money_Chart) => {
-                        let sum = 0;
-                        let dataArr = Money_Chart.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(2)+"%";
+                    formatter: (value, REVENUE_BY_FOOD_GROUP_THIS_MONTH) => {
+                    if(value>0)
+                    {
+                      let sum = 0;
+                      let dataArr = REVENUE_BY_FOOD_GROUP_THIS_MONTH.chart.data.datasets[0].data;
+                      dataArr.map(data => {
+                          sum += data;
+                      });
+                      let percentage = (value*100 / sum).toFixed(2)+"%";
+                      if( (value*100 / sum).toFixed(2) > 5 )
                         return percentage;
-                    },
-                    color: '#fff',
+                      else return "";
+                    }
+                    else
+                    {
+                      value = "";
+                      return value;
+                    }
+                  },
+                  color: '#fff',
+                   font: {
+                    weight: 'bold',
+                    size: 10,
+                  }
                     
-                }
+              },
+              outlabels: {
+                  text: '%l => %p',
+                  color: 'white',
+                  stretch: 15,
+                  borderRadius: 20,
+                  borderWidth:1,
+                  font: {
+                      resizable: false,
+                       minSize: 8,
+                       maxSize: 12,
+                      size: 12
+                  },
+                  textAlign:"center",
+                  padding: 2,
+                  display: function(context){
+                          var index = context.dataIndex;
+                          var value = context.dataset.data[index];//console.log(context.percent);
+                          return ( context.percent > 0.10 || context.percent ===0 ) ? false : true;
+                  }
+              }
             },
-              title: {
+            title: {
                 display:true,
                 text:"Biểu đồ số tiền",
                 fontSize:19
               }
           };
 
-        var myPieChart  = new Chart(Money_Chart, {
+       if(moneyChart != undefined)
+       {
+          moneyChart.destroy();
+       }
+
+         moneyChart  = new Chart(Money_Chart, {
             type: 'doughnut',
             data: data2,
             options: options2

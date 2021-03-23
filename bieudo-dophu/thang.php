@@ -75,7 +75,8 @@ $(function () {
                   },
                   color: '#fff',
                   
-              }
+              },
+              outlabels: false
           }
         };
 

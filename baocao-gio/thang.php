@@ -14,6 +14,8 @@ require('../datetimepicker-month.php');
 </div>
 <?php require_once('../ajax-loading.php'); ?>
 <script>
+  var mylineChart;
+  var myMoneyChart
 $(function () {  
   $('body').on('submit', 'form#customMonth', function (event){
     event.preventDefault();
@@ -36,7 +38,7 @@ $(function () {
         {
           qty_sum_arr.push( parseInt(response.qty[x]) );
         }
-      console.log(qty_sum_arr)
+
         
           const QTY_CHART = document.getElementById("qtyMonth");
             
@@ -105,8 +107,13 @@ $(function () {
                 text:"Tất cả"
                }
             };
+            ///this one is to fix chartjs show old data after 2nd ajax call
+             if(mylineChart != undefined)
+             {
+                mylineChart.destroy();
+             }
 
-          var mylineChart  = new Chart(QTY_CHART, {
+           mylineChart  = new Chart(QTY_CHART, {
               type: 'line',
               data: dataQty,
               options: optionsQty,
@@ -201,7 +208,12 @@ $(function () {
           }
         };
 
-      var myMoneyChart  = new Chart(MONEY_CHART , {
+        if(myMoneyChart != undefined)
+       {
+          myMoneyChart.destroy();
+       }
+
+       myMoneyChart  = new Chart(MONEY_CHART , {
           type: 'line',
           data: dataMoney,
           options: optionsMoney

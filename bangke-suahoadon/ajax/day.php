@@ -19,15 +19,15 @@ foreach ( $bill_edit as $r )
 { 
 $output .= '<tr>
       <td>' . ( ( $r['ThoiGianSuaPhieu'] ) ? substr($r['ThoiGianSuaPhieu'], 0, 10) : "" ). '</td>
-      <td>' . utf8_encode($r['TenNV']) . ' </td>
+      <td>' . ($r['NVTinhTienMaNV']) . ' </td>
       <td> ' . ( ( $r['ThoiGianSuaPhieu'] ) ? substr($r['ThoiGianSuaPhieu'], 11, 5) : ""  )  . '</td>
-      <td> ' . utf8_encode($r['GhiChu']) . '</td>
-      <td>' . substr($r['ThoiGianTaoPhieu'],0, 10) . '</td>
+      <td> ' . ($r['TenSuCo']) . '</td>
+      <td>' . ( ( $r['ThoiGianSuaPhieu'] ) ? substr($r['ThoiGianSuaPhieu'], 0, 10) : "" ). '</td>
       <td>' . $r['MaLichSuPhieu'] . '</td>
       
-      <td></td>
-      <td></td>
-      <td></td>
+      <td>' . number_format($r['Initial'],0,",",".") . '</td>
+      <td>' . number_format($r['Payback'],0,",",".") .  '</td>
+      <td>' . number_format($r['Diff'],0,",",".") .  '</td>
     </tr>';
 }
 // var_dump($output); 
