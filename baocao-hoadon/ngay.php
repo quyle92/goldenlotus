@@ -22,6 +22,7 @@
 <script>
 var qtyChart;
 var moneyChart;
+//console.log($('body form#customDate'));
 $(function () {  
   $('body').on('submit', 'form#customDate', function (event){
     event.preventDefault();
@@ -142,7 +143,7 @@ $(function () {
                   "#D94826",
                   "#C3D7CA",
                   "#63BF85",
-                  "#E5E5E5"
+                  "yellow"
                 ],
                 borderWidth: [1, 1]
               }
@@ -150,6 +151,14 @@ $(function () {
           };
 
           var options2 = {
+            layout: {
+                padding: {
+                    left: 65,
+                    right: 65,
+                    top: 65,
+                    bottom: 65
+                }
+            },
             responsive: true,
             legend: {
               display: true,
@@ -162,32 +171,32 @@ $(function () {
               plugins: {
                 datalabels: {
                     formatter: (value, REVENUE_BY_FOOD_GROUP_THIS_MONTH) => {
-                    if(value>0)
-                    {
-                      let sum = 0;
-                      let dataArr = REVENUE_BY_FOOD_GROUP_THIS_MONTH.chart.data.datasets[0].data;
-                      dataArr.map(data => {
-                          sum += data;
-                      });
-                      let percentage = (value*100 / sum).toFixed(2)+"%";
-                      if( (value*100 / sum).toFixed(2) > 5 )
-                        return percentage;
-                      else return "";
+                      if(value>0)
+                      {
+                        let sum = 0;
+                        let dataArr = REVENUE_BY_FOOD_GROUP_THIS_MONTH.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(2)+"%";
+                        if( (value*100 / sum).toFixed(2) > 10 )
+                          return percentage;
+                        else return "";
+                      }
+                      else
+                      {
+                        value = "";
+                        return value;
+                      }
+                    },
+                    color: '#fff',
+                     font: {
+                      weight: 'bold',
+                      size: 10,
                     }
-                    else
-                    {
-                      value = "";
-                      return value;
-                    }
-                  },
-                  color: '#fff',
-                   font: {
-                    weight: 'bold',
-                    size: 10,
-                  }
                     
-              },
-              outlabels: {
+                },
+                outlabels: {
                   text: '%l => %p',
                   color: 'white',
                   stretch: 15,
@@ -208,7 +217,7 @@ $(function () {
                   }
               }
             },
-            title: {
+              title: {
                 display:true,
                 text:"Biểu đồ số tiền",
                 fontSize:19
@@ -225,9 +234,16 @@ $(function () {
             data: data2,
             options: options2
         });
-      }
-    }); 
+
+         if (window.matchMedia('(min-width: 769px)').matches) {
+            moneyChart.canvas.parentNode.style.width = '93vw';
+            moneyChart.canvas.parentNode.style.margin = '1px -148px';
+        } 
+        
+      }     
+    });
   });
-});
+}); 
+
 
 </script>

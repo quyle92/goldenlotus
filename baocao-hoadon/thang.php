@@ -73,7 +73,7 @@ $(function () {
               plugins: {
                 datalabels: {
                     formatter: (value, REVENUE_BY_FOOD_GROUP_THIS_MONTH) => {
-                      if(value>0)
+                      if(value > 0)
                       {
                         let sum = 0;
                         let dataArr = REVENUE_BY_FOOD_GROUP_THIS_MONTH.chart.data.datasets[0].data;
@@ -119,8 +119,6 @@ $(function () {
             options: options
         });
 
-
-
         var sales_sum_arr = []; 
         for (x in response.amt )
         {
@@ -142,7 +140,7 @@ $(function () {
                   "#D94826",
                   "#C3D7CA",
                   "#63BF85",
-                  "#E5E5E5"
+                  "yellow"
                 ],
                 borderWidth: [1, 1]
               }
@@ -233,7 +231,13 @@ $(function () {
             data: data2,
             options: options2
         });
-         moneyChart.canvas.parentNode.style.height = '700px';
+
+        if (window.matchMedia('(min-width: 769px)').matches) {
+            moneyChart.canvas.parentNode.style.width = '93vw';
+            moneyChart.canvas.parentNode.style.margin = '1px -148px';
+        } 
+          
+
       }
     }); 
   });

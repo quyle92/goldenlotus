@@ -143,7 +143,7 @@ $(function () {
                   "#D94826",
                   "#C3D7CA",
                   "#63BF85",
-                  "#E5E5E5"
+                  "yellow"
                 ],
                 borderWidth: [1, 1]
               }
@@ -151,6 +151,14 @@ $(function () {
           };
 
           var options2 = {
+            layout: {
+                padding: {
+                    left: 65,
+                    right: 65,
+                    top: 65,
+                    bottom: 65
+                }
+            },
             responsive: true,
             legend: {
               display: true,
@@ -226,6 +234,12 @@ $(function () {
             data: data2,
             options: options2
         });
+
+         if (window.matchMedia('(min-width: 769px)').matches) {
+            moneyChart.canvas.parentNode.style.width = '93vw';
+            moneyChart.canvas.parentNode.style.margin = '1px -148px';
+        } 
+        
       }
     }); 
   });

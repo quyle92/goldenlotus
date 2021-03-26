@@ -35,7 +35,6 @@ if($denngay == "")
 <?php include ('../head/head-tag.php');?>
 <style>
 
-
 </style>
 
 </head>
