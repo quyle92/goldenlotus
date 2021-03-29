@@ -1,5 +1,5 @@
 <?php 
-$page_name = "BaoCaoBanHang";
+$page_name = "BaoCaoQuanTri";
 require_once('../helper/security.php');
 include_once( '../lib/db.php');
 include_once( '../lib/goldenlotus.php');

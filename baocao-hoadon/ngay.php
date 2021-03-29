@@ -128,7 +128,6 @@ $(function () {
           sales_sum_arr.push( parseInt(response.amt[x]) );
         }
 
-        
         const Money_Chart = document.getElementById('moneyDay');
           
           var data2 = {
@@ -212,7 +211,7 @@ $(function () {
                   padding: 2,
                   display: function(context){
                           var index = context.dataIndex;
-                          var value = context.dataset.data[index];//console.log(context.percent);
+                          var value = context.dataset.data[index];
                           return ( context.percent > 0.10 || context.percent ===0 ) ? false : true;
                   }
               }

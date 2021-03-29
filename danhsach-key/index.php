@@ -1,5 +1,5 @@
 <?php  
-$page_name = "BaoCaoQuanTri";
+$page_name = "BaoCaoBanHang";
 require_once('../helper/security.php'); 
 ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
 require('../lib/db.php');

@@ -1,5 +1,5 @@
 <?php  
-$page_name = "BaoCaoQuanTri";
+$page_name = "TongHopSoLuongBan";
 require_once('../helper/security.php'); 
 require('../lib/db.php');
 require('../lib/goldenlotus.php');
@@ -291,7 +291,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <span class="glyphicon glyphicon-new-window"></span></td>
+                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_SPA" target="_blank"> <span class="glyphicon glyphicon-new-window"></span></a></td>
                         </tr>
                         <tr>
                           <td>Snack bar</td>
@@ -316,7 +316,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <span class="glyphicon glyphicon-new-window"></span></td>
+                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_SNACKBAR" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
                         </tr>
                         <tr>
                           <td>Cafeteria</td>
@@ -341,7 +341,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <span class="glyphicon glyphicon-new-window"></span></td>
+                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_CAFE" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
                         </tr>
                         <tr>
                           <td>Game</td>
@@ -366,7 +366,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <span class="glyphicon glyphicon-new-window"></span></td>
+                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_GAME" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
                         </tr>
                         <tr>
                           <td>Nhà hàng</td>
@@ -391,7 +391,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <span class="glyphicon glyphicon-new-window"></span></td>
+                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_RESTAURANT" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
                         </tr>
                       </tbody>
                     </table>
@@ -426,5 +426,6 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
 
 
 </body>
+
 </html>
 

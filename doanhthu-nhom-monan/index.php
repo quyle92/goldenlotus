@@ -1,5 +1,5 @@
 <?php 
-$page_name = "BieuDoDoanhThu";
+$page_name = "TongHopSoLuongBan";
 require_once('../helper/security.php');
 require('../lib/db.php');
 require('../lib/goldenlotus.php');

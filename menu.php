@@ -18,41 +18,40 @@
             </button>
             <div class="dropdown-container">
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-theothang/index.php"><i class="fas fa-apple-alt"></i>
-                    Tổng hợp món ăn bán theo tháng</a>
-                </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php"><i class="fas fa-apple-alt"></i>
-                    Tổng hợp doanh thu các quầy (Ngày)</a>
-                </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theothang/index.php"><i class="fas fa-apple-alt"></i>
-                    Tổng hợp doanh thu các quầy (Tháng)</a>
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bieudo-dophu/index.php"><i class="fas fa-chart-pie"></i>Độ phủ</a>
                 </li>
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-soluong-over-sokey/index.php"><i class="fas fa-apple-alt"></i>
                     Tổng hợp số lượng quá số key</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theonam/index.php"><i class="fas fa-apple-alt"></i>
-                    Tổng hợp doanh thu các quầy (Năm)</a>
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/danhsach-key/index.php"><i class="fas fa-table"></i>
+                    Danh sách key</a>
                 </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bieudo-doanhthu-theonam/index.php"><i class="fa fa-signal nav_icon"></i>Doanh thu theo năm</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bieudo-doanhthu-theothang/index.php"><i class="fas fa-chart-area"></i>  Doanh thu theo tháng</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-hoadon/index.php"><i class="fas fa-file-invoice-dollar"></i>Báo cáo hóa đơn</a>
+                </li>
+                <!-- <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-theothang/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp món ăn bán theo tháng</a>
+                </li>
+                
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-theongay/index.php"><i class="fas fa-cookie"></i>
                     Tổng hợp món ăn bán theo ngày</a>
                 </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bangke-chitiet-pttt/index.php"><i class="fas fa-money-bill-alt"></i>
-                    Bảng kê chi tiết phương thức thanh toán</a>
-                </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-banhang-theohoadon/index.php"><i class="fas fa-menorah"></i>
-                    Báo cáo bán hàng chi tiết món theo từng hóa đơn</a>
-                </li>
+                
+                
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-ban/index.php"><i class="fas fa-cloud-meatball"></i>
                     Tổng hợp món ăn bán</a>
-                </li>
+                </li> -->
                <!-- <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bangke-chitiet-hoadon/index.php"><i class="fas fa-file-alt"></i>
                     Bảng kê chi tiết hóa đơn bán hàng</a>
@@ -64,12 +63,15 @@
             </button>
             <div class="dropdown-container">
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doichieu-soluong-bangoi/index.php"><i class="fas fa-file-csv"></i>
-                    Đối chiếu số lượng giữa bán và gọi</a>
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-gio/index.php"><i class="far fa-clock"></i>Báo cáo giờ</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-tiente/index.php"><i class="fas fa-funnel-dollar"></i>
-                    Báo cáo tiền tệ</a>
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bangke-chitiet-pttt/index.php"><i class="fas fa-money-bill-alt"></i>
+                    Bảng kê chi tiết phương thức thanh toán</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-banhang-theohoadon/index.php"><i class="fas fa-menorah"></i>
+                    Báo cáo bán hàng chi tiết món theo từng hóa đơn</a>
                 </li>
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bangke-suahoadon/index.php"><i class="fas fa-receipt"></i>
@@ -79,42 +81,34 @@
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bangke-nhatky-bomon/index.php"><i class="fas fa-trash-alt"></i>
                     Bảng kê nhật ký bỏ món</a>
                 </li>
+            </div>
+		 <button class="dropdown-btn"  data-report="TongHopSoLuongBan"><i class="fas fa-columns"></i> Tổng hợp số lượng bán
+                <span class="fa fa-caret-down"></span>
+          </button> 
+            <div class="dropdown-container">
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/danhsach-ban-doanhthu/index.php"><i class="fas fa-table"></i>
-                    Danh sách bàn - doanh thu</a>
-                </li>
-				<li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-spa/index.php"><i class="fas fa-spa"></i>
-                    Doanh thu spa</a>
+                    Doanh thu spa (tổng hợp doanh thu + chi tiết hóa đơn)</a>
                 </li>
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/diemtong/index.php"><i class="fab fa-acquisitions-incorporated"></i>
-                    Điểm tổng</a>
-                </li>
-            </div>
-		 <button class="dropdown-btn"  data-report="BieuDoDoanhThu"><i class="fas fa-columns"></i> Biểu đồ
-                <span class="fa fa-caret-down"></span>
-            </button> 
-            <div class="dropdown-container">
-
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bieudo-doanhthu-theonam/index.php"><i class="fa fa-signal nav_icon"></i>Doanh thu theo năm</a>
-                </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bieudo-doanhthu-theothang/index.php"><i class="fas fa-chart-area"></i>  Doanh thu theo tháng</a>
-                </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bieudo-dophu/index.php"><i class="fas fa-chart-pie"></i>Độ phủ</a>
-                </li>
+                    Điểm tổng</a>               
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-nhom-monan/index.php"><i class="fas fa-chart-line"></i>Doanh thu nhóm món ăn</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-gio/index.php"><i class="far fa-clock"></i>Báo cáo giờ</a>
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp doanh thu các quầy (Ngày)</a>
                 </li>
                 <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-hoadon/index.php"><i class="fas fa-file-invoice-dollar"></i>Báo cáo hóa đơn</a>
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theothang/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp doanh thu các quầy (Tháng)</a>
                 </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theonam/index.php"><i class="fas fa-apple-alt"></i>
+                    Tổng hợp doanh thu các quầy (Năm)</a>
+                </li>
+                
             </div>
             <li style="list-style-type: none;" class="li-level1">
                 <a class="menu-level1" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/thucdon.php"><i class="fas fa-utensils"></i> Thực đơn</a>
@@ -148,9 +142,10 @@ $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuo
    // var baoCaoDuocXem ="";
     var baoCaoDuocXem= <?=json_encode($bao_cao_duoc_xem);?>;
 
-    var bieuDoDoanhThu = $('button[data-report="BieuDoDoanhThu"]').attr('data-report');
     var baoCaoBanHang = $('button[data-report="BaoCaoBanHang"]').attr('data-report');
     var baoCaoQuanTri = $('button[data-report="BaoCaoQuanTri"]').attr('data-report');
+    var bieuDoDoanhThu = $('button[data-report="TongHopSoLuongBan"]').attr('data-report');
+
     var admin = '<?=$_SESSION['MaNV']?>';
 
     var reportArr = []; 
