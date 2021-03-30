@@ -1,92 +1,15 @@
 <?php 
-if($tungay == "")
+$rs = $goldenlotus->getDoanhThuNamNay( $tenQuay );
+if($rs != false)
 {
-  $tungay = "01-01-".date('Y');
-}
-
-if($denngay == "")
-{
-  $denngay = date('d-m-Y');
-}
-  //
-  //---------chuyển sang chuỗi tháng -> để query sql
-  //
-  $tuthang_converted = "";
-  $denthang_converted = "";
-  if($tungay != "")
+ 
+  $doanh_thu = array();
+  foreach ( $rs[0] as $k => $v ) 
   {
-    $tuthang_converted = substr($tungay,6) . "/" . substr($tungay,3,2);
+    $doanh_thu[] = $v;
   }
-  //
-  //----loc doanh thu tung thang-----//
-  //
-  $doanhthu_t1 = 0; $doanhthu_t2 = 0; $doanhthu_t3 = 0; $doanhthu_t4 = 0; $doanhthu_t5 = 0; $doanhthu_t6 = 0;
-  $doanhthu_t7 = 0; $doanhthu_t8 = 0; $doanhthu_t9 = 0; $doanhthu_t10 = 0; $doanhthu_t11 = 0; 
-  $doanhthu_t12 = 0;
-  //
-  //---thang
-  //
-  $sql = "";
 
-  $sql .= "SELECT ";
-
-for ( $i = 1; $i <= 12; $i++ ){
-
-    if($i <= 9){
-     $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '" . $tungay . "/0" . $i ."' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
-   }
-
-    if($i > 9){
-      $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,111),0,8) like '" . $tungay . "/" . $i ."' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
-    }
 }
-  
- $sql = rtrim($sql, ", ");
-
-  $sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
-    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
-  if( ! empty($tenQuay) )
-  {
-      $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
-  }
-  
-  try
-  {
-    $rs = $dbCon->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    
-      foreach ( $rs as $r1 ) 
-      {
-        $r1['DoanhThuT1'];
-        $r1['DoanhThuT2'];
-        $r1['DoanhThuT3'];
-        $r1['DoanhThuT4'];
-        $r1['DoanhThuT5'];
-        $r1['DoanhThuT6'];
-        $r1['DoanhThuT7'];
-        $r1['DoanhThuT8'];
-        $r1['DoanhThuT9'];
-        $r1['DoanhThuT10'];
-        $r1['DoanhThuT11'];
-        $r1['DoanhThuT12'];
-      }
-      
-      $doanhthu_t1 = $r1['DoanhThuT1'];settype($doanhthu_t1, "integer");
-      $doanhthu_t2 = $r1['DoanhThuT2'];settype($doanhthu_t2, "integer");
-      $doanhthu_t3 = $r1['DoanhThuT3'];settype($doanhthu_t3, "integer");
-      $doanhthu_t4 = $r1['DoanhThuT4'];settype($doanhthu_t4, "integer");
-      $doanhthu_t5 = $r1['DoanhThuT5'];settype($doanhthu_t5, "integer");
-      $doanhthu_t6 = $r1['DoanhThuT6'];settype($doanhthu_t6, "integer");
-      $doanhthu_t7 = $r1['DoanhThuT7'];settype($doanhthu_t7, "integer");
-      $doanhthu_t8 = $r1['DoanhThuT8'];settype($doanhthu_t8, "integer");
-      $doanhthu_t9 = $r1['DoanhThuT9'];settype($doanhthu_t9, "integer");
-      $doanhthu_t10 = $r1['DoanhThuT10'];settype($doanhthu_t10, "integer");
-      $doanhthu_t11 = $r1['DoanhThuT11'];settype($doanhthu_t11, "integer");
-      $doanhthu_t12 = $r1['DoanhThuT12'];settype($doanhthu_t12, "integer");
-   
-  }
-  catch (PDOException $e) {
-    echo $e->getMessage();
-  }
 ?>
 
  <div class="panel panel-warning" data-widget="{&quot;draggable&quot;: &quot;false&quot;}" data-widget-static="">
@@ -107,11 +30,15 @@ for ( $i = 1; $i <= 12; $i++ ){
 <script>
 //var ctx = document.getElementById('myChart').getContext('2d');
 var salesThisYear = document.getElementById('thisyear');
+ var doanhThu = new Array();
+    <?php foreach($doanh_thu as $dt ){ ?>
+        doanhThu.push('<?php echo $dt; ?>');
+    <?php } ?>
 var data = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July","Aug","Sep","Oct","Nov","Dec"],
   datasets: [{
     label: "Revenue",
-    data: [('<?php echo $doanhthu_t1; ?>'), ('<?php echo $doanhthu_t2; ?>'), ('<?php echo $doanhthu_t3; ?>'), ('<?php echo $doanhthu_t4; ?>'), ('<?php echo $doanhthu_t5; ?>'), ('<?php echo $doanhthu_t6; ?>'), ('<?php echo $doanhthu_t7; ?>'), ('<?php echo $doanhthu_t8; ?>'), ('<?php echo $doanhthu_t9; ?>'), ('<?php echo $doanhthu_t10; ?>'), ('<?php echo $doanhthu_t11; ?>'), ('<?php echo $doanhthu_t12; ?>')],
+    data: doanhThu,
     fill: false,
     // cubicInterpolationMode : 'monotone',
     lineTension: 0,
@@ -229,7 +156,7 @@ salesThisYear.onclick = function(e) {
   // }
  //    updateConfigByMutating(lineChart);
 }
-console.log(lineChart);
+
 $(function(){ 
   function updateConfigByMutating(lineChart) {
       lineChart.options.title.text = 'new title';

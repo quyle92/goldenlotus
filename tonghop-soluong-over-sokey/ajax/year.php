@@ -6,8 +6,6 @@ $goldenlotus = new GoldenLotus($dbCon);
 
 $tuNam = isset( $_POST['tuNam']) ?  $_POST['tuNam'] : "";
 $tenQuay = isset( $_POST['tenQuay'] ) ? $_POST['tenQuay'] : "";
-$khu_nam = "(b.MaKhu = '03-NH1' or b.MaKhu = '03-NH2' or b.MaKhu = '03-NH3')";
-$khu_nu = "(b.MaKhu = '03-NH4' or b.MaKhu = '01-NH5' or b.MaKhu = '01-NH6')";
 
 if( ! empty($tenQuay))
 {
@@ -16,8 +14,8 @@ if( ! empty($tenQuay))
 
 $output = "";
 
-$rs_men = $goldenlotus->getSoLuongVeKey_Year( $tuNam, $tenQuay, $khu_nam );
-$rs_women = $goldenlotus->getSoLuongVeKey_Year( $tuNam, $tenQuay, $khu_nu );
+$rs_men = $goldenlotus->getSoLuongVeKey_Year( $tuNam, $tenQuay, $ma_khu = 'nam' );
+$rs_women = $goldenlotus->getSoLuongVeKey_Year( $tuNam, $tenQuay, $khu_nu = 'nu' );
 
 $output .= '<tr>
       <td>Khu nam</td>

@@ -12,6 +12,9 @@ class GoldenLotus extends General{
 	/* Properties */
     private $conn;
     private $general;
+    private $allowTbl = ['SPA_ALL', 'SPA', 'SNACKBAR', 'CAFE', 'GAME', 'GYM', 'RESTAURANT'];
+    private $khu_nam = "(b.MaKhu = '03-NH1' or b.MaKhu = '03-NH2' or b.MaKhu = '03-NH3')";
+	private $khu_nu = "(b.MaKhu = '03-NH4' or b.MaKhu = '01-NH5' or b.MaKhu = '01-NH6')";
 
     /* Get database access */
     public function __construct(\PDO $dbCon) {
@@ -48,10 +51,16 @@ class GoldenLotus extends General{
 		$ma_bao_cao = changeTitle($report_name);
 		$report_name_eng = ucwords($report_name_eng);
 		$report_name = ucwords($report_name);
-		$sql = "INSERT INTO [tblDMBaoCao] (MaBaoCao, TenBaoCao, TenBaoCaoNN) VALUES ('$ma_bao_cao', N'$report_name', '$report_name_eng' )";
-		try {
-			$rs = $this->conn->query($sql);
-		
+		$sql = "INSERT INTO [tblDMBaoCao] (MaBaoCao, TenBaoCao, TenBaoCaoNN) VALUES (:ma_bao_cao, :report_name, :report_name_eng )";
+		try 
+		{	
+			$stmt = $this->conn->prepare( $sql );
+
+			$stmt->bindParam(':ma_bao_cao', $ma_bao_cao);
+			$stmt->bindParam(':report_name', $report_name);
+			$stmt->bindParam(':report_name_eng', $report_name_eng);
+			
+			$stmt->execute();
 			
 		}
 		catch ( PDOException $error ) {
@@ -230,6 +239,12 @@ class GoldenLotus extends General{
 	}
 
 	public function countOccupiedTables_Day( $tenQuay = null , $tuNgay ) : int {
+
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+		
 		$sql = "SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
@@ -242,7 +257,12 @@ class GoldenLotus extends General{
 
 		try 
 		{
-			$nRows = $this->conn->query($sql)->fetchColumn();
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('tuNam', $tuNam);
+			
+			$stmt->execute();
+
+			$nRows = $stmt->fetchColumn();
 
 			return $nRows;
 
@@ -254,6 +274,12 @@ class GoldenLotus extends General{
 	}
 
 	public function countOccupiedTables_Month( $tenQuay, $tuThang ) : int {
+
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
 		$sql = "SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
@@ -266,7 +292,12 @@ class GoldenLotus extends General{
 
 		try 
 		{
-			$nRows = $this->conn->query($sql)->fetchColumn();
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('tuNam', $tuNam);
+			
+			$stmt->execute();
+
+			$nRows = $stmt->fetchColumn();
 
 			return $nRows;
 
@@ -276,21 +307,33 @@ class GoldenLotus extends General{
 		}
 
 	}
-
+	
 	public function countOccupiedTables_Year( $tenQuay, $tuNam ) : int {
-		$sql = "SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
+
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "
+		SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
-		where  substring(Convert(varchar,GioVao,126),0,5) = '$tuNam' and [ThoiGianDongPhieu] IS NULL";
+		where  substring(Convert(varchar,GioVao,126),0,5) = :tuNam and [ThoiGianDongPhieu] IS NULL";
 
 		if ( ! empty($tenQuay) )
 		{	
-			 $sql .= " AND c.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+			$sql .= " AND c.TenHangBan IN ( SELECT * FROM {$tenQuay}View )";
 		}
 
 		try 
-		{
-			$nRows = $this->conn->query($sql)->fetchColumn();
+		{	
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('tuNam', $tuNam);
+			
+			$stmt->execute();
+
+			$nRows = $stmt->fetchColumn();
 
 			return $nRows;
 
@@ -2509,15 +2552,335 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 	
 		}
 	}
+
+	public function getDoanhThuNamNay( $tenQuay )
+	{
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "";
+
+		$sql .= "Declare @year varchar(max)
+		     SET @year = YEAR(GETDATE())
+		  SELECT ";
+
+		for ( $i = 1; $i <= 12; $i++ ){
+
+		    if($i <= 9){
+		     $sql .= "
+		     SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,8) like @year + '-0$i' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+		   }
+
+		    if($i > 9){
+		      $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,8) like @year + '-$i' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+		    }
+		}
+		  
+		$sql = rtrim($sql, ", ");
+
+		$sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+		    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+
+		if( ! empty($tenQuay) )
+		{
+		    $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			
+			$stmt->execute();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+			return $rs;
+		}
+		catch ( PDOException $error )
+		{
+			echo $error->getMessage();
+		}
+	}
 	
-	public function getTablesAndBills( $date,  $tenQuay = null ){
+	public function getDoanhThuNamTruoc( $tenQuay )
+	{
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "";
+
+		$sql .= "Declare @year varchar(max)
+		     SET @year = YEAR( DATEADD(year, -1, GETDATE() ) )
+		  SELECT ";
+
+		for ( $i = 1; $i <= 12; $i++ ){
+
+		    if($i <= 9){
+		     $sql .= "
+		     SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,8) like @year + '-0$i' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+		   }
+
+		    if($i > 9){
+		      $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,8) like @year + '-$i' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+		    }
+		}
+		  
+		$sql = rtrim($sql, ", ");
+
+		$sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+		    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+
+		if( ! empty($tenQuay) )
+		{
+		    $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			
+			$stmt->execute();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+			return $rs;
+		}
+		catch ( PDOException $error )
+		{
+			echo $error->getMessage();
+		}
+	}
+
+	public function getDoanhThuNamKhac( $tenQuay, $tuNam )
+	{
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl ) )
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+		$sql = "";
+
+		$sql .= "Declare @year varchar(max)
+		SET @year = :year
+		  SELECT ";
+
+		for ( $i = 1; $i <= 12; $i++ ){
+
+		    if($i <= 9){
+		     $sql .= "
+		     SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,8) like  @year + '-0$i' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+		   }
+
+		    if($i > 9){
+		      $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,8) like  @year + '-$i' Then TienThucTra  Else 0 END) as DoanhThuT" . $i . ", "; 
+		    }
+		}
+		  
+		$sql = rtrim($sql, ", ");
+
+		$sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+		    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+
+		if( ! empty($tenQuay) )
+		{
+		     $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			//$yearArr = array_pad( array(), 12, $tuNam );
+			// for ( $i = 1; $i <= 12; $i++ )
+			// {
+			// 	$stmt->bindValue($i, $tuNam, PDO::PARAM_INT);
+			// }
+			$stmt->bindParam('year', $tuNam);
+			$stmt->execute();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+			return $rs;
+		}
+		catch ( PDOException $error )
+		{
+			echo $error->getMessage();
+		}
+	}
+
+	public function getDoanhThuThangNay( $tenQuay )
+	{
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "";
+		$date = date('Y-m');
+		$sql .= "Declare @date varchar(max)
+		     SET @date = :date
+		SELECT ";
+
+		for ( $i = 1; $i <= 31; $i++ )
+		{
+
+			if($i <= 9)
+			{
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_0" . $i . ", "; 
+			}
+
+			if($i > 9)
+			{
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
+			}
+		}
+
+		$sql = rtrim($sql, ", ");
+
+		$sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+		    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+
+		if( ! empty($tenQuay) )
+		{
+		    $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('date', $date);
+			$stmt->execute();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			return $rs;
+		}
+		catch ( PDOException $error )
+		{
+			echo $error->getMessage();
+		}
+	}
+
+	public function getDoanhThuThangTruoc( $tenQuay )
+	{
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "";
+		$date = date('Y-m',strtotime("first day of last month"));
+		$sql .= "Declare @date varchar(max)
+		     SET @date = :date
+		SELECT ";
+
+		for ( $i = 1; $i <= 31; $i++ )
+		{
+
+			if($i <= 9)
+			{
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_0" . $i . ", "; 
+			}
+
+			if($i > 9)
+			{
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
+			}
+		}
+
+		$sql = rtrim($sql, ", ");
+
+		$sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+		    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+
+		if( ! empty($tenQuay) )
+		{
+		    $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('date', $date);
+			$stmt->execute();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			return $rs;
+		}
+		catch ( PDOException $error )
+		{
+			echo $error->getMessage();
+		}
+	}
+
+	public function getDoanhThuThangKhac( $tenQuay, $date  )
+	{	
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "";
+		$sql .= "Declare @date varchar(max)
+		     SET @date = :date
+		SELECT ";
+
+		for ( $i = 1; $i <= 31; $i++ )
+		{
+
+			if($i <= 9)
+			{
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_0" . $i . ", "; 
+			}
+
+			if($i > 9)
+			{
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
+			}
+		}
+
+		$sql = rtrim($sql, ", ");
+
+		$sql .=" FROM [tblLichSuPhieu] a LEFT JOIN [tblLSPhieu_HangBan] b on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
+		    where DangNgoi = 0 and PhieuHuy = 0 and DaTinhTien = 1 ";
+
+		if( ! empty($tenQuay) )
+		{
+		    $sql .=" AND b.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}
+
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('date', $date);
+			$stmt->execute();
+
+			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			return $rs;
+		}
+		catch ( PDOException $error )
+		{
+			echo $error->getMessage();
+		}
+	}
+	public function getTablesAndBills( $tuNgay,  $tenQuay = null ){
+
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
 
 		$sql = "SET NOCOUNT ON;
 		IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
 			BEGIN
 			DROP TABLE #temp_t1
 			END
-
+		declare @ngay varchar(max)
+		set @ngay = :tuNgay
 			select *
 			  into #temp_t1 FROM(
 			SELECT distinct b.MaBan, c.MaLichSuPhieu, GioVao,
@@ -2532,15 +2895,17 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						on a.[MaKhu] = b.[MaKhu]
 						left join [tblLichSuPhieu] c
 						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$date'
+						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = @ngay
 						left JOIN [tblLSPhieu_HangBan] d
 						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
-";
-	if( ! empty($tenQuay) )
-	{
-		$sql .=" WHERE  d.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
-	}				
-	$sql .=" ) t1
+		";
+
+		if( ! empty($tenQuay) )
+		{
+			$sql .=" WHERE  d.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
+		}		
+
+		$sql .=" ) t1
 
 
 				select MaBan, case when i.rnk=1 THEN i.MaLichSuPhieu  ELSE ' ' 	END as MaLichSuPhieu, 
@@ -2554,10 +2919,20 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			drop table #temp_t1 
 			 
 			";
+			try
+			{
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuNgay', $tuNgay);
+				
+				$stmt->execute();
 
-		$rs = $this->conn->query($sql)->fetchAll();
-
-		return $rs;
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
+				return $rs;
+			}
+			catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
 
 	}
 
@@ -3168,13 +3543,32 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSoLuongVeKey_Day( $date, $tenQuay, $ma_khu)
-	{
-		$sql = "  SELECT  TotalKey = count(a.MaLichSuPhieu),
+	public function getSoLuongVeKey_Day( $tuNgay, $tenQuay = null, $ma_khu)
+	{	
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		if( $ma_khu === 'nam' )
+		{
+			$ma_khu = $this->khu_nam;
+		}
+		elseif( $ma_khu === 'nu' )
+		{
+			$ma_khu = $this->khu_nu;
+		}
+		else
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "
+		SELECT  TotalKey = count(a.MaLichSuPhieu),
 		TotalVe = sum (SoLuong), 
 		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
 	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
-	 where substring( Convert(varchar,ThoiGianBan,126),0,11 ) = '$date' and $ma_khu";
+	 where substring( Convert(varchar,ThoiGianBan,126),0,11 ) = :tuNgay and $ma_khu";
 
 		if( ! empty($tenQuay) )
 		{
@@ -3182,22 +3576,45 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 
 		try{
-				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('tuNgay', $tuNgay);
+			
+			$stmt->execute();
+
+			$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 		
-					return $rs;
+			return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 			}
 	}
 
-	public function getSoLuongVeKey_Month( $date, $tenQuay, $ma_khu)
-	{
-		$sql = "  SELECT  TotalKey = count(a.MaLichSuPhieu),
+	public function getSoLuongVeKey_Month( $tuThang, $tenQuay, $ma_khu)
+	{	
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+		
+		if( $ma_khu === 'nam' )
+		{
+			 $ma_khu = $this->khu_nam;
+		}
+		elseif( $ma_khu === 'nu' )
+		{
+			$ma_khu = $this->khu_nu;
+		}
+		else
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
+		$sql = "SELECT  TotalKey = count(a.MaLichSuPhieu),
 		TotalVe = sum (SoLuong), 
 		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
 	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
-	 where substring( Convert(varchar,ThoiGianBan,126),0,8 ) = '$date' and $ma_khu";
+	 where substring( Convert(varchar,ThoiGianBan,126),0,8 ) = :tuThang and $ma_khu";
 
 		if( ! empty($tenQuay) )
 		{
@@ -3205,22 +3622,45 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 
 		try{
-				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('tuThang', $tuThang);
+			
+			$stmt->execute();
+
+			$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 		
-					return $rs;
+			return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 			}
 	}
 
-	public function getSoLuongVeKey_Year( $date, $tenQuay, $ma_khu)
-	{
+	public function getSoLuongVeKey_Year( $tuNam, $tenQuay, $ma_khu)
+	{	
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+		
+		if( $ma_khu ==='nam' )
+		{
+			$ma_khu = $this->khu_nam;
+		}
+		elseif( $ma_khu === 'nu' )
+		{
+			$ma_khu = $this->khu_nu;
+		}
+		else
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
 		$sql = "  SELECT  TotalKey = count(a.MaLichSuPhieu),
 		TotalVe = sum (SoLuong), 
 		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
 	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
-	 where substring( Convert(varchar,ThoiGianBan,126),0,5 ) = '$date' and $ma_khu";
+	 where substring( Convert(varchar,ThoiGianBan,126),0,5 ) = :tuNam and $ma_khu";
 
 		if( ! empty($tenQuay) )
 		{
@@ -3228,9 +3668,14 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 
 		try{
-				$rs = $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('tuNam', $tuNam);
+			
+			$stmt->execute();
+
+			$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 		
-					return $rs;
+			return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();

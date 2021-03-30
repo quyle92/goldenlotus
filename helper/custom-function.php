@@ -352,3 +352,4 @@ function so_sanh_diem_tong_tuan_truoc( $sales_today, $sales_last_week ){
       echo ( $sales_today == 0 ? $down : $up ) . ' ' . '100% vs  cùng ngày tuần trước';
     }
 }
+

@@ -91,9 +91,11 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                  </div>
             </div>
         </form>
-
+<?php
+//var_dump ( $goldenlotus->layTatCaBaoCao() );
+?>
          <div class="container" id="wrap"> <div class="row"> 
-            <div class="btn-toolbar" style="margin-bottom:10px"> <button class="btn btn-primary"><a href="signup.php" style="text-decoration: none; color:#fff">Thêm User</a></button> 
+            <div class="btn-toolbar" style="margin-bottom:10px"> 
             </div>
             <?php
             if(isset($_POST['report_name']) || isset($_POST['report_name_eng']))

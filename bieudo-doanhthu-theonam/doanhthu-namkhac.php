@@ -10,7 +10,7 @@
 			<label for="tu-ngay">Từ:</label>
 			<div class="input-group date" style="margin-bottom:5px">
         <input type='hidden' class="form-control" name="tenQuay" value="<?=isset($tenQuay ) ? $tenQuay  : ""?>"/>
-			  <input name="year" type='text' class="form-control" id="tu-ngay" />
+			  <input name="tuNam" type='text' class="form-control" id="tu-ngay" />
 			  <span class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
 			  </span>
@@ -42,7 +42,7 @@
 <script>
 //var ctx = document.getElementById('myChart').getContext('2d');
 
-
+var lineChart;
   $('form#namKhac').on('submit', function (event){
     event.preventDefault();
     var formValues= $(this).serialize();
@@ -50,24 +50,19 @@
       url:"../bieudo-doanhthu-theonam/ajax-call/process-year.php",
       method:"POST",
       data:formValues,
+      dataType:"json",
       beforeSend :function(){
           $("#loadingMask").css('visibility', 'visible');
       },
       success:function(data)
       {
-        var result = [];
-        json_data=JSON.parse(data);  
-        for(var i in json_data)
-          result.push([i, json_data [i]]);
-        console.log(json_data['doanhthu_t8']);
-        var t1 = json_data['doanhthu_t8'];
         var  anotherYearSales = document.getElementById('others');
         //console.log(t1);
 
         var speedData = {
              labels :["Jan", "Feb", "Mar", "Apr", "May", "June", "July","Aug","Sep","Oct","Nov","Dec"], 
               datasets: [{
-                data:[json_data['doanhthu_t1'],json_data['doanhthu_t2'],json_data['doanhthu_t3'],json_data['doanhthu_t4'],json_data['doanhthu_t5'],json_data['doanhthu_t6'],json_data['doanhthu_t7'],json_data['doanhthu_t8'],json_data['doanhthu_t9'],json_data['doanhthu_t10'],json_data['doanhthu_t11'],json_data['doanhthu_t12'] ],
+                data:data,
                  fill: false,
                  lineTension: 0,
                 borderColor: 'rgb(51, 153, 255)',
@@ -142,7 +137,12 @@
            } 
         };
 
-        var lineChart = new Chart(anotherYearSales, {
+       if(lineChart != undefined)
+       {
+          lineChart.destroy();
+       }
+
+        lineChart = new Chart(anotherYearSales, {
             type: 'line',
             data:speedData,
             options: chartOptions

@@ -13,7 +13,7 @@ $ten=isset($_SESSION['TenNV'])?$_SESSION['TenNV']:"";
 $matrungtam = isset($_SESSION['MaTrungTam'])?$_SESSION['MaTrungTam']:"";
 $trungtam = isset($_SESSION['TenTrungTam'])?$_SESSION['TenTrungTam']:"";
 
-
+$tenQuay = isset( $_POST['tenQuay'] ) ? $_POST['tenQuay'] : "";
 ?>
 
 <!DOCTYPE HTML>
@@ -112,7 +112,7 @@ justify-content: center;
       <div id="page-wrapper" >
 
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Danh Sách Bàn + Doanh Thu (Nhà Hàng)</h3>
+            <h3 class="title">Danh Sách Key + Doanh Thu</h3>
 
   
             <div class="panel with-nav-tabs panel-primary ">
@@ -127,9 +127,32 @@ justify-content: center;
                     <div class="tab-content">
 
                       <div class="tab-pane fade active in" id="tab1primary">
-                        <?php
-                          require('../datetimepicker-day.php');
-                        ?>
+                        <div class="col-md-4">
+                          <form action="" id="customDate" method="post" class="form-horizontal">
+                             <div class="form-group">
+                                  <label for="tenQuay" class="col-md-3 control-label">Quầy:</label>
+                                  <div class="input-group col-md-9" >
+                                    <select name="tenQuay" id="tenQuay"  class="form-control" >
+                                      <option selected value=''>Tất cả</option>
+                                        <?php
+                                        $rs = $goldenlotus->getTenQuayTemp();
+                                        foreach ( $rs as $r )
+                                        { ?>
+                                           <option <?=isset($_POST['tenQuay']) && $r['TenQuay'] == $_POST['tenQuay'] ? "selected" : "" ?>><?=$r['TenQuay']?></option>
+                                        <?php 
+                                        }
+                                        ?>
+                                    </select>
+                                  </div>
+                              </div>
+                               <div class="form-group">
+                                  <div class="col-md-9 col-md-offset-3">
+                                    <button class="btn btn-primary" type="submit" >
+                                     Submit</button>
+                                  </div>
+                                </div>
+                          </form>
+                        </div>
                           <div class="col-xs-12 col-sm-12 table-responsive">
                             <div class="panel panel-default">
 
@@ -149,7 +172,7 @@ justify-content: center;
                                     }
 
                                     $tenQuay = isset($_POST['tenQuay']) ? $_POST['tenQuay'] : "";
-                                    $tuNgay = isset( $_POST['tuNgay'] ) ?  date_format( date_create( $_POST['tuNgay'] ) , 'Y-m-d' ) : "";
+                                    $tuNgay = isset( $_POST['tuNgay'] ) ?  date_format( date_create( $_POST['tuNgay'] ) , 'Y-m-d' ) : '2017-10-21';
                                     $sales_by_table = $goldenlotus->getTablesAndBills( $tuNgay, $tenQuay );
                                     $sales_by_table = customizeArray_TablesBills( $sales_by_table );
                                     //var_dump($sales_by_table);//die;

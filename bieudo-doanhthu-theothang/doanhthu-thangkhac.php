@@ -40,6 +40,7 @@
          
 <?php require_once('../ajax-loading.php'); ?>
 <script>
+  var lineChart;
   $('form#thangkhac').on('submit', function (event){
     event.preventDefault();
     var formValues= $(this).serialize();console.log(formValues)
@@ -47,24 +48,20 @@
       url:"ajax-call/process-month.php",
       method:"POST",
       data:formValues,
+      dataType:"json",
       beforeSend :function(){
           $("#loadingMask").css('visibility', 'visible');
       },
       success:function(data)
       {
-        var result = [];
-        json_data=JSON.parse(data);  
-        for(var i in json_data)
-          //result.push( [i, addCommas( json_data [i] ) ] );
-          result.push(  parseInt( json_data [i] )   );
-        console.log(  ( result ) ) ;
+        console.log(data);
         var  anotherMonthSales = document.getElementById('others');
        
         var data = {
              labels :["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11,", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25","26", "27", "28", "29", "30", "31"],
               datasets: [{
                 label: "Revenue",
-                data:result,
+                data:data,
                  fill: false,
                  lineTension: 0,
                 borderColor: 'rgb(51, 153, 255)',
@@ -141,7 +138,12 @@
 
         };
 
-      var lineChart = new Chart(anotherMonthSales, {
+      if(lineChart != undefined)
+       {
+          lineChart.destroy();
+       }
+       
+       lineChart = new Chart(anotherMonthSales, {
             type: 'line',
             data:data,
             options: options,
@@ -221,8 +223,8 @@
 
  $('#tu-ngay').datetimepicker({
      // viewMode: 'years',
-      //useCurrent: false,
-      format: 'MM-YYYY',
+      useCurrent: true,
+       format: 'MMM YYYY',
       //defaultDate:dateNow
    });
 </script>

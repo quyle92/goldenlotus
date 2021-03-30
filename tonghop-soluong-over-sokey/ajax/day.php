@@ -6,8 +6,7 @@ $goldenlotus = new GoldenLotus($dbCon);
 
 $tuNgay = date('Y-m-d', strtotime($_POST['tuNgay']) );
 $tenQuay = isset( $_POST['tenQuay'] ) ? $_POST['tenQuay'] : "";
-$khu_nam = "(b.MaKhu = '03-NH1' or b.MaKhu = '03-NH2' or b.MaKhu = '03-NH3')";
-$khu_nu = "(b.MaKhu = '03-NH4' or b.MaKhu = '01-NH5' or b.MaKhu = '01-NH6')";
+
 if( ! empty($tenQuay))
 {
 	$goldenlotus->layView( $tenQuay  );
@@ -15,8 +14,8 @@ if( ! empty($tenQuay))
 
 $output = "";
 
-$rs_men = $goldenlotus->getSoLuongVeKey_Day( $tuNgay, $tenQuay, $khu_nam );
-$rs_women = $goldenlotus->getSoLuongVeKey_Day( $tuNgay, $tenQuay, $khu_nu );
+$rs_men = $goldenlotus->getSoLuongVeKey_Day( $tuNgay, $tenQuay, $ma_khu = 'nam' );
+$rs_women = $goldenlotus->getSoLuongVeKey_Day( $tuNgay, $tenQuay, $ma_khu = 'nu' );
 
 $output .= '<tr>
       <td>Khu nam</td>
