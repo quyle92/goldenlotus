@@ -44,8 +44,7 @@ $paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$
  * [$sqlRec description]
  * @var string
  */
-var_dump($where);
-var_dump($paginating);
+
 $sqlRec = $goldenlotus->getPayMethodDetails_Rec_Month( $tenQuay, $tuThang,  $where , $paginating); 
 //var_dump($sqlRec);die;
     

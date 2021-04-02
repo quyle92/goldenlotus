@@ -20,7 +20,7 @@
       <div class="form-group">
         <label for="tuNam" class="col-md-3 control-label">Ngày:</label><!--2020/12/01 -->
         <div class="col-md-9 input-group date">
-          <input name="tuNam" type='text' class="form-control" id="tuNam" value="<?=isset($tuNam) ? substr($tuNam,8) . "/" .substr($tuNam,5,2) . "/" .  substr($tuNam,0,4) : date('d-m-y') ?>"/>
+          <input name="tuNam" type='text' class="form-control" id="tuNam" value="<?=isset($tuNam) ? substr($tuNam,8) . "/" .substr($tuNam,5,2) . "/" .  substr($tuNam,0,4) : date('y') ?>"/>
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
           </span>

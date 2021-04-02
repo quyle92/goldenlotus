@@ -42,6 +42,9 @@ require('../datetimepicker-year.php');
             "serverSide": true,
             ajax : {
                 "url": "ajax/year.php",
+                'beforeSend': function (request) {
+                    $("#loadingMask").css('visibility', 'visible');
+                },
                 "data": function ( d ) {
                     //method 1: d.time = time;
                     //method 2: d.custom = $('#myInput').val();
@@ -52,7 +55,8 @@ require('../datetimepicker-year.php');
                     } );//d is current default data object created by DataTable and "time": is additional data.
                     //ref: https://datatables.net/reference/option/ajax.data
                     //ref: https://stackoverflow.com/questions/4528744/how-does-the-extend-function-work-in-jquery  
-                }
+                },
+                complete: function() { $("#loadingMask").css('visibility', 'hidden'); }
             },
 
 

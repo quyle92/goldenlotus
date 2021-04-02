@@ -11,7 +11,7 @@ $params = $_REQUEST;
 
 $tungay = dateConverter($params['tuNgay']);
 $denngay = dateConverter($params['denNgay']);
-$ma_khu = "(a.MaKhu = '03-NH4' or a.MaKhu = '01-NH5' or a.MaKhu = '01-NH6')";
+$ma_khu = "nu";
 
 //define index of column name
 $columns = array(

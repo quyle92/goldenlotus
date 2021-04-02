@@ -53,7 +53,7 @@ if( $_SESSION['MaNV'] != 'HDQT' )
     <div id="page-wrapper">
     <div class="col-md-12 graphs">
     <div class="xs">
-   
+
         <form action="" method="post">
             <div class="container">
                 <div class="row">

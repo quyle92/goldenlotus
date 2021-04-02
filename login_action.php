@@ -3,22 +3,25 @@ require('lib/db.php');
 session_start();
 	$user= htmlentities(trim(strip_tags($_POST['username'])),ENT_QUOTES,'utf-8');
 	$pass = htmlentities(trim(strip_tags($_POST['password'])),ENT_QUOTES,'utf-8');
-	
+	$user1 = $_POST['username'];
+	$pass1 =  $_POST['password'];
 	//Truy van DB de kiem tra
 	 $sql="select PWDCOMPARE(:pass,MatKhau) as IsDungMatKhau, TenSD
 	 , BaoCaoDuocXem
 	 , b.MaNV,b.TenNV, b.MaTrungTam, c.TenTrungTam  
 from tblDSNguoiSD a, tblDMNhanVien b, tblDMTrungTam c where a.MaNhanVien = b.MaNV and b.MaTrungTam = c.MaTrungTam and a.TenSD like :user";
-	
+// 	$sql1="select PWDCOMPARE('$pass1',MatKhau) as IsDungMatKhau, TenSD, b.MaNV,b.TenNV, b.MaTrungTam, c.TenTrungTam  
+// from tblDSNguoiSD a, tblDMNhanVien b, tblDMTrungTam c where a.MaNhanVien = b.MaNV and b.MaTrungTam = c.MaTrungTam and a.TenSD like '$user1'";
 	try
-	{
+	{	
+		//$result_dangnhap = $dbCon->query($sql1)->fetchAll(PDO::FETCH_ASSOC); 
 		//lay ket qua query
 		$stmt = $dbCon->prepare($sql);
 		$stmt->bindParam(':pass', $pass, PDO::PARAM_INT);
 		$stmt->bindValue(':user', "%{$user}%");
 		$stmt->execute();
 		$result_dangnhap = $stmt->fetch();//var_dump($result_dangnhap);die;
-		if($result_dangnhap != 1)
+		if($result_dangnhap != false)
 		{//var_dump($result_dangnhap);die;
 
 			$_SESSION['TenSD']=$result_dangnhap['TenSD'];
@@ -26,7 +29,7 @@ from tblDSNguoiSD a, tblDMNhanVien b, tblDMTrungTam c where a.MaNhanVien = b.MaN
 			$_SESSION['TenNV']=$result_dangnhap['TenNV'];
 			$_SESSION['MaTrungTam'] = $result_dangnhap['MaTrungTam'];
 			$_SESSION['TenTrungTam']=$result_dangnhap['TenTrungTam'];
-			$_SESSION['BaoCaoDuocXem']  = unserialize($r['BaoCaoDuocXem']);
+			$_SESSION['BaoCaoDuocXem']  = unserialize($result_dangnhap['BaoCaoDuocXem']);
 			//https://phppot.com/php/php-login-script-with-remember-me/
 			if(!empty($_POST["remember"])) 
 			{
@@ -40,7 +43,7 @@ from tblDSNguoiSD a, tblDMNhanVien b, tblDMTrungTam c where a.MaNhanVien = b.MaN
 			}
 			
 			// var_dump($_SESSION['MaNV']);die;
-			header('location:diemtong/index.php');
+			header('location:diemtong.php');
 		}
 		else
 		{

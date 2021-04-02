@@ -102,6 +102,6 @@ $(document).ready(function() {
 </div>
     <!-- /#wrapper -->
 <!-- Nav CSS -->
-
+<?php require_once('../ajax-loading.php'); ?>
 </body>
 </html>

@@ -76,7 +76,6 @@ $('body').on('submit', 'form#customYear_<?=$r['TenQuay']?>', function (event){
     dataType:"json",
     success:function(response)
       { 
-   //var result = JSON.parse(response);
         console.log(response);
         var result = response['data'];
         var totalQty = response['totalQty'];

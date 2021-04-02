@@ -35,7 +35,7 @@ require('../datetimepicker-day.php');
             $("#loadingMask").css('visibility', 'visible');
         },
         success:function(output)
-        {console.log(output)
+        {
         if ($.fn.DataTable.isDataTable("#day")) 
         {
          $("table#day").dataTable().fnDestroy();

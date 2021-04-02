@@ -11,8 +11,10 @@
     </div>
     <div class="navbar-default sidebar" role="navigation">
         <div class="sidebar-nav navbar-collapse collapse" aria-expanded="false"> 
-   
-           
+            
+            <li style="list-style-type: none;" class="li-level1">
+                <a class="menu-level1" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/diemtong.php"><i class="fab fa-acquisitions-incorporated"></i> Điểm tổng</a>
+            </li>
             <button class="dropdown-btn" data-report="BaoCaoBanHang"><i class="fas fa-utensils"></i></i> Báo cáo bán hàng
                 <span class="fa fa-caret-down"></span>
             </button>
@@ -90,12 +92,7 @@
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-spa/index.php"><i class="fas fa-spa"></i>
                     Doanh thu spa (tổng hợp doanh thu + chi tiết hóa đơn)</a>
                 </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/diemtong/index.php"><i class="fab fa-acquisitions-incorporated"></i>
-                    Điểm tổng</a>               
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-nhom-monan/index.php"><i class="fas fa-chart-line"></i>Doanh thu nhóm món ăn</a>
-                </li>
+                               
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php"><i class="fas fa-apple-alt"></i>
                     Tổng hợp doanh thu các quầy (Ngày)</a>

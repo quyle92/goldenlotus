@@ -1,9 +1,9 @@
 <?php  
-$page_name = "TongHopSoLuongBan";
-require_once('../helper/security.php'); 
-require('../lib/db.php');
-require('../lib/goldenlotus.php');
-require_once('../helper/custom-function.php'); 
+$page_name = "diemtong";
+require_once('helper/security.php'); 
+require('lib/db.php');
+require('lib/goldenlotus.php');
+require_once('helper/custom-function.php'); 
 @session_start();
 $goldenlotus = new GoldenLotus($dbCon);
 
@@ -33,7 +33,7 @@ $rs = removeOuterArr( $goldenlotus->getDoanhThuSpa() );
 <!DOCTYPE HTML>
 <html>
 <head>
-<?php include ('../head/head-tag.php');?>
+<?php include ('head/head-revenue.month.php');?>
 <style>
 .graphs {
     padding: 2em 1em;
@@ -152,7 +152,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
 </head>
 <body>
 <div id="wrapper">
-    <?php include '../menu.php'; ?>
+    <?php include 'menu.php'; ?>
   <div id="page-wrapper">
      <div class="container">  
       <div class="col-md-6 col-md-offset-2 well">
@@ -291,7 +291,11 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_SPA" target="_blank"> <span class="glyphicon glyphicon-new-window"></span></a></td>
+                          <td> 
+                            <?php if( $_SESSION['MaNV'] === 'HDQT' ||  in_array($page_name, $_SESSION['BaoCaoDuocXem']) ) { ?>
+                            <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_SPA" target="_blank"> <span class="glyphicon glyphicon-new-window"></span></a>
+                          <?php } ?>
+                          </td>
                         </tr>
                         <tr>
                           <td>Snack bar</td>
@@ -316,7 +320,10 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_SNACKBAR" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
+                          <td> <?php if( $_SESSION['MaNV'] === 'HDQT' ||  in_array($page_name, $_SESSION['BaoCaoDuocXem']) ) { ?>
+                            <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_SNACKBAR" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a>
+                            <?php } ?>
+                          </td>
                         </tr>
                         <tr>
                           <td>Cafeteria</td>
@@ -341,7 +348,10 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_CAFE" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
+                          <td> <?php if( $_SESSION['MaNV'] === 'HDQT' ||  in_array($page_name, $_SESSION['BaoCaoDuocXem']) ) { ?>
+                            <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_CAFE" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a>
+                            <?php } ?>
+                          </td>
                         </tr>
                         <tr>
                           <td>Game</td>
@@ -366,13 +376,17 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_GAME" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
+                          <td>  
+                            <?php if( $_SESSION['MaNV'] === 'HDQT' ||  in_array($page_name, $_SESSION['BaoCaoDuocXem']) ) { ?>
+                            <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_GAME" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a>
+                            <?php } ?>
+                          </td>
                         </tr>
                         <tr>
                           <td>Nhà hàng</td>
                           <td>
                             <?php 
-                            $nha_hang = removeOuterArr( $goldenlotus->getDoanhThuGame() ); 
+                            $nha_hang = removeOuterArr( $goldenlotus->getDoanhThuNhaHang() ); 
                             echo $nha_hang_today = number_format( $nha_hang[0]['DoanhThu'],0,",",".");
                             ?>
                              <sup>đ</sup>
@@ -391,7 +405,11 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                               ?>
                             </small>
                           </td>
-                          <td> <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_RESTAURANT" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a></td>
+                          <td> 
+                            <?php if( $_SESSION['MaNV'] === 'HDQT' ||  in_array($page_name, $_SESSION['BaoCaoDuocXem']) ) { ?>
+                              <a href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-doanhthu-cacquay-theongay/index.php#tab_RESTAURANT" target="_blank"> <span class="glyphicon glyphicon-new-window" ></span></a>
+                              <?php } ?>
+                            </td>
                         </tr>
                       </tbody>
                     </table>

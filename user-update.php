@@ -49,7 +49,6 @@ if( $_SESSION['MaNV'] != 'HDQT' )
     <div id="page-wrapper">
     <div class="col-md-12 graphs">
     <div class="xs">
-   
         <form action="" method="post">
             <div class="container">
                 <div class="row">
@@ -71,7 +70,7 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                             }
 
 
-                            ?>
+                            ?><button type="button" class="btn btn-info" onclick="window.history.go(-1);">Back to Users</button>
                             <h4>BẠN ĐANG ĐĂNG NHẬP VỚI QUYỀN - <?php echo $ten; ?> </h4>
                         </div>
                         <div class="" style="margin-bottom:5px">Chi nhánh:</div>

@@ -256,6 +256,7 @@ $(document).ready(function () {
     </div>
       <!-- /#page-wrapper -->
 </div>
+<?php require_once('../ajax-loading.php'); ?>
 </body>
 
 <script>

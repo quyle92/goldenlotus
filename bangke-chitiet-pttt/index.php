@@ -91,7 +91,7 @@ $trungtam = isset($_SESSION['TenTrungTam'])? $_SESSION['TenTrungTam']:"";
     <!-- /#wrapper -->
 <!-- Nav CSS -->
 
-
+<?php require_once('../ajax-loading.php'); ?>
 </body>
 </html>
 

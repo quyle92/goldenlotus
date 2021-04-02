@@ -134,7 +134,24 @@ class General {
 		}
 	}
 
+	protected function checkUser( $maNV ) 
+	{	
+		 $maNV = htmlentities(trim(strip_tags($maNV)),ENT_QUOTES,'utf-8');
 
+		$sql = "SELECT * from [tblDSNguoiSD] where [TenSD] = :maNV";
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('maNV', $maNV);
+			
+			$stmt->execute();
+			$rs = $stmt->fetch(PDO::FETCH_ASSOC);
+			return ( ! $rs ) ? false : true;
+		}
+		catch ( PDOException $error ){
+			echo $error->getMessage();
+		}
+	}
 }
 
 /**Note**/
