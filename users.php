@@ -7,16 +7,13 @@ require('lib/goldenlotus.php');
 @session_start();
 $goldenlotus = new GoldenLotus($dbCon);
 
-$id=$_SESSION['MaNV'];
-$ten=$_SESSION['TenNV'];
+$id= isset($_SESSION['MaNV']) ? $_SESSION['MaNV'] : '';
+$ten= isset($_SESSION['TenNV']) ? $_SESSION['MaNV'] : '';
 
-$matrungtam=$_SESSION['MaTrungTam'];
-$trungtam=$_SESSION['TenTrungTam'];
+$matrungtam= isset( $_SESSION['matrungtam'] ) ? $_SESSION['MaTrungTam'] : '';
+$trungtam= isset( $_SESSION['TenTrungTam'] ) ? $_SESSION['TenTrungTam'] : '';
 
-$tungay=@$_POST['tungay'];
-$denngay=@$_POST['denngay'];
-
-if( $_SESSION['MaNV'] != 'HDQT' )
+if( isset($_SESSION['MaNV'] ) && $_SESSION['MaNV'] != 'HDQT' )
    die('<script> alert("Bạn ko được quyền truy cập vào đây!"); window.history.go(-1); </script>');
 
 ?>
@@ -137,7 +134,7 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                          <?php
                         $i = 1;
                         $users_list = $goldenlotus->layDanhSachUsers(); 
-                        foreach ( $users_list as $r ) { ?>
+                        foreach ( $users_list as $r ) { //var_dump(unserialize(unserialize(base64_decode($r['BaoCaoDuocXem']))))?>
                                                           
                         <tr>
                           <td><?=$i?></td>
@@ -145,7 +142,7 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                           <td><?=$r['TenNV']?></td>
                           <td><ul style="padding-left:0px">
                             <?php 
-                                $bao_cao_duoc_xem_arr = ( !empty( $r['BaoCaoDuocXem'] )   ?  unserialize(str_replace('&quot;','"',$r['BaoCaoDuocXem'])) :"" );
+                                $bao_cao_duoc_xem_arr = ( !empty( $r['BaoCaoDuocXem'] )   ?  unserialize(unserialize(base64_decode($r['BaoCaoDuocXem']))) :"" );
                                 $ten_bao_cao = "";
                                  $report_name = "";
                                 if ( !empty($bao_cao_duoc_xem_arr ) )
@@ -160,12 +157,12 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                             ?>
                           </ul></td>
                           <td>
-                              <a href="user-update.php?maNV=<?=$r['MaNV']?>"><i class="material-icons">&#xE8B8;</i></a>
+                              <a href="user-update.php?tenSD=<?=$r['TenSD']?>"><i class="material-icons">&#xE8B8;</i></a>
                               
                           </td>
                           <td>
                              
-                              <a href="user-delete.php?maNV=<?=$r['MaNV']?>" onclick="return confirm('Are you sure you want to delete?');" role="button" data-toggle="modal"><i class="material-icons" style="color:#F44336">&#xE5C9;</i></a>
+                              <a href="user-delete.php?tenSD=<?=$r['TenSD']?>" onclick="return confirm('Are you sure you want to delete?');" role="button" data-toggle="modal"><i class="material-icons" style="color:#F44336">&#xE5C9;</i></a>
                           </td>
 
                         </tr>
@@ -189,32 +186,7 @@ if( $_SESSION['MaNV'] != 'HDQT' )
    </div>
     <!-- /#wrapper -->
 <!-- Nav CSS -->
-<script>
-    /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var i;
 
-for (i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function() {
-    //this.classList.toggle("active");
-    var dropdownContent = this.nextElementSibling;
-    if (dropdownContent.style.display === "block") {
-        dropdownContent.style.display = "none";
-    } else {
-        dropdownContent.style.display = "block";
-    }
-  });
-}
-
-//dropdown[0].click();
-
-</script>
-<script>
-$('.navbar-toggle').on('click', function() {
-  $('.sidebar-nav').toggleClass('block');  
-   
-});
-</script>
 
 
 </body>

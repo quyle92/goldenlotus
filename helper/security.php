@@ -2,8 +2,8 @@
 session_start();
 $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuocXem'] : array() );
 
-if( ! isset($_SESSION['MaNV'])  )
-{	
+if( ! isset($_SESSION['TenSD'])  )
+{	var_dump($_SESSION['TenSD']);
    if( $page_name === "diemtong")
 	{
 		die('<script> 
@@ -22,7 +22,7 @@ if( ! isset($_SESSION['MaNV'])  )
 	}
 }
 
-if($_SESSION['MaNV'] !== 'HDQT')
+if($_SESSION['TenSD'] !== 'Admin')
 {
 	if( !in_array('diemtong', $bao_cao_duoc_xem) )
 	{

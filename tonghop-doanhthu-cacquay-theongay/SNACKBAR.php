@@ -77,6 +77,9 @@ $('body').on('submit', 'form#customDate_<?=$r['TenQuay']?>', function (event){
     method:"POST",
     data:formValues,
     dataType:"json",
+    'beforeSend': function (request) {
+        $("#loadingMask").css('visibility', 'visible');
+    },
     success:function(response)
       { 
         //var result = JSON.parse(response);
@@ -120,7 +123,9 @@ $('body').on('submit', 'form#customDate_<?=$r['TenQuay']?>', function (event){
 
 
 
-      }
+      },
+       complete: function() { $("#loadingMask").css('visibility', 'hidden'); }
+       
     });
 });
 

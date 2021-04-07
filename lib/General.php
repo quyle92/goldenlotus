@@ -134,15 +134,17 @@ class General {
 		}
 	}
 
-	protected function checkUser( $maNV ) 
+	protected function checkUser( $tenSD ) 
 	{	
-		 $maNV = htmlentities(trim(strip_tags($maNV)),ENT_QUOTES,'utf-8');
+		 $tenSD = htmlentities(trim(strip_tags($tenSD)),ENT_QUOTES,'utf-8');
 
-		$sql = "SELECT * from [tblDSNguoiSD] where [TenSD] = :maNV";
+		$sql = "DECLARE @tenSD varchar(max)
+		SET @tenSD = :tenSD
+		SELECT * from [tblDSNguoiSD] where [TenSD] = @tenSD";
 		try
 		{
 			$stmt = $this->conn->prepare($sql);
-			$stmt->bindParam('maNV', $maNV);
+			$stmt->bindParam('tenSD', $tenSD);
 			
 			$stmt->execute();
 			$rs = $stmt->fetch(PDO::FETCH_ASSOC);

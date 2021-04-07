@@ -61,16 +61,28 @@ justify-content: center;
 });
 
   $(document).ready(function() {
-    $('#all').DataTable();
+    $('#all').DataTable({
+    "drawCallback": function( settings ) {//console.log( settings );
+       stylingInnerTable();
+    }
+});
 } );
   $(document).ready(function() {
-    $('#occupied').DataTable();
+    $('#occupied').DataTable({
+    "drawCallback": function( settings ) {//console.log( settings );
+       stylingInnerTable();
+    }
+});
 } );
   $(document).ready(function() {
-    $('#empty').DataTable();
+    $('#empty').DataTable({
+    "drawCallback": function( settings ) {//console.log( settings );
+       stylingInnerTable();
+    }
+});
 } );
 
-  $(function () {
+  function stylingInnerTable() {
 
   /**
    * css for first bill_ID
@@ -98,12 +110,12 @@ justify-content: center;
       'font-weight': 'bold'
   };
   tr.each(function() {
-    if($(this).data('bill') != " "){//console.log($(this).data('bill'));
+    if($(this).data('total') != " "){console.log( $(this).find('td')[6]);
       $(this).find('td').css(style);
     }
   });
 
-});
+}
 </script>
 </head>
 <body>
@@ -173,6 +185,7 @@ justify-content: center;
 
                                     $tenQuay = isset($_POST['tenQuay']) ? $_POST['tenQuay'] : "";
                                     $tuNgay = isset( $_POST['tuNgay'] ) ?  date_format( date_create( $_POST['tuNgay'] ) , 'Y-m-d' ) : '2017-10-21';
+                                    //$tuNgay = date('Y-m-d');
                                     $sales_by_table = $goldenlotus->getTablesAndBills( $tuNgay, $tenQuay );
                                     $sales_by_table = customizeArray_TablesBills( $sales_by_table );
                                     //var_dump($sales_by_table);//die;
@@ -490,8 +503,6 @@ justify-content: center;
                               <tbody>
                                   
                                     <?php
-                                    $date = date('2015/08/26');
-                                   // $date = date('yy/m/d');
                                   
                                     $sales_by_table = $goldenlotus->getTablesAndBills_Empty(  $tuNgay , $tenQuay );
                                     $sales_by_table = customizeArray_TablesBills( $sales_by_table );

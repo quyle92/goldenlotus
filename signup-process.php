@@ -14,26 +14,36 @@ if( $password !== $confirm_password ){
 }
 
 $report_arr = serialize( $_POST['report_arr'] );
+$report_arr = base64_encode(serialize($report_arr));
 $report_arr = htmlentities(trim(strip_tags($report_arr)),ENT_QUOTES,'utf-8');
+
 
 if ( $username != "" && $password != "" && $report_arr != "" )
 {
 	$sql="INSERT INTO [tblDSNguoiSD] ( [TenSD], [MaNhanVien],
-	   [MatKhau],[KiemTraSD],[DangSD],[TamNgung],[KhongDoi],[SuDungDacBiet], [BaoCaoDuocXem]) VALUES ( '$username', '$maNV', PWDENCRYPT('$password'), 0,0,0,0,0, '$report_arr' )"; 
+	   [MatKhau],[KiemTraSD],[DangSD],[TamNgung],[KhongDoi],[SuDungDacBiet], [BaoCaoDuocXem]) VALUES ( :username, :maNV, PWDENCRYPT(:password), 0,0,0,0,0, :report_arr )"; 
 
-	try{
-	 		$rs = $dbCon->query($sql);
-	 		$_SESSION['signup_success'] = 1;
-			header('location:signup.php');
+	try
+	{
+ 		$stmt = $dbCon->prepare($sql);
+		$stmt->bindParam('username', $username);
+		$stmt->bindParam('maNV', $maNV);
+		$stmt->bindParam('password', $password);
+		$stmt->bindParam('report_arr', $report_arr);
+		
+		$stmt->execute();
+
+ 		$_SESSION['signup_success'] = 1;
+		header('location:signup.php');
 			
-		}
+	}
 
 	catch(Exception $e) 
-		{ 	
-			echo $e->getMessage();
-			$_SESSION['signup_success'] = 0;
-			header('location:signup.php');
-		}
+	{ 	
+		echo $e->getMessage();
+		$_SESSION['signup_success'] = 0;
+		header('location:signup.php');
+	}
 
 } else {
  	//throw new \Exception('Required field(s) missing. Please try again.');

@@ -11,6 +11,7 @@ require('../datetimepicker-month.php');
 </div>
 
 <script>
+  var myPieChart;
 $(function () {  
   $('body').on('submit', 'form#customMonth', function (event){
     event.preventDefault();
@@ -80,7 +81,12 @@ $(function () {
           }
         };
 
-      var myPieChart  = new Chart(DOPHU_BAYGIO, {
+      if(myPieChart != undefined)
+       {
+          myPieChart.destroy();
+       }
+
+       myPieChart  = new Chart(DOPHU_BAYGIO, {
           type: 'doughnut',
           data: data,
           options: options

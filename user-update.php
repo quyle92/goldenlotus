@@ -6,15 +6,16 @@ require('lib/db.php');
 require('lib/goldenlotus.php');
 @session_start();
 $goldenlotus = new GoldenLotus($dbCon);
-$maNV = isset($_GET['maNV']) ? $_GET['maNV'] : "";
-if( !empty($maNV) ){
-$user = $goldenlotus->layTenUser($maNV);
+$_SESSION['tenSD'] = isset($_GET['tenSD']) ? $_GET['tenSD'] : "";
+$tenSD = $_SESSION['tenSD'];
+if( !empty($tenSD) ){
+$user = $goldenlotus->layTenUser($tenSD);
 }
 
 
 $report_arr = isset( $_POST['report_arr'] ) ? serialize( $_POST['report_arr'] ) : "";
 if( isset($_POST['submit']) ){
-	 $goldenlotus->updateUser($maNV, $report_arr);	
+	 $goldenlotus->updateUser($tenSD, $report_arr);	
 }
 
 
@@ -169,10 +170,10 @@ if( $_SESSION['MaNV'] != 'HDQT' )
                             <h4><strong>Lựa chọn menu:</strong></h4>
                             <?php
                             $danh_sach_bao_cao = $goldenlotus->layTatCaBaoCao();
-                            $bao_cao_duoc_xem_arr = ( !empty( $user['BaoCaoDuocXem'] )   ? unserialize($user['BaoCaoDuocXem']) :array() );
-                           
+                            $bao_cao_duoc_xem_arr = ( !empty( $user['BaoCaoDuocXem'] )   ? unserialize(unserialize(base64_decode($user['BaoCaoDuocXem']))) : array() );
+
                              foreach ( $danh_sach_bao_cao as $r ) {
-                                if(  in_array( $r['MaBaoCao'], $bao_cao_duoc_xem_arr ) ){
+                                if(  ! empty( $bao_cao_duoc_xem_arr ) &&   in_array( $r['MaBaoCao'], $bao_cao_duoc_xem_arr ) ){
                                 echo '<div class="">
                                   <label>
                                     <input type="checkbox" checked data-toggle="toggle" name="report_arr[]" value="' . $r['MaBaoCao'] . '">

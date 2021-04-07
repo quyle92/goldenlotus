@@ -28,7 +28,8 @@ class GoldenLotus extends General{
 	}
 
 	public function layView( $ma_quay  )
-	{
+	{	
+		$ma_quay =  htmlentities(trim(strip_tags($ma_quay)),ENT_QUOTES,'utf-8');
 		$this->general->taoView($ma_quay);
 	}
 	
@@ -96,7 +97,7 @@ class GoldenLotus extends General{
 	}
 
 	public function layDanhSachUsers() {
-		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [tblDSNguoiSD] a,  [tblDMNhanVien] b where a.MaNhanVien = b.MaNV and [TenSD] <> 'Admin'	";
+		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [tblDSNguoiSD] a,  [tblDMNhanVien] b where a.MaNhanVien = b.MaNV and [TenSD] <> 'Admin'";
 		try{
 			$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 			//$r=sqlsrv_fetch_array($rs); 
@@ -109,19 +110,26 @@ class GoldenLotus extends General{
 		}
 	}
 	
-	public function updateUser( $maNV, $report_arr )
-	{
-		if( empty($maNV) ) 
+	public function updateUser( $tenSD, $report_arr )
+	{	
+		$tenSD =  htmlentities(trim(strip_tags($tenSD)),ENT_QUOTES,'utf-8');
+		$report_arr = base64_encode(serialize($report_arr));
+		$report_arr = htmlentities(trim(strip_tags($report_arr)),ENT_QUOTES,'utf-8');	
+		
+		if( empty($tenSD) ) 
 		{
 			throw new InvalidArgumentException();
 		}
 
-		$sql = "UPDATE [tblDSNguoiSD] SET [BaoCaoDuocXem] = :report_arr where MaNhanVien = :maNV";
+		$sql = "DECLARE @report_arr varchar(max), @tenSD varchar(max)
+		SET @report_arr = :report_arr
+		SET @tenSD = :tenSD
+		UPDATE [tblDSNguoiSD] SET [BaoCaoDuocXem] = @report_arr where TenSD = @tenSD";
 			try
 			{	
 				$stmt = $this->conn->prepare($sql);
 				$stmt->bindParam('report_arr', $report_arr);
-				$stmt->bindParam('maNV', $maNV);
+				$stmt->bindParam('tenSD', $tenSD);
 				
 				$stmt->execute();
 				$_SESSION['update_success'] = 1;
@@ -135,12 +143,22 @@ class GoldenLotus extends General{
 			}	
 	}
 
-	public function layBaoCao( $ma_bao_cao ){
-		$sql = "SELECT * FROM [tblDMBaoCao] WHERE [MaBaoCao] = '$ma_bao_cao' ";
-		try {
-			$rs = $this->conn->query($sql)->fetch();
-						
-				return $rs['TenBaoCao'];
+	public function layBaoCao( $ma_bao_cao )
+	{
+		$sql = "DECLARE @ma_bao_cao varchar(max)
+		SET @ma_bao_cao = :ma_bao_cao
+		SELECT * FROM [tblDMBaoCao] WHERE [MaBaoCao] = @ma_bao_cao";
+
+		try 
+		{	
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('ma_bao_cao', $ma_bao_cao);
+			
+			$stmt->execute();
+
+			$rs = $stmt->fetch(PDO::FETCH_ASSOC);
+					
+			return $rs['TenBaoCao'];
 			
 		}
 		catch ( PDOException $error ) {
@@ -148,12 +166,17 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function layTenUser($maNV) {
-		$sql = "SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [tblDSNguoiSD] a,  [tblDMNhanVien] b where a.MaNhanVien = b.MaNV and MaNV = :maNV";
+	public function layTenUser($tenSD) 
+	{
+		$tenSD = htmlentities(trim(strip_tags($tenSD)),ENT_QUOTES,'utf-8');
+
+		$sql = "DECLARE @tenSD varchar(max)
+		SET @tenSD = :tenSD
+		SELECT TenSD, b.MaNV,b.TenNV, BaoCaoDuocXem FROM [tblDSNguoiSD] a,  [tblDMNhanVien] b where a.MaNhanVien = b.MaNV and tenSD = @tenSD";
 		try
 		{
 			$stmt = $this->conn->prepare($sql);
-			$stmt->bindParam('maNV', $maNV);
+			$stmt->bindParam('tenSD', $tenSD);
 			
 			$stmt->execute();
 			$rs =  $stmt->fetch(PDO::FETCH_ASSOC);
@@ -167,7 +190,7 @@ class GoldenLotus extends General{
 
 	public function getTenQuay()
 	{
-		$sql = "SELECT distinct TenQuay  FROM [SPA_HOANGSENQ3].[dbo].[tblDMNhomHangBan] ";
+		$sql = "SELECT distinct TenQuay  FROM [tblDMNhomHangBan] ";
 		try{
 			$rs = $this->conn->query($sql)->fetchAll();
 			
@@ -210,15 +233,15 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function changePassword( $maNV, $password, $repass, &$loi ) 
+	public function changePassword( $tenSD, $password, $repass, &$loi ) 
 	{
 		$thanhcong=true;
 
-		$maNV = htmlentities(trim(strip_tags($maNV)),ENT_QUOTES,'utf-8');
+		$tenSD = htmlentities(trim(strip_tags($tenSD)),ENT_QUOTES,'utf-8');
 		$password = htmlentities(trim(strip_tags($password)),ENT_QUOTES,'utf-8');
 		$repass = htmlentities(trim(strip_tags($repass)),ENT_QUOTES,'utf-8');
 
-		if ( $this->general->checkUser( $maNV ) === false ) 
+		if ( $this->general->checkUser( $tenSD ) === false ) 
 		{
 			throw new InvalidArgumentException('Please don\'t change username!');
 		}
@@ -243,12 +266,16 @@ class GoldenLotus extends General{
 
 		if ( $thanhcong == true )
 		{
-			$sql = "UPDATE [tblDSNguoiSD] SET [MatKhau] = PWDENCRYPT(:password) where [TenSD] = :maNV";
+			$sql = "DECLARE @password varchar(max)
+			DECLARE @tenSD varchar(max)
+			SET @password = :password
+			SET @tenSD = :tenSD
+			UPDATE [tblDSNguoiSD] SET [MatKhau] = PWDENCRYPT(@password) where [TenSD] = @tenSD";
 			try
 			{
 				$stmt = $this->conn->prepare($sql);
 				$stmt->bindParam('password', $password);
-				$stmt->bindParam('maNV', $maNV);
+				$stmt->bindParam('tenSD', $tenSD);
 				
 				$stmt->execute();
 				
@@ -263,10 +290,17 @@ class GoldenLotus extends General{
 		
 	}
 
-	public function xoaUser( $maNV ){
-		$sql = "DELETE FROM  [tblDSNguoiSD] where [MaNhanVien] = '$maNV'";
-		try{
-			$rs = $this->conn->query($sql);
+	public function xoaUser( $tenSD ){
+		$sql = "DECLARE @tenSD varchar(max)
+		SET @tenSD = :tenSD
+		DELETE FROM  [tblDSNguoiSD] where [TenSD] = @tenSD";
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindParam('tenSD', $tenSD);
+			
+			$stmt->execute();
+
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -351,11 +385,12 @@ class GoldenLotus extends General{
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "
+		$sql = "DECLARE @tuNam varchar(max)
+		SET @tuNam = :tuNam
 		SELECT count(DISTINCT MaBan) FROM  [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 		JOIN [tblDMHangBan] c ON b.MaHangBan = c.MaHangBan
-		where  substring(Convert(varchar,GioVao,126),0,5) = :tuNam and [ThoiGianDongPhieu] IS NULL";
+		where  substring(Convert(varchar,GioVao,126),0,5) = @tuNam and [ThoiGianDongPhieu] IS NULL";
 
 		if ( ! empty($tenQuay) )
 		{	
@@ -398,7 +433,7 @@ class GoldenLotus extends General{
 
 	
 
-	public function getFoodSoldThisMonth (  &$total = null, $ma_quay = '' ) 
+	private function getFoodSoldThisMonth (  &$total = null, $ma_quay = '' ) 
 	{
 		$sql = "SELECT  distinct TenHangBan, MaDVT,  SUM(SoLuong) OVER(PARTITION BY TenHangBan) AS SoLuong, (DonGia * SUM(SoLuong) OVER(PARTITION BY TenHangBan)) as ThanhTien FROM
   			[tblLSPhieu_HangBan] 
@@ -428,7 +463,7 @@ class GoldenLotus extends General{
 	}
 
 
-	public function getFoodSoldLastMonth ( &$total = null, $ma_quay = '' ) {
+	private function getFoodSoldLastMonth ( &$total = null, $ma_quay = '' ) {
 
 		$sql = "SELECT  distinct TenHangBan, MaDVT,  SUM(SoLuong) OVER(PARTITION BY TenHangBan) AS SoLuong, (DonGia * SUM(SoLuong) OVER(PARTITION BY TenHangBan)) as ThanhTien FROM
   			[tblLSPhieu_HangBan] 
@@ -457,7 +492,7 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getFoodSoldAnotherMonth ($tu_thang, $den_thang, &$total = null, $ma_quay = null ) {
+	private function getFoodSoldAnotherMonth ($tu_thang, $den_thang, &$total = null, $ma_quay = null ) {
 		$sql = "SELECT  distinct TenHangBan, MaDVT,  SUM(SoLuong) OVER(PARTITION BY TenHangBan) AS SoLuong, (DonGia * SUM(SoLuong) OVER(PARTITION BY TenHangBan)) as ThanhTien FROM
   			[tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) between '$tu_thang' and '$den_thang' and SoLuong >0";
 		$sql_1 = "SELECT sum(ThanhTien) as Total FROM [tblLSPhieu_HangBan] where substring( Convert(varchar,ThoiGianBan,111),0,8 ) between '$tu_thang' and '$den_thang' and SoLuong >0";
@@ -482,7 +517,7 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getFoodSoldToday($hom_nay, &$total) {
+	private function getFoodSoldToday($hom_nay, &$total) {
 		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
 					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
 					 FROM [tblLSPhieu_HangBan] 
@@ -503,7 +538,7 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getFoodSoldYesterday($hom_truoc, &$total = null) {
+	private function getFoodSoldYesterday($hom_truoc, &$total = null) {
 		$sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
 					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
 					 FROM [tblLSPhieu_HangBan] 
@@ -524,7 +559,7 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getFoodSoldAnotherDay($tungay, $denngay, &$total = null) {
+	private function getFoodSoldAnotherDay($tungay, $denngay, &$total = null) {
 		 $sql = "SELECT  TenHangBan, MaDVT,SoLuong, (DonGia*SoLuong) as ThanhTien FROM
 					( SELECT TenHangBan, MaDVT, sum(SoLuong) as SoLuong, DonGia
 					 FROM [tblLSPhieu_HangBan] 
@@ -545,7 +580,7 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getDatesHasBillOfThisMonth( $this_month, &$total_count = null ) {
+	private function getDatesHasBillOfThisMonth( $this_month, &$total_count = null ) {
 		 $sql = "SELECT substring( Convert(varchar,GioVao,111),0,11 ) as NgayCoBill , count(*) as total
      FROM [tblLichSuPhieu] a
       JOIN  [tblLSPhieu_CTThanhToan] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu 
@@ -574,7 +609,7 @@ class GoldenLotus extends General{
 	}
 
 
-	public function getDatesHasBillBySelection( $tungay, $denngay, &$total_count = null   ){
+	private function getDatesHasBillBySelection( $tungay, $denngay, &$total_count = null   ){
 		 $sql = "SELECT substring( Convert(varchar,GioVao,111),0,11 ) as NgayCoBill , count(*) as total
      FROM [tblLichSuPhieu] a
       JOIN  [tblLSPhieu_CTThanhToan] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu 
@@ -602,7 +637,7 @@ class GoldenLotus extends General{
 		}
 	}
 
-	public function getBillDetailsByDayOfMonth( $date, &$count = null ){
+	private function getBillDetailsByDayOfMonth( $date, &$count = null ){
 		$sql = "SELECT a.*, b.*, c.[MaLoaiThe] FROM [tblLSPhieu_HangBan] a JOIN  [tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 ";
 		 $sql_1 = "SELECT count(*) FROM ( SELECT  c.[MaLoaiThe] FROM [tblLSPhieu_HangBan] a JOIN  [tblLichSuPhieu] b  ON a.MaLichSuPhieu=b.MaLichSuPhieu LEFT JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0) t1 ";
 		try{
@@ -963,7 +998,7 @@ class GoldenLotus extends General{
 			ON a.MaLichSuPhieu=b.MaLichSuPhieu  
 			JOIN [tblLSPhieu_CTThanhToan] c
 			ON b.MaLichSuPhieu=c.MaLichSuPhieu
-			WHERE substring( Convert(varchar, b.ThoiGianBan,126),0,5) = @tuNam' and SoLuong >0 
+			WHERE substring( Convert(varchar, b.ThoiGianBan,126),0,5) = @tuNam and SoLuong >0 
 			";
 
 		if ( ! empty($tenQuay) )
@@ -998,7 +1033,7 @@ class GoldenLotus extends General{
 		}
 	}
 	
-	public function getBillDetailsThisMonth( $month, &$total = NULL ){
+	private function getBillDetailsThisMonth( $month, &$total = NULL ){
 		$sql = "SELECT substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, a.*,b.*,   c.[MaLoaiThe] 
 				FROM [tblLichSuPhieu] a 
 				JOIN [tblLSPhieu_HangBan] b
@@ -1029,7 +1064,7 @@ class GoldenLotus extends General{
 			
 		}
 
-	public function getPayMethodDetailsByDate( $date, &$count = null ){
+	private function getPayMethodDetailsByDate( $date, &$count = null ){
 		 $sql = "SELECT   b.MaLichSuPhieu, b.GioVao, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b  JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) ='$date' ";
 		
 		 $sql_1 = "SELECT count(*) FROM ( SELECT  b.MaLichSuPhieu FROM  [tblLichSuPhieu] b  JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,111),0,11 ) ='$date' ) t1 ";
@@ -1047,7 +1082,7 @@ class GoldenLotus extends General{
 		}
 	}
 	
-	public function getPayMethodDetailsByMonth( $month, &$total = null ){
+	private function getPayMethodDetailsByMonth( $month, &$total = null ){
      $sql = "
 			SELECT substring( Convert(varchar,GioVao,111),0,11 ) as NgayCoBill,
 			b.MaLichSuPhieu, b.GioVao, b.TienThucTra, c.[MaLoaiThe] 
@@ -1433,7 +1468,7 @@ class GoldenLotus extends General{
     }
   }
 
-	 public function getFoodGroupsByDate( $date ){
+	 private function getFoodGroupsByDate( $date ){
 		$sql = "select Ten from  [tblLSPhieu_HangBan] a 
  LEFT JOIN [tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [tblDMNhomHangBan] c 
 ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),0,11 ) ='$date' and SoLuong >0 group by Ten";
@@ -1446,7 +1481,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 		}
 	}
 
-	public function getFoodSoldByGroup( $date, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
+	private function getFoodSoldByGroup( $date, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
 
 	 	$sql_2 = "select Ten from  [tblLSPhieu_HangBan] a 
 		 LEFT JOIN [tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [tblDMNhomHangBan] c 
@@ -1494,7 +1529,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			}
 	}
 
-	public function getFoodSoldByGroup_Month( $month, &$nhom_hang_ban_arr = "", $nhom_hang_ban = "" ){
+	private function getFoodSoldByGroup_Month( $month, &$nhom_hang_ban_arr = "", $nhom_hang_ban = "" ){
 
 	 	$sql_2 = "select top 1 Ten from  [tblLSPhieu_HangBan] a 
 		 LEFT JOIN [tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [tblDMNhomHangBan] c 
@@ -1543,7 +1578,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			}
 	}
 
-	public function getFoodSoldByGroup_DateSelected( $tungay, $denngay, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
+	private function getFoodSoldByGroup_DateSelected( $tungay, $denngay, &$nhom_hang_ban_arr, $nhom_hang_ban = "" ){
 
 	 	$sql_2 = "select  Ten from  [tblLSPhieu_HangBan] a 
 		 LEFT JOIN [tblDMHangBan] b ON a.[MaHangBan]=b.[MaHangBan] LEFT JOIN [tblDMNhomHangBan] c 
@@ -1590,33 +1625,14 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			}
 	}
 
-	public function getSalesByFoodGroup( $date ){
-		 $sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [tblDMNhomHangBan] x
-right Join 
-(	select t1.[MaNhomHangBan], t1.MaHangBan, t2.SoLuong, t2.DonGia, 
-	t2.SoLuong * t2.DonGia as TotalMoney
-	from [tblDMHangBan] t1
-	left join (
-		select MaHangBan, [TenHangBan], SoLuong, DonGia  from
-		[tblLSPhieu_HangBan]
-		where substring ( Convert(varchar,ThoiGianBan,111),0,8 ) ='$date' 
-		and SoLuong >0 ) t2 
-	on t2.MaHangBan = t1.MaHangBan 
-) y
-ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
-			try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-		
-					return $rs;
-			}
-			catch ( PDOException $error ){
-				echo $error->getMessage();
-			}
-	}
+	public function getDMNhomHangBan( $tenQuay = null )
+	{
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ) 
+		{
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
 
-	public function getDMNhomHangBan( $tenQuay = null ){
-		
 		if( ! empty( $tenQuay ) )
 		{	
 			$sql="select * from [tblDMNhomHangBan] where [TenQuay] = '$tenQuay' order by Ten ";
@@ -1628,9 +1644,12 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		
 
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+				$stmt = $this->conn->prepare($sql);
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		
-					return $rs;
+				return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -1638,32 +1657,96 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 	}
 	
-	public function getSalesByFoodGroupBySelection( $tungay, $denngay ){
-		  $sql = "select Ma, Ten, sum (TotalMoney) as DoanhThu  from [tblDMNhomHangBan] x
-		right Join 
-		(	select t1.[MaNhomHangBan], t1.MaHangBan, t2.SoLuong, t2.DonGia, 
-			t2.SoLuong * t2.DonGia as TotalMoney
-			from [tblDMHangBan] t1
-			left join (
-				select MaHangBan, [TenHangBan], SoLuong, DonGia  from
-				[tblLSPhieu_HangBan]
-				where substring( Convert(varchar,ThoiGianBan,111),0,11 ) between '$tungay' and '$denngay'
-				and SoLuong >0 ) t2 
-			on t2.MaHangBan = t1.MaHangBan 
-		) y
-		ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
+	public function getSalesByFoodGroup_Day( $tuNgay )
+	{
+		$tuNgay = htmlentities(trim(strip_tags($tuNgay)),ENT_QUOTES,'utf-8');
+		  $sql = "Declare @tuNgay varchar(max)
+		  SET @tuNgay = :tuNgay
+		 with cte_1 as 
+		(
+		select  distinct Ten, b.TenHangBan, Sales = DonGia * SUM(SoLuong) OVER ( Partition By b.TenHangBan )  FROM [tblDMNhomHangBan] a LEFT JOIN [tblDMHangBan] b ON a.Ma = b.MaNhomHangBan
+		left join [tblLSPhieu_HangBan] c ON b.MaHangBan = c.MaHangBan  
+		and substring( Convert(varchar,ThoiGianBan,126),0,11 ) = @tuNgay
+		WHERE TenQuay = 'RESTAURANT' 
+		) 
+		SELECT Ten, TotalSales = SUM(CASE WHEN Sales >0 THEN Sales ELSE 0 END) FROM cte_1 GROUP BY Ten ORDER BY Ten";
 
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuNgay', $tuNgay);
+				
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		
-					return $rs;
+				return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
 			}
 	}
 
-	public function getSoldvsCancelledItemsByDate( $date ){
+	public function getSalesByFoodGroup_Month( $tuThang )
+	{	
+		$tuThang = htmlentities(trim(strip_tags($tuThang)),ENT_QUOTES,'utf-8');
+
+		  $sql = "Declare @tuThang varchar(max)
+		  SET @tuThang = :tuThang
+		 with cte_1 as 
+		(
+		select  distinct Ten, b.TenHangBan, Sales = DonGia * SUM(SoLuong) OVER ( Partition By b.TenHangBan )  FROM [tblDMNhomHangBan] a LEFT JOIN [tblDMHangBan] b ON a.Ma = b.MaNhomHangBan
+		left join [tblLSPhieu_HangBan] c ON b.MaHangBan = c.MaHangBan  
+		and substring( Convert(varchar,ThoiGianBan,126),0,8 ) = @tuThang
+		WHERE TenQuay = 'RESTAURANT' 
+		) 
+		SELECT Ten, TotalSales = SUM(CASE WHEN Sales >0 THEN Sales ELSE 0 END) FROM cte_1 GROUP BY Ten ORDER BY Ten";
+
+		try{
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuThang', $tuThang);
+				
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+				return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSalesByFoodGroup_Year( $tuNam )
+	{	
+		$tuNam = htmlentities(trim(strip_tags($tuNam)),ENT_QUOTES,'utf-8');
+		
+		  $sql = "Declare @tuNam varchar(max)
+		  SET @tuNam = :tuNam
+		 with cte_1 as 
+		(
+		select  distinct Ten, b.TenHangBan, Sales = DonGia * SUM(SoLuong) OVER ( Partition By b.TenHangBan )  FROM [tblDMNhomHangBan] a LEFT JOIN [tblDMHangBan] b ON a.Ma = b.MaNhomHangBan
+		left join [tblLSPhieu_HangBan] c ON b.MaHangBan = c.MaHangBan  
+		and substring( Convert(varchar,ThoiGianBan,126),0,5 ) = @tuNam
+		WHERE TenQuay = 'RESTAURANT' 
+		) 
+		SELECT Ten, TotalSales = SUM(CASE WHEN Sales >0 THEN Sales ELSE 0 END) FROM cte_1 GROUP BY Ten ORDER BY Ten";
+
+		try{
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuNam', $tuNam);
+				
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+				return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	private function getSoldvsCancelledItemsByDate( $date ){
 		 $sql = "select TenHangBan,
 		  	sum (CASE WHEN soluong > 0 THEN soluong
 		END) AS SLOrder,
@@ -1682,7 +1765,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSoldvsCancelledItemsByMonth( $month ){
+	private function getSoldvsCancelledItemsByMonth( $month ){
 		 $sql = "select TenHangBan,
 		  	sum (CASE WHEN soluong > 0 THEN soluong
 		END) AS SLOrder,
@@ -1701,7 +1784,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSoldvsCancelledItemsBySelection( $tungay, $denngay ){
+	private function getSoldvsCancelledItemsBySelection( $tungay, $denngay ){
 		 $sql = "select TenHangBan,
 		  	sum (CASE WHEN soluong > 0 THEN soluong
 		END) AS SLOrder,
@@ -1722,7 +1805,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getCurrencyReportByDate( $date ){
+	private function getCurrencyReportByDate( $date ){
 		$sql = "  select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [tblLichSuPhieu] 
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'   group by [MaTienTe]";
 
@@ -1736,7 +1819,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getCurrencyReportByMonth( $month ){
+	private function getCurrencyReportByMonth( $month ){
 		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [tblLichSuPhieu] 
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  group by [MaTienTe]";
 
@@ -1750,7 +1833,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getCurrencyReportBySelection( $tungay, $denngay ){
+	private function getCurrencyReportBySelection( $tungay, $denngay ){
 		$sql = "select [MaTienTe], sum([TienThucTra]) as ThucThu FROM [tblLichSuPhieu] 
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) between '$tungay' and '$denngay' group by [MaTienTe]";
 
@@ -1764,7 +1847,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getBillEditDetailsByDate( $date ){	
+	private function getBillEditDetailsByDate( $date ){	
 		 $sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
 			ON a.[NVTaoMaNV] = b.MaNV
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date'  " ;
@@ -1779,7 +1862,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getBillEditDetailsByMonth( $month ){	
+	private function getBillEditDetailsByMonth( $month ){	
 		 $sql = "select a.* , b.*  FROM [tblLichSuPhieu] a LEFT JOIN [tblDMNhanVien] b
 			ON a.[NVTaoMaNV] = b.MaNV
   			WHERE substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,8 ) = '$month'  " ;
@@ -1948,7 +2031,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 	}
 
 
-	public function getCancelledFoodItemByDate( $date ) {
+	private function getCancelledFoodItemByDate( $date ) {
 		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' ";
 
 		try{
@@ -1961,7 +2044,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getCancelledFoodItemByMonth ( $month ) {
+	private function getCancelledFoodItemByMonth ( $month ) {
 		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0 and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month' ";
 
 		try{
@@ -1987,7 +2070,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = :tuNgay  " ;
+		$sql = "DECLARE @tuNgay varchar(max)
+		SET @tuNgay = :tuNgay
+		SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = @tuNgay  " ;
 
 		if( ! empty($tenQuay) )
 		{
@@ -2022,7 +2107,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = :tuThang " ;
+		$sql = "DECLARE @tuThang varchar(max)
+		SET @tuThang = :tuThang
+		SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = @tuThang " ;
 
 		if( ! empty($tenQuay) )
 		{
@@ -2057,7 +2144,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = :tuNam " ;
+		$sql = "DECLARE @tuNam varchar(max)
+		SET @tuNam = :tuNam
+		SELECT a.*, b.*,c.* FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMNhanVien] b ON a.[MaNhanVien] = b.[MaNV] JOIN [tblLichSuPhieu] c on a.[MaLichSuPhieu] = c.[MaLichSuPhieu] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = @tuNam " ;
 
 		if( ! empty($tenQuay) )
 		{
@@ -2080,7 +2169,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSumFoodCancelledByDate( $date ) {
+	private function getSumFoodCancelledByDate( $date ) {
 		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) = '$date' group by TenHangBan ";
 
 		try{
@@ -2093,7 +2182,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSumFoodCancelledByMonth ( $month ) {
+	private function getSumFoodCancelledByMonth ( $month ) {
 		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,8 ) = '$month'  group by TenHangBan";
 
 		try{
@@ -2106,7 +2195,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSumFoodCancelledBySelection ( $tungay, $denngay ) {
+	private function getSumFoodCancelledBySelection ( $tungay, $denngay ) {
 		$sql = "SELECT TenHangBan, sum (SoLuong) as SoLuong from [tblLSPhieu_HangBan] where soluong < 0  and substring( Convert(varchar,[ThoiGianBan],111),0,11 ) between '$tungay' and '$denngay'  group by TenHangBan " ;
 		try{
 				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -2118,7 +2207,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 
-	public function getSalesByTableID ( $date, $occupation = null ){
+	private function getSalesByTableID ( $date, $occupation = null ){
 		if( $occupation == '0' && $occupation != null )
 		{
 			$sql = "SELECT count(*) FROM ( SELECT  a.MaBan, sum(TienThucTra) as DoanhThu  from  [tblDMBan] a left join [tblLichSuPhieu] b on  a.MaBan = b.MaBan and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = '$date' where [ThoiGianDongPhieu] IS NOT NULL  group by a.MaBan order by DoanhThu DESC ) t1";
@@ -2151,7 +2240,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			}
 	}
 	
-	public function getSalesByTableID_Paginate( $itemcount,  $date, $occupation ){
+	private function getSalesByTableID_Paginate( $itemcount,  $date, $occupation ){
 
 		$drop_proc_sql = "IF EXISTS (SELECT type_desc, type FROM sys.procedures WITH(NOLOCK)  WHERE NAME = 't1' AND type = 'P'  ) DROP PROCEDURE dbo.t1";
     	$drop_proc_query = $this->conn->query( $drop_proc_sql );
@@ -2234,7 +2323,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		
 	}
 
-	public function getSalesByFoodNames ( $date, $table_id, $occupation = null ){
+	private function getSalesByFoodNames ( $date, $table_id, $occupation = null ){
 
 		if( $occupation == '0' && $occupation != null )
 		{
@@ -2587,7 +2676,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		 $sql = "select
+		 $sql = "DECLARE @tuNgay varchar(max)
+		 SET @tuNgay = :tuNgay
+		 select
 			SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 				between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
 				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
@@ -2621,7 +2712,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
 			from [tblLSPhieu_HangBan]
-			where substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = :tuNgay
+			where substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = @tuNgay
 			";
 
 		if( ! empty($tenQuay) )
@@ -2659,7 +2750,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 		
-		$sql = "select
+		$sql = "DECLARE @tuNgay varchar(max)
+		 SET @tuNgay = :tuNgay
+		select
 					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 						between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
 						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
@@ -2695,7 +2788,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						
 					from [tblLSPhieu_HangBan]
 
-					where substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = :tuNgay
+					where substring( Convert(varchar,[ThoiGianBan],126),0,11 ) = @tuNgay
 			";
 		if( ! empty($tenQuay) )
 		{
@@ -2731,7 +2824,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "select
+		$sql = "DECLARE @tuThang varchar(max)
+		 SET @tuThang = :tuThang
+		select
 			SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 				between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
 				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
@@ -2765,7 +2860,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
 			from [tblLSPhieu_HangBan]
-			where substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = :tuThang
+			where substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = @tuThang
 			";
 
 		if( ! empty($tenQuay) )
@@ -2803,7 +2898,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 		
-		$sql = "select
+		$sql = "DECLARE @tuThang varchar(max)
+		 SET @tuThang = :tuThang
+		select
 					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 						between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
 						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
@@ -2839,7 +2936,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						
 					from [tblLSPhieu_HangBan]
 
-					where substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = :tuThang
+					where substring( Convert(varchar,[ThoiGianBan],126),0,8 ) = @tuThang
 			";
 		if( ! empty($tenQuay) )
 		{
@@ -2875,7 +2972,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		 $sql = "select
+		 $sql = "DECLARE @tuNam varchar(max)
+		 SET @tuNam = :tuNam
+		 select
 			SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 				between '08:00:00' and '08:59:59' THEN SoLuong ELSE 0 END) as '08h-09h',
 				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
@@ -2909,7 +3008,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 				SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 				between '20:00:00' and '20:59:59' THEN SoLuong ELSE 0 END) as '23h-24h'
 			from [tblLSPhieu_HangBan]
-			where substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = :tuNam
+			where substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = @tuNam
 			";
 
 		if( ! empty($tenQuay) )
@@ -2947,7 +3046,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 		
-		$sql = "select
+		$sql = "DECLARE @tuNam varchar(max)
+		 SET @tuNam = :tuNam
+		select
 					SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
 						between '08:00:00' and '08:59:59' THEN ThanhTien ELSE 0 END) as '08h-09h',
 						SUM(CASE WHEN  substring( Convert(varchar,[ThoiGianBan],114),1,8 ) 
@@ -2983,7 +3084,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						
 					from [tblLSPhieu_HangBan]
 
-					where substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = :tuNam
+					where substring( Convert(varchar,[ThoiGianBan],126),0,5 ) = @tuNam
 			";
 		if( ! empty($tenQuay) )
 		{
@@ -3062,12 +3163,19 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 	}
 
-	public function getFoodItemsByGroup( $food_group ) {
+	public function getFoodItemsByGroup( $food_group ) 
+	{	
+		$food_group = htmlentities(trim(strip_tags($food_group)),ENT_QUOTES,'utf-8');
+
 		$sql=" SELECT a.MaHangBan, a.TenHangBan , b.MaHangBan, b.Gia FROM [tblDMHangBan] a   join [tblGiaBanHang] b ON a.[MaHangBan] = b.[MaHangBan] AND MaNhomHangBan = '$food_group' AND MaNhomHangBan IS NOT NULL";
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('food_group', $food_group);
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		
-					return $rs;
+				return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -3090,14 +3198,16 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 		}
 	}
 
-	public function getTotalSales( $tuNgay ) {
-		
+	public function getTotalSales( $tuNgay ) 
+	{
 		if( empty($tuNgay) ) 
 		{
 			throw new InvalidArgumentException('date missing');
 		}
 
-		 $sql="SELECT sum(TienThucTra) as TienThucTra from [tblLichSuPhieu]  a  join [tblDMKhu] b on a.MaKhu = b.Makhu join [tblDMQuay] c on b.MaQuay = c.MaQuay  where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],126),0,11 ) = :tuNgay";
+		 $sql="DECLARE @tuNgay varchar(max)
+		 SET @tuNgay = :tuNgay
+		 SELECT sum(TienThucTra) as TienThucTra from [tblLichSuPhieu]  a  join [tblDMKhu] b on a.MaKhu = b.Makhu join [tblDMQuay] c on b.MaQuay = c.MaQuay  where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],126),0,11 ) = @tuNgay";
 
 		try
 		{		
@@ -3125,11 +3235,15 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 		if( $ma_quay == null )
 		{
-			 $sql="SELECT count(*) from [tblLichSuPhieu]  a  join [tblDMKhu] b on a.MaKhu = b.Makhu join [tblDMQuay] c on b.MaQuay = c.MaQuay  where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],126),0,11 ) = :tuNgay";
+			 $sql="DECLARE @tuNgay varchar(max)
+		 SET @tuNgay = :tuNgay
+		 SELECT count(*) from [tblLichSuPhieu]  a  join [tblDMKhu] b on a.MaKhu = b.Makhu join [tblDMQuay] c on b.MaQuay = c.MaQuay  where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],126),0,11 ) = @tuNgay";
 		}
 		else
 		{
-		 $sql="SELECT count(*) from [tblLichSuPhieu]  a  join [tblDMKhu] b on a.MaKhu = b.Makhu join [tblDMQuay] c on b.MaQuay = c.MaQuay  where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],126),0,11 ) = '$date' and c.MaQuay = '$ma_quay'";
+		 $sql="DECLARE @tuNgay varchar(max)
+		 SET @tuNgay = :tuNgay
+		 SELECT count(*) from [tblLichSuPhieu]  a  join [tblDMKhu] b on a.MaKhu = b.Makhu join [tblDMQuay] c on b.MaQuay = c.MaQuay  where PhieuHuy = 0 and DaTinhTien = 1 and ThoiGianDongPhieu is not null and substring( Convert(varchar,[GioVao],126),0,11 ) = @tuNgay and c.MaQuay = '$ma_quay'";
 		}
 
 		try
@@ -3328,7 +3442,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 			if($i > 9)
 			{
-			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
 			}
 		}
 
@@ -3381,7 +3495,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 			if($i > 9)
 			{
-			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
 			}
 		}
 
@@ -3433,7 +3547,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 			if($i > 9)
 			{
-			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-0$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
+			    $sql .= "SUM(CASE WHEN substring(Convert(varchar,GioVao,126),0,11) like @date + '-$i' Then TienThucTra  Else 0 END) as DoanhThu_" . $i . ", "; 
 			}
 		}
 
@@ -3474,8 +3588,8 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			BEGIN
 			DROP TABLE #temp_t1
 			END
-		declare @ngay varchar(max)
-		set @ngay = :tuNgay
+		declare @tuNgay varchar(max)
+		set @tuNgay = :tuNgay
 			select *
 			  into #temp_t1 FROM(
 			SELECT distinct b.MaBan, c.MaLichSuPhieu, GioVao,
@@ -3490,9 +3604,9 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						on a.[MaKhu] = b.[MaKhu]
 						left join [tblLichSuPhieu] c
 						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = @ngay
+						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = @tuNgay
 						left JOIN [tblLSPhieu_HangBan] d
-						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
+						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu] 
 		";
 
 		if( ! empty($tenQuay) )
@@ -3509,7 +3623,8 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 					select *
 					, row_number() over (partition by MaLichSuPhieu order by MaBan) as rnk
 					from #temp_t1
-				) i order by MaBan DESC
+				) i 
+				order by MaBan DESC
 
 			drop table #temp_t1 
 			 
@@ -3531,14 +3646,22 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 
 	}
 
-	public function getTablesAndBills_Occupied( $date, $tenQuay ){
-		echo $tenQuay ;
+	public function getTablesAndBills_Occupied( $tuNgay, $tenQuay )
+	{	
+		$tuNgay = htmlentities(trim(strip_tags($tuNgay)),ENT_QUOTES,'utf-8');
+
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ){
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
+
 		$sql = "SET NOCOUNT ON;
 		IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
 			BEGIN
 			DROP TABLE #temp_t1
 			END
 
+			Declare @tuNgay varchar(max)
+			SET @tuNgay = :tuNgay
 			select *
 			  into #temp_t1 FROM(
 			SELECT distinct b.MaBan, c.MaLichSuPhieu, GioVao, ThoiGianDongPhieu,
@@ -3553,7 +3676,7 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						on a.[MaKhu] = b.[MaKhu]
 						left join [tblLichSuPhieu] c
 						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$date'
+						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = @tuNgay
 						left JOIN [tblLSPhieu_HangBan] d
 						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
 
@@ -3577,13 +3700,28 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			 
 			";
 
-		$rs = $this->conn->query($sql)->fetchAll();
+		try{
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuNgay', $tuNgay);
+				$stmt->execute();
 
-		return $rs;
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+				return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
 
 	}
 
-	public function getTablesAndBills_Empty( $date, $tenQuay ){
+	public function getTablesAndBills_Empty( $tuNgay, $tenQuay )
+	{	
+		$tuNgay = htmlentities(trim(strip_tags($tuNgay)),ENT_QUOTES,'utf-8');
+
+		if( ! empty($tenQuay) && ! in_array($tenQuay, $this->allowTbl) ){
+			throw new InvalidArgumentException('Your input was not valid!');
+		}
 
 		$sql = "SET NOCOUNT ON;
 		IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
@@ -3591,6 +3729,8 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			DROP TABLE #temp_t1
 			END
 
+			Declare @tuNgay varchar(max)
+			SET @tuNgay = :tuNgay
 			select *
 			  into #temp_t1 FROM(
 			SELECT distinct b.MaBan, c.MaLichSuPhieu, GioVao, ThoiGianDongPhieu,
@@ -3605,12 +3745,13 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 						on a.[MaKhu] = b.[MaKhu]
 						left join [tblLichSuPhieu] c
 						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = '$date'
+						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = @tuNgay
 						left JOIN [tblLSPhieu_HangBan] d
 						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
 
 						WHERE ( c.MaLichSuPhieu IS  NULL 
 							or ( c.MaLichSuPhieu IS  not NULL  and [ThoiGianDongPhieu] is not null )
+
 						)
 		";
 
@@ -3630,9 +3771,18 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			 
 			";
 
-		$rs = $this->conn->query($sql)->fetchAll();
+		try{
+				$stmt = $this->conn->prepare($sql);		
+				$stmt->bindParam('tuNgay', $tuNgay);
+				$stmt->execute();
 
-		return $rs;
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+				return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
 
 	}
 	
@@ -4155,10 +4305,12 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
+		$sql = "DECLARE @tuNgay varchar(max)
+		SET @tuNgay = :tuNgay
+		  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
   (DonGia * SUM(SoLuong) OVER(PARTITION BY a.TenHangBan)) as ThanhTien, [Ten] as TenNhom
   FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan LEFT JOIN [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma 
-  WHERE substring( Convert(varchar,ThoiGianBan,126),0,11 ) = :tuNgay AND SoLuong > 0
+  WHERE substring( Convert(varchar,ThoiGianBan,126),0,11 ) = @tuNgay AND SoLuong > 0
    AND a.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
 
 		if( ! empty($tenNhom) )
@@ -4192,10 +4344,12 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		 $sql = "  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
+		 $sql = "DECLARE @tuThang varchar(max)
+		SET @tuThang = :tuThang
+		  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
   (DonGia * SUM(SoLuong) OVER(PARTITION BY a.TenHangBan)) as ThanhTien, [Ten] as TenNhom
   FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan LEFT JOIN [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma 
-  WHERE substring( Convert(varchar,ThoiGianBan,126),0,8 ) = :tuThang AND SoLuong > 0
+  WHERE substring( Convert(varchar,ThoiGianBan,126),0,8 ) = @tuThang AND SoLuong > 0
    AND a.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] )";
 
 		if( ! empty($tenNhom) )
@@ -4229,10 +4383,12 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		 $sql = "  SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
+		 $sql = "DECLARE @tuNam varchar(max)
+		SET @tuNam = :tuNam  
+		 SELECT distinct a.[MaHangBan], a.[TenHangBan], [MaDVT], SUM( [SoLuong]  ) OVER ( Partition BY a.[MaHangBan] ) as [SoLuong],
   (DonGia * SUM(SoLuong) OVER(PARTITION BY a.TenHangBan)) as ThanhTien, [Ten] as TenNhom
   FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan LEFT JOIN [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma 
-  WHERE substring( Convert(varchar,ThoiGianBan,126),0,5 ) = :tuNam 
+  WHERE substring( Convert(varchar,ThoiGianBan,126),0,5 ) = @tuNam 
    AND a.TenHangBan IN ( SELECT * FROM [{$tenQuay}View] ) AND SoLuong > 0";
 
 		if( ! empty($tenNhom) )
@@ -4274,12 +4430,13 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "
+		$sql = "DECLARE @tuNgay varchar(max)
+		 SET @tuNgay = :tuNgay
 		SELECT  TotalKey = count(a.MaLichSuPhieu),
 		TotalVe = sum (SoLuong), 
 		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
 	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
-	 where substring( Convert(varchar,ThoiGianBan,126),0,11 ) = :tuNgay and $ma_khu";
+	 where substring( Convert(varchar,ThoiGianBan,126),0,11 ) = @tuNgay and $ma_khu";
 
 		if( ! empty($tenQuay) )
 		{
@@ -4321,11 +4478,13 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "SELECT  TotalKey = count(a.MaLichSuPhieu),
+		$sql = "DECLARE @tuThang varchar(max)
+		 SET @tuThang = :tuThang
+		SELECT  TotalKey = count(a.MaLichSuPhieu),
 		TotalVe = sum (SoLuong), 
 		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
 	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
-	 where substring( Convert(varchar,ThoiGianBan,126),0,8 ) = :tuThang and $ma_khu";
+	 where substring( Convert(varchar,ThoiGianBan,126),0,8 ) = @tuThang and $ma_khu";
 
 		if( ! empty($tenQuay) )
 		{
@@ -4367,11 +4526,12 @@ ON x.Ma = y.[MaNhomHangBan] where Ma IS NOT NULL group by Ma, Ten order by Ten";
 			throw new InvalidArgumentException('Your input was not valid!');
 		}
 
-		$sql = "  SELECT  TotalKey = count(a.MaLichSuPhieu),
+		$sql = "DECLARE @tuNam varchar(max)
+		 SET @tuNam = :tuNam  SELECT  TotalKey = count(a.MaLichSuPhieu),
 		TotalVe = sum (SoLuong), 
 		ChenhLech = sum (SoLuong) - count(a.MaLichSuPhieu)
 	 FROM [tblLSPhieu_HangBan] a LEFT JOIN [tblLichSuPhieu] b ON a.MaLichSuPhieu = b.MaLichSuPhieu
-	 where substring( Convert(varchar,ThoiGianBan,126),0,5 ) = :tuNam and $ma_khu";
+	 where substring( Convert(varchar,ThoiGianBan,126),0,5 ) = @tuNam and $ma_khu";
 
 		if( ! empty($tenQuay) )
 		{

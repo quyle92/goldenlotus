@@ -39,6 +39,10 @@
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-hoadon/index.php"><i class="fas fa-file-invoice-dollar"></i>Báo cáo hóa đơn</a>
                 </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-nhom-monan/index.php"><i class="fas fa-cloud-meatball"></i>
+                    Doanh thu nhóm món ăn</a>
+                </li>
                 <!-- <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-theothang/index.php"><i class="fas fa-apple-alt"></i>
                     Tổng hợp món ăn bán theo tháng</a>
@@ -50,10 +54,7 @@
                 </li>
                 
                 
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-monan-ban/index.php"><i class="fas fa-cloud-meatball"></i>
-                    Tổng hợp món ăn bán</a>
-                </li> -->
+                 -->
                <!-- <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bangke-chitiet-hoadon/index.php"><i class="fas fa-file-alt"></i>
                     Bảng kê chi tiết hóa đơn bán hàng</a>
@@ -143,24 +144,26 @@ $bao_cao_duoc_xem = ( isset( $_SESSION['BaoCaoDuocXem'] ) ? $_SESSION['BaoCaoDuo
     var baoCaoQuanTri = $('button[data-report="BaoCaoQuanTri"]').attr('data-report');
     var bieuDoDoanhThu = $('button[data-report="TongHopSoLuongBan"]').attr('data-report');
 
-    var admin = '<?=$_SESSION['MaNV']?>';
+    var admin = '<?=isset($_SESSION['MaNV']) ? $_SESSION['MaNV'] : '';?>';
 
     var reportArr = []; 
     reportArr = [bieuDoDoanhThu, baoCaoBanHang, baoCaoQuanTri];
-   // console.log(baoCaoDuocXem);
-    var i;
-    var k;
-    for ( i = 0; i < baoCaoDuocXem.length; i++ )
-    {
-        if( admin != 'HDQT' && jQuery.inArray( baoCaoDuocXem,  reportArr) == -1){
-            for( k = 0; k < reportArr.length; k++ )
-            {
-                if( baoCaoDuocXem != reportArr[k] )
-                { 
-                    $('button[data-report="' + reportArr[k] + '"]').css({display:'none'});
-                    $('button[data-report="' + reportArr[k] + '"] + div.dropdown-container').html('');
-                }
-            }
+   // return report array not in baoCaoDuocXem
+    if( typeof baoCaoDuocXem !== 'undefined' && baoCaoDuocXem.length > 0 ){
+        var hiddenReports = reportArr.filter(function (report) {
+                return !baoCaoDuocXem.includes(report);
+        });
+    }
+    //ref:https://flaviocopes.com/how-to-remove-item-from-array/
+   
+    if( admin != 'HDQT' )
+    {  
+
+        //$('button[data-report="Users"]').parent().hide();
+        for ( var i = 0; i < hiddenReports.length; i++ )
+        {   
+            $('button[data-report="' + hiddenReports[i] + '"]').css({display:'none'});
+            $('button[data-report="' + hiddenReports[i] + '"] + div.dropdown-container').html('');
         }
     }
 

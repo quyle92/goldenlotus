@@ -80,7 +80,12 @@ $(function () {
           }
         };
 
-      var myPieChart  = new Chart(DOPHU_BAYGIO, {
+      if(myPieChart != undefined)
+       {
+          myPieChart.destroy();
+       }
+       
+       myPieChart  = new Chart(DOPHU_BAYGIO, {
           type: 'doughnut',
           data: data,
           options: options

@@ -17,7 +17,7 @@ from tblDSNguoiSD a, tblDMNhanVien b, tblDMTrungTam c where a.MaNhanVien = b.MaN
 		//$result_dangnhap = $dbCon->query($sql1)->fetchAll(PDO::FETCH_ASSOC); 
 		//lay ket qua query
 		$stmt = $dbCon->prepare($sql);
-		$stmt->bindParam(':pass', $pass, PDO::PARAM_INT);
+		$stmt->bindParam(':pass', $pass);
 		$stmt->bindValue(':user', "%{$user}%");
 		$stmt->execute();
 		$result_dangnhap = $stmt->fetch();//var_dump($result_dangnhap);die;
@@ -29,7 +29,8 @@ from tblDSNguoiSD a, tblDMNhanVien b, tblDMTrungTam c where a.MaNhanVien = b.MaN
 			$_SESSION['TenNV']=$result_dangnhap['TenNV'];
 			$_SESSION['MaTrungTam'] = $result_dangnhap['MaTrungTam'];
 			$_SESSION['TenTrungTam']=$result_dangnhap['TenTrungTam'];
-			$_SESSION['BaoCaoDuocXem']  = unserialize($result_dangnhap['BaoCaoDuocXem']);
+			$_SESSION['BaoCaoDuocXem']  = unserialize(unserialize(base64_decode($result_dangnhap['BaoCaoDuocXem'])));
+			//var_dump(($_SESSION['BaoCaoDuocXem']));die;
 			//https://phppot.com/php/php-login-script-with-remember-me/
 			if(!empty($_POST["remember"])) 
 			{

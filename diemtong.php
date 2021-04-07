@@ -270,7 +270,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                       <tbody>
                         <tr>
                           <td>Spa</td>
-                          <td>
+                          <td nowrap="nowrap">
                             <?php 
                             $spa = removeOuterArr( $goldenlotus->getDoanhThuSpa() ); 
                             echo $spa_today = number_format( $spa[0]['DoanhThu'],0,",",".");
@@ -298,7 +298,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                           </td>
                         </tr>
                         <tr>
-                          <td>Snack bar</td>
+                          <td nowrap="nowrap">Snack bar</td>
                           <td>
                             <?php 
                             $snack_bar = removeOuterArr( $goldenlotus->getDoanhThuSnackBar() ); 
@@ -383,7 +383,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                           </td>
                         </tr>
                         <tr>
-                          <td>Nhà hàng</td>
+                          <td nowrap="nowrap">Nhà hàng</td>
                           <td>
                             <?php 
                             $nha_hang = removeOuterArr( $goldenlotus->getDoanhThuNhaHang() ); 

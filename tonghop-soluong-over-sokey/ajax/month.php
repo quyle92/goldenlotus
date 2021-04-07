@@ -16,8 +16,8 @@ if( ! empty($tenQuay))
 
 $output = "";
 
-$rs_men = $goldenlotus->getSoLuongVeKey_Month( $tuThang, $tenQuay, $khu_nam );
-$rs_women = $goldenlotus->getSoLuongVeKey_Month( $tuThang, $tenQuay, $khu_nu );
+$rs_men = $goldenlotus->getSoLuongVeKey_Month( $tuThang, $tenQuay, $ma_khu = 'nam' );
+$rs_women = $goldenlotus->getSoLuongVeKey_Month( $tuThang, $tenQuay, $ma_khu = 'nu' );
 
 $output .= '<tr>
       <td>Khu nam</td>

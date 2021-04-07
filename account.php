@@ -8,7 +8,7 @@ require('lib/goldenlotus.php');
 $goldenlotus = new GoldenLotus($dbCon);
 $maNV = isset($_GET['maNV']) ? $_GET['maNV'] : "";
 if( !empty($maNV) ){
-$user = $goldenlotus->layTenUser($maNV);
+// $user = $goldenlotus->layTenUser($maNV);
 
 }
 $thanhcong="";
@@ -16,10 +16,10 @@ $loi=array();
 
 if(isset($_POST['submit']))
 {
-  $maNV= $_SESSION['TenSD'];
+  $tenSD= $_SESSION['TenSD'];
   $password= $_POST['password'];
   $repass = $_POST['repass'];//var_dump($password); var_dump($repass);die;
-  $thanhcong = $goldenlotus->changePassword( $maNV, $password, $repass, $loi );
+  $thanhcong = $goldenlotus->changePassword( $tenSD, $password, $repass, $loi );
 }
 
 $id=$_SESSION['MaNV'];

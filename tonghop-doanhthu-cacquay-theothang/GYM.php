@@ -74,8 +74,11 @@ $('body').on('submit', 'form#customMonth_<?=$r['TenQuay']?>', function (event){
     method:"POST",
     data:formValues,
     dataType:"json",
+    'beforeSend': function (request) {
+        $("#loadingMask").css('visibility', 'visible');
+    },
     success:function(response)
-      { 
+    { 
    //var result = JSON.parse(response);
         console.log(response);
         var result = response['data'];
@@ -115,9 +118,8 @@ $('body').on('submit', 'form#customMonth_<?=$r['TenQuay']?>', function (event){
 
       $('#totalQty_<?=$r['TenQuay']?> strong').html('Tổng số lượng: ' + totalQty);
 
-
-
-      }
+      },
+       complete: function() { $("#loadingMask").css('visibility', 'hidden'); }
     });
 });
 
