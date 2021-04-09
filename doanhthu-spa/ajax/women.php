@@ -9,8 +9,8 @@ $goldenlotus = new GoldenLotus($dbCon);
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 
-$tungay = dateConverter($params['tuNgay']);
-$denngay = dateConverter($params['denNgay']);
+$tuNgay = isset( $params['tuNgay']) ? date('Y-m-d', strtotime( $params['tuNgay']) ) : "";
+$denNgay = isset( $params['denNgay']) ? date('Y-m-d', strtotime( $params['denNgay']) ) : "";
 $ma_khu = "nu";
 
 //define index of column name
@@ -54,7 +54,7 @@ if( $params['draw'] > 1 ) $paginating = "RowNum BETWEEN ( {$params['start']} + 1
  * [$sqlRec description]
  * @var string
  */
-$sqlRec = $goldenlotus->getSalesSpa_Advanced_Rec( $ma_khu, $tungay, $denngay, $where, $paginating );
+$sqlRec = $goldenlotus->getSalesSpa_Advanced_Rec( $ma_khu, $tuNgay, $denNgay, $where, $paginating );
 //var_dump($sqlRec);die;
     
 foreach( $sqlRec as $r )
@@ -87,7 +87,7 @@ if(isset($sqlRec[0]["TotalWhere"]))
 /**
  * $sqlTot
  */
-$nRows = $goldenlotus->getSalesSpa_Advanced_Tot( $ma_khu, $tungay, $denngay, $where );
+$nRows = $goldenlotus->getSalesSpa_Advanced_Tot( $ma_khu, $tuNgay, $denNgay, $where );
 
 
 

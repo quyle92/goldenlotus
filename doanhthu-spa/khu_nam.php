@@ -382,7 +382,7 @@ $('form#khu_nam').on('submit', function (event){
         },
         // Note: this only fires once (first ajax cal only), not fire on every next ajax call
         "initcomplete ":function( settings, json){
-            console.log(json);
+            //console.log(json);
         }
 
 
@@ -401,6 +401,8 @@ $('form#khu_nam').on('submit', function (event){
           $("h3#total_rev_men strong").html(output);
         }
       });
+
+     
 
 
   });

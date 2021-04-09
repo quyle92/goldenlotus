@@ -52,9 +52,9 @@
 
 $('form#khu_nu').on('submit', function (event){
     event.preventDefault();
-    var tuNgay = $('form#khu_nu input[name="tuNgay"]').val();console.log(tuNgay);
-    var denNgay = $('form#khu_nu input[name="denNgay"]').val();console.log(denNgay);
-    var maKhu =  $('form#khu_nu select[name="maKhu"]').val();console.log(maKhu);
+    var tuNgay = $('form#khu_nu input[name="tuNgay"]').val();
+    var denNgay = $('form#khu_nu input[name="denNgay"]').val();
+    var maKhu =  $('form#khu_nu select[name="maKhu"]').val();
 
 
     $('#custom_month_women').DataTable({
@@ -125,6 +125,28 @@ $('form#khu_nu').on('submit', function (event){
             $('h3#total_rev_women + h4').html("");
           }
         },
+        "createdRow": function( row, data, dataIndex ) {
+            if ( data['MaNhanVien'] === null ) 
+            { 
+              $(row).css({background:'rgba(242, 242, 242, 0.36)'});
+              $(row).children(":first-child").addClass( 'red' );
+              $(row).children(":first-child").addClass( 'borderLessRight' );
+              $(row).children(":nth-child(2)").addClass( 'borderLess' );
+              $(row).children(":nth-child(3)").addClass( 'borderLess' );
+              $(row).children(":nth-child(4)").addClass( 'borderLess' );
+              $(row).children(":nth-child(5)").addClass( 'borderLessLeft' );
+              $(row).children(":nth-child(6)").addClass( 'red' );
+              $(row).children(":last-child").addClass( 'red' );
+
+            }
+            else
+            {  
+              //let index = this.api().$(row).index();console.log(dataIndex);
+
+              $(row).children(":first-child").text("");
+
+            }
+        },
         // Note: this only fires once (first ajax cal only), not fire on every next ajax call
         "initcomplete ":function( settings, json){
             console.log(json);
@@ -147,6 +169,20 @@ $('form#khu_nu').on('submit', function (event){
         $("h3#total_rev_women strong").html(output);
       }
     });
+
+     //total rev including men + women
+       $.ajax({
+        url:"ajax/grand_total.php",
+        method:"post",
+        data:formValues,
+        dataType:"json",
+        success:function(output)
+        {
+          console.log(output);
+          //$(output).appendTo('h3#total_rev_men strong');
+          $("#grandTotal").html(output);
+        }
+      });
     
   });
 

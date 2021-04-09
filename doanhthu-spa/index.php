@@ -26,6 +26,25 @@ $trungtam=isset($_SESSION['TenTrungTam'])? $_SESSION['TenTrungTam']:"";
 /*table#custom_month_men tbody tr:nth-child(11), table#custom_month_women tbody tr:nth-child(11){
   display: none;
 }*/
+.red {
+  color: red !important;
+  font-weight: 500;
+}
+
+.borderLess{
+  border-left: none!important;
+  border-right: none!important
+}
+
+.borderLessLeft{
+  border-left: none!important;
+ 
+}
+
+.borderLessRight{
+  border-right: none!important;
+ 
+}
 
 .h2-bg{
     margin: 30px 0;
@@ -170,7 +189,7 @@ $(document).ready(function () {
       <div id="page-wrapper" >
 
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Doanh thu Spa</h3>
+            <h3 class="title">Doanh thu Spa: <strong id="grandTotal" class="text-danger"></strong></h3>
 
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">
@@ -266,28 +285,28 @@ $(document).ready(function () {
 $(function () {
    $('form#khu_nam .row input[name="tuNgay"]').datetimepicker({
      // viewMode: 'years',
-      format: 'DD/MM/YYYY'
+      format: 'DD-MM-YYYY'
    });
 });
 
 $(function () {
    $('form#khu_nam .row input[name="denNgay"]').datetimepicker({
      // viewMode: 'years',
-      format: 'DD/MM/YYYY'
+      format: 'DD-MM-YYYY'
    });
 });
 
 $(function () {
    $('form#khu_nu .row input[name="tuNgay"]').datetimepicker({
      // viewMode: 'years',
-      format: 'DD/MM/YYYY'
+      format: 'DD-MM-YYYY'
    });
 });
 
 $(function () {
    $('form#khu_nu .row input[name="denNgay"]').datetimepicker({
      // viewMode: 'years',
-      format: 'DD/MM/YYYY'
+      format: 'DD-MM-YYYY'
    });
 });
 

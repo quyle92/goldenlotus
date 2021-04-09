@@ -30,7 +30,7 @@
 <br>
 <h3 id="total_rev_men" style="color:#337AB7"><strong>Tổng doanh thu:</strong></h3>
 <h4 id="filter_result_total" style="color:#337AB7"><strong></strong></h4>
-<table class="table table-striped table-bordered" id="custom_month_men">
+<table class="table table-bordered" id="custom_month_men">
 	<thead>
 	  <tr>
 	    <th>Mã lịch sử phiếu</th>
@@ -67,6 +67,29 @@ $('form#khu_nam').on('submit', function (event){
                 { data: "SoLuong" },
                 { data: "ThanhTien" }	
             ],
+             // "columnDefs": [
+             //  {
+             //    "targets": "MaLichSuPhieu",
+             //  },
+             //  {
+             //    "targets": 1,
+             //  },
+             //  {
+             //    "targets": 2,
+             //  },
+             //  {
+             //    "targets": 3,
+             //  },
+             //  {
+             //    "targets": 4,
+             //  },
+             //  {
+             //    "targets": 5,
+             //  },
+             //  {
+             //    "targets": 6,
+             //  },
+             //  ],
             "order": [[ 0, "desc" ]],
             "destroy": true, //use for reinitialize datatable
             "processing": true,
@@ -97,8 +120,16 @@ $('form#khu_nam').on('submit', function (event){
            * ref: https://stackoverflow.com/questions/15786572/call-a-function-in-success-of-datatable-ajax-call
            */
          "drawCallback":function( settings, json){
-          var api = this.api();
-          var data =  JSON.parse(JSON.stringify( api.rows( {page:'current'} ).data() ));console.log( data  );//ref: https://stackoverflow.com/questions/17546953/cant-access-object-property-even-though-it-shows-up-in-a-console-log
+          // let maLichSuPhieuCol = $('tbody tr td:first-child'); console.log(maLichSuPhieuCol);
+          // maLichSuPhieuCol.each( function() {
+          //   if( maLichSuPhieuCol.text() !== '' )
+          //   {console.log(maLichSuPhieuCol.parent());
+          //     maLichSuPhieuCol.parent().css({"color": "red", "border": "2px solid red"});
+          //   }
+          // })
+            
+          var api = this.api();//console.log(this.api());
+          var data =  JSON.parse(JSON.stringify( api.rows( {page:'current'} ).data() ));//console.log( data  );//ref: https://stackoverflow.com/questions/17546953/cant-access-object-property-even-though-it-shows-up-in-a-console-log
           var dataArr = Object.values(data);//convert obj to array
 
           //ref: https://www.javascripttutorial.net/javascript-array-filter/
@@ -126,10 +157,34 @@ $('form#khu_nam').on('submit', function (event){
           {
             $('h3#total_rev_men + h4').html("");
           }
+
+        },
+         "createdRow": function( row, data, dataIndex ) {
+            if ( data['MaNhanVien'] === null ) 
+            { 
+              $(row).css({background:'rgba(242, 242, 242, 0.36)'});
+              $(row).children(":first-child").addClass( 'red' );
+              $(row).children(":first-child").addClass( 'borderLessRight' );
+              $(row).children(":nth-child(2)").addClass( 'borderLess' );
+              $(row).children(":nth-child(3)").addClass( 'borderLess' );
+              $(row).children(":nth-child(4)").addClass( 'borderLess' );
+              $(row).children(":nth-child(5)").addClass( 'borderLessLeft' );
+              $(row).children(":nth-child(6)").addClass( 'red' );
+              $(row).children(":last-child").addClass( 'red' );
+
+            }
+            else
+            {  
+              //let index = this.api().$(row).index();console.log(dataIndex);
+
+              $(row).children(":first-child").text("");
+
+            }
         },
         // Note: this only fires once (first ajax cal only), not fire on every next ajax call
         "initcomplete ":function( settings, json){
-            console.log(json);
+            //console.log(json);
+             
         }
 
 
@@ -149,6 +204,18 @@ $('form#khu_nam').on('submit', function (event){
         }
       });
 
+       //total rev including men + women
+       $.ajax({
+        url:"ajax/grand_total.php",
+        method:"post",
+        data:formValues,
+        dataType:"json",
+        success:function(output)
+        {
+
+          $("#grandTotal").html(output);
+        }
+      });
 
   });
 

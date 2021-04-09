@@ -9,8 +9,8 @@ $goldenlotus = new GoldenLotus($dbCon);
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 //var_dump($params);
-$tungay = dateConverter($params['tuNgay']);
-$denngay = dateConverter($params['denNgay']);
+$tuNgay = isset( $params['tuNgay']) ? date('Y-m-d', strtotime( $params['tuNgay']) ) : "";
+$denNgay = isset( $params['denNgay']) ? date('Y-m-d', strtotime( $params['denNgay']) ) : "";
 $ma_khu = "nam";
 
 //define index of column name
@@ -48,13 +48,13 @@ if( !empty($params['search']['value']) ) {
 
 }
 
-$paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$params['length']} ) ";
+$paginating = " RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$params['length']} ) ";
 if( $params['draw'] > 1 ) $paginating = "RowNum BETWEEN ( {$params['start']} + 1 ) AND  ( {$params['start']} + {$params['length']} ) ";
 /**
  * [$sqlRec description]
  * @var string
  */
-$sqlRec = $goldenlotus->getSalesSpa_Advanced_Rec( $ma_khu, $tungay, $denngay, $where, $paginating );
+$sqlRec = $goldenlotus->getSalesSpa_Advanced_Rec( $ma_khu, $tuNgay, $denNgay, $where, $paginating );
 //var_dump($sqlRec);die;
     
 
@@ -66,7 +66,7 @@ foreach( $sqlRec as $r )
         $columns[1] => $r['MaNhanVien'],
         $columns[2] =>  substr($r['GioVao'],0,10),
         $columns[3]=>  utf8_encode( $r['TenHangBan'] ),
-        $columns[4]=> number_format($r['DonGia'],0,",",".").'<sup>đ</sup>',
+        $columns[4]=> $r['DonGia'] ? number_format($r['DonGia'],0,",",".").'<sup>đ</sup>' : '',
         $columns[5]=> number_format($r['SoLuong'],0,",","."),
         $columns[6]=>  number_format($r['ThanhTien'],0,",",".").'<sup>đ</sup>',
     );
@@ -94,7 +94,7 @@ if(isset($sqlRec[0]["TotalWhere"]))
 /**
  * $sqlTot
  */
-$nRows = $goldenlotus->getSalesSpa_Advanced_Tot( $ma_khu, $tungay, $denngay, $where );
+$nRows = $goldenlotus->getSalesSpa_Advanced_Tot( $ma_khu, $tuNgay, $denNgay, $where );
 
 
 

@@ -1746,6 +1746,103 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			}
 	}
 
+	public function getSoLuongHangBanTheoNhom_Day( $tuNgay, $tenNhom  )
+	{	
+		$tuNgay =  htmlentities(trim(strip_tags($tuNgay)),ENT_QUOTES,'utf-8');
+		$tenNhom = htmlentities(trim(strip_tags($tenNhom)),ENT_QUOTES,'utf-8');
+
+		 $sql = "DECLARE @tuNgay varchar(max), @tenNhom varchar(max)
+		 SET @tuNgay = :tuNgay
+		 SET @tenNhom = :tenNhom
+
+		select Distinct b.MaHangBan, b.TenHangBan
+		, TongSoLuong = SUM( SoLuong )  
+		FROM [tblLSPhieu_HangBan] a 
+		right join [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan AND substring( Convert(varchar,ThoiGianBan,126),0,11 ) = @tuNgay
+		left JOIN  [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma
+		WHERE Ma = @tenNhom
+		GROUP BY b.MaHangBan, b.TenHangBan, MaNhomHangBan  order by  TongSoLuong DESC";
+
+		try{
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuNgay', $tuNgay);
+				$stmt->bindParam('tenNhom', $tenNhom);
+				
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+				return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSoLuongHangBanTheoNhom_Month( $tuThang, $tenNhom  )
+	{	
+		$tuThang =  htmlentities(trim(strip_tags($tuThang)),ENT_QUOTES,'utf-8');
+		$tenNhom = htmlentities(trim(strip_tags($tenNhom)),ENT_QUOTES,'utf-8');
+		 $sql = "DECLARE @tuThang varchar(max), @tenNhom varchar(max)
+		 SET @tuThang = :tuThang
+		 SET @tenNhom = :tenNhom
+
+		select Distinct b.MaHangBan, b.TenHangBan
+		, TongSoLuong = SUM( SoLuong )  
+		FROM [tblLSPhieu_HangBan] a 
+		right join [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan AND substring( Convert(varchar,ThoiGianBan,126),0,8 ) = @tuThang
+		left JOIN  [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma
+		WHERE Ma = @tenNhom
+		GROUP BY b.MaHangBan, b.TenHangBan, MaNhomHangBan  order by  TongSoLuong DESC";
+
+		try{
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuThang', $tuThang);
+				$stmt->bindParam('tenNhom', $tenNhom);
+				
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+				return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
+	public function getSoLuongHangBanTheoNhom_Year( $tuNam, $tenNhom  )
+	{	
+		$tuNam =  htmlentities(trim(strip_tags($tuNam)),ENT_QUOTES,'utf-8');
+		$tenNhom = htmlentities(trim(strip_tags($tenNhom)),ENT_QUOTES,'utf-8');
+		 $sql = "DECLARE @tuNam varchar(max), @tenNhom varchar(max)
+		 SET @tuNam = :tuNam
+		 SET @tenNhom = :tenNhom
+
+		select Distinct b.MaHangBan, b.TenHangBan
+		, TongSoLuong = SUM( SoLuong )  
+		FROM [tblLSPhieu_HangBan] a 
+		right join [tblDMHangBan] b ON a.MaHangBan = b.MaHangBan AND substring( Convert(varchar,ThoiGianBan,126),0,5 ) = @tuNam
+		left JOIN  [tblDMNhomHangBan] c ON b.MaNhomHangBan = c.Ma
+		WHERE Ma = @tenNhom
+		GROUP BY b.MaHangBan, b.TenHangBan, MaNhomHangBan  order by  TongSoLuong DESC";
+
+		try{
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuNam', $tuNam);
+				$stmt->bindParam('tenNhom', $tenNhom);
+				
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+				return $rs;
+			}
+		catch ( PDOException $error ){
+				echo $error->getMessage();
+			}
+	}
+
 	private function getSoldvsCancelledItemsByDate( $date ){
 		 $sql = "select TenHangBan,
 		  	sum (CASE WHEN soluong > 0 THEN soluong
@@ -3109,12 +3206,22 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 	}
 
 
-	public function getNDMNhomHangBan() {
-		$sql = "select * from [tblDMNhomHangBan] order By Ten";
+	public function getNDMNhomHangBan( $tenQuay ) 
+	{	
+		$tenQuay = htmlentities(trim(strip_tags($tenQuay)),ENT_QUOTES,'utf-8');
+
+		$sql = "DECLARE @tenQuay varchar(max)
+		SET @tenQuay = :tenQuay
+		select * from [tblDMNhomHangBan] where TenQuay = @tenQuay order By Ten";
 		try{
-				$rs = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-		
-					return $rs;
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tenQuay', $tenQuay);
+				
+				$stmt->execute();
+
+				$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
+				return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();
@@ -3665,22 +3772,22 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			select *
 			  into #temp_t1 FROM(
 			SELECT distinct b.MaBan, c.MaLichSuPhieu, GioVao, ThoiGianDongPhieu,
-						TenHangBan, DonGia	
-						, sum( SoLuong ) OVER(PARTITION BY TenHangBan) AS SoLuong
-						, ThanhTien = sum( SoLuong ) OVER(PARTITION BY TenHangBan) * DonGia
-						, TongDoanhThu =  sum( Thanhtien ) OVER(PARTITION BY b.MaBan),
-						MaNhanVien 
-						FROM 
-						[tblDMKhu] a
-						join 	[tblDMBan] b 
-						on a.[MaKhu] = b.[MaKhu]
-						left join [tblLichSuPhieu] c
-						on b.[MaBan] = c.[MaBan]
-						and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = @tuNgay
-						left JOIN [tblLSPhieu_HangBan] d
-						on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
+				TenHangBan, DonGia	
+				, sum( SoLuong ) OVER(PARTITION BY TenHangBan) AS SoLuong
+				, ThanhTien = sum( SoLuong ) OVER(PARTITION BY TenHangBan) * DonGia
+				, TongDoanhThu =  sum( Thanhtien ) OVER(PARTITION BY b.MaBan),
+				MaNhanVien 
+				FROM 
+				[tblDMKhu] a
+				join 	[tblDMBan] b 
+				on a.[MaKhu] = b.[MaKhu]
+				left join [tblLichSuPhieu] c
+				on b.[MaBan] = c.[MaBan]
+				and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = @tuNgay
+				left JOIN [tblLSPhieu_HangBan] d
+				on c.[MaLichSuPhieu] = d.[MaLichSuPhieu]
 
-						WHERE c.MaLichSuPhieu IS NOT NULL and [ThoiGianDongPhieu] IS NULL 
+				WHERE c.MaLichSuPhieu IS NOT NULL and [ThoiGianDongPhieu] IS NULL 
 			";
 
 			if( ! empty($tenQuay) )
@@ -3807,7 +3914,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 				--on a.[MaKhu] = b.[MaKhu]
 				left join [tblLichSuPhieu] b
 				on a.MaKhu = b.MaKhu
-				and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) = convert(varchar, getdate(), 111)
+				and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) = convert(varchar, getdate(), 126)
 				left JOIN [tblLSPhieu_HangBan] c
 				on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]
 				
@@ -3864,7 +3971,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 				--on a.[MaKhu] = b.[MaKhu]
 				left join [tblLichSuPhieu] b
 				on a.MaKhu = b.MaKhu
-				and substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) =  convert(varchar, getdate(), 111)
+				and substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) =  convert(varchar, getdate(), 126)
 				left JOIN [tblLSPhieu_HangBan] c
 				on b.[MaLichSuPhieu] = c.[MaLichSuPhieu]
 				
@@ -3945,7 +4052,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			FROM [tblLichSuPhieu] a 
 			left JOIN [tblLSPhieu_HangBan] b 
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
-			where substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
+			where substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) 
 			between @tuNgay and @denNgay  and  $ma_khu
 			 AND a.MaLichSuPhieu IS NOT NULL AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
 			)
@@ -3960,8 +4067,10 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 
 		if ( $where == "" )
 		{
-			$sql .= 'SELECT * FROM   cte_1';
+			$sql .= 'SELECT MaLichSuPhieu, MaNhanVien, GioVao, TenHangBan, DonGia, SoLuong, ThanhTien FROM   cte_1';
 	    	$sql .= " WHERE ". $paginating ;
+	    	 $sql .= "UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL,  SUM (SoLuong), SUM (ThanhTien) FROM cte_1 WHERE  $paginating   GROUP BY MaLichSuPhieu
+ 				ORDER BY MaLichSuPhieu, TenHangBan";
 		}
 		else
 		{
@@ -4039,7 +4148,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 			FROM [tblLichSuPhieu] a 
 			left JOIN [tblLSPhieu_HangBan] b 
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
-			where substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
+			where substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) 
 			between  @tuNgay and @denNgay and  $ma_khu  AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
 			AND a.MaLichSuPhieu IS NOT NULL ) t1 ;
 
@@ -4074,20 +4183,36 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 
 	}
 
-	public function getSalesSpa_Advanced_TotalRev(  $ma_khu, $tungay, $denngay )
+	public function getSalesSpa_Advanced_TotalRev(  $ma_khu = null, $tuNgay, $denNgay )
 	{
-		$sql ="SELECT  TongDoanhThu = sum( Thanhtien ) 
+		$sql ="DECLARE @tuNgay varchar(max)
+		DECLARE @denNgay varchar(max)
+		SET @tuNgay = :tuNgay
+		SET @denNgay = :denNgay
+		SELECT  TongDoanhThu = sum( Thanhtien ) 
 			FROM [tblLichSuPhieu] a 
 			left JOIN [tblLSPhieu_HangBan] b 
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
-			where substring( Convert(varchar,[ThoiGianTaoPhieu],111),0,11 ) 
-			between '$tungay' and '$denngay'  and $ma_khu  AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
-			AND a.MaLichSuPhieu IS NOT NULL group by a.MaKhu";
-			
+			where substring( Convert(varchar,[ThoiGianTaoPhieu],126),0,11 ) 
+			between @tuNgay and @denNgay  ";
+
+		if ( isset($ma_khu) )
+		{
+			$sql .=" and $ma_khu";
+		}
+
+		 $sql .= " AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
+			AND a.MaLichSuPhieu IS NOT NULL ";
+
 		try{
-				$rs = $this->conn->query($sql)->fetchColumn();
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindParam('tuNgay', $tuNgay);
+				$stmt->bindParam('denNgay', $denNgay);
+				
+				$stmt->execute();
+				$rs = $stmt->fetchColumn();
 		
-					return $rs;
+				return $rs;
 			}
 		catch ( PDOException $error ){
 				echo $error->getMessage();

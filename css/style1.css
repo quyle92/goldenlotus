@@ -551,9 +551,7 @@ a.tiles_info, a.shortcut-tiles {
   text-align: center;
   font-size:0.85em;
 }
-.red{
-  background: #ef553a;
-}
+
 .tiles_info .tiles-body-alt, .info-tiles .tiles-body {
   padding: 15px;
   font-weight: 300;
