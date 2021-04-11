@@ -1,19 +1,13 @@
 <?php 
-$page_name = "BaoCaoQuanTri";
+$page_name = "BaoCaoBanHang";
 require_once('../helper/security.php');
 require('../lib/db.php');
 require('../lib/goldenlotus.php');
 require('../helper/custom-function.php');
 @session_start();
 $goldenlotus = new GoldenLotus($dbCon);
-
-
-
-
 $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
-
-
 
 ?>
 
@@ -23,7 +17,7 @@ $trungtam=$_SESSION['TenTrungTam'];
 <?php include ('../head/head-tag.php');?>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0/dist/chartjs-plugin-datalabels.min.js"></script> 
 <script>
-var title = "Tổng hợp số lượng qua số key";
+
 
 </script>  
 </head>
@@ -35,7 +29,7 @@ var title = "Tổng hợp số lượng qua số key";
     <div class="col-md-12 graphs">
 
 
- <h3 class="title"> Tổng hợp số lượng qua số key</h3>
+ <h3 class="title">Tổng hợp số lượng quá số key</h3>
     <div class="panel with-nav-tabs panel-primary ">
           <div class="panel-heading">
                   <ul class="nav nav-tabs">
@@ -74,7 +68,7 @@ var title = "Tổng hợp số lượng qua số key";
       <!-- /#page-wrapper -->
    </div>
     <!-- /#wrapper -->
-<?php require_once('../ajax-loading.php'); ?>
+
 </body>
 </html>
 

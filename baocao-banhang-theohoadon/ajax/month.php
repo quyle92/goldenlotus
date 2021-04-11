@@ -21,20 +21,18 @@ if( ! empty($tenQuay))
 
 //define index of column name
 $columns = array(
-    0 =>'NgayCoBill',
-    1 =>'MaLoaiThe',
-    2 =>'MaLichSuPhieu',
+    0 =>'MaLichSuPhieu',
+    1 =>'NgayCoBill',
+    2 =>'MaLoaiThe',
     3 =>'NVTinhTienMaNV',
-    4 =>'Floor',
-    5 =>'TenHangBan',
-    6 =>'Note',
-    7 =>'DonGia',
-    8 =>'SoLuong',
-    9 =>'TienGiamGia',
-    10 =>'Discount',
-    11=>'SoTienDVPhi',
-    12 => 'SoTienVAT',
-    13 => 'ThanhTien'
+    4 =>'TenHangBan',
+    5 =>'DonGia',
+    6 =>'SoLuong',
+    7 =>'TienGiamGia',
+    8 =>'Discount',
+    9 =>'SoTienDVPhi',
+    10 => 'SoTienVAT',
+    11 => 'ThanhTien'
 );
 //var_dump($params['time']);die;
 $where = $sqlTot = $sqlRec = "";
@@ -46,9 +44,7 @@ if( !empty($params['search']['value']) ) {
     $where .=" OR MaLoaiThe LIKE '%" . $params['search']['value']."%' ";
     $where .=" OR MaLichSuPhieu LIKE '%".$params['search']['value']."%' ";
     $where .=" OR NVTinhTienMaNV LIKE '%".$params['search']['value']."%' ";
-    $where .=" OR Floor LIKE '%".$params['search']['value']."%' ";
     $where .=" OR TenHangBan LIKE '%".$params['search']['value']."%' ";
-    $where .=" OR Note LIKE '%".$params['search']['value']."%' ";
     $where .=" OR DonGia LIKE '%".$params['search']['value']."%' ";
     $where .=" OR SoLuong LIKE '%".$params['search']['value']."%' ";
     $where .=" OR TienGiamGia LIKE '%".$params['search']['value']."%' ";
@@ -58,8 +54,8 @@ if( !empty($params['search']['value']) ) {
     $where .=" OR ThanhTien LIKE '%".$params['search']['value']."%' )";
 }
 
-$paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$params['length']} ) ORDER BY {$columns[$params['order'][0]['column']]} {$params['order'][0]['dir']}";
-
+$paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$params['length']} )";
+//$orderBy = " ORDER BY {$columns[$params['order'][0]['column']]} {$params['order'][0]['dir']}";
 /**
  * [$sqlRec description]
  * @var string
@@ -71,22 +67,20 @@ $sqlRec = $goldenlotus->getBillDetails_Rec_Month( $tenQuay, $tuThang, $where , $
 $tong_tien = 0;
 foreach( $sqlRec as $r )
 {
-	$data[] = array(
+    $data[] = array(
         'NgayCoBill' => substr($r['NgayCoBill'],0,10),
-        'MaLoaiThe' => isset($r['MaLoaiThe']) ? $r['MaLoaiThe'] : "Tiền Mặt",
+        'MaLoaiThe' =>  isset($r['TenHangBan']) ?  (   isset($r['MaLoaiThe'])  ? $r['MaLoaiThe']  : "Tiền Mặt" ) : '',
         'MaLichSuPhieu' => $r['MaLichSuPhieu'],
         'NVTinhTienMaNV' =>$r['NVTinhTienMaNV'],
-		'Floor' => $r['Floor'],
-		'TenHangBan' => $r['TenHangBan'],
-		'Note' => $r['Note'],
+        'TenHangBan' => $r['TenHangBan'],
         'DonGia' => $r['DonGia'],
         'SoLuong' => $r['SoLuong'],
         'TienGiamGia' => $r['TienGiamGia'],
         'Discount' => $r['Discount'],
         'SoTienDVPhi' => $r['SoTienDVPhi'],
         'SoTienVAT' => $r['SoTienVAT'],
-        'ThanhTien' => number_format($r['ThanhTien'],0,",",".") . '<sup>đ</sup>'
-	);
+        'ThanhTien' => number_format($r['Tongtien'],0,",",".") . '<sup>đ</sup>'
+    );
 
   //$tong_tien  += $r['TienThucTra'];
 }

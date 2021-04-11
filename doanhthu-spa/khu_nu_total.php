@@ -31,7 +31,7 @@
 <br>
 <h3 id="total_rev_women" style="color:#337AB7"><strong>Tổng doanh thu:</strong></h3>
 <h4 style="color:#337AB7"><strong></strong></h4>
-<table class="table table-striped table-bordered" id="custom_month_women">
+<table class="table table-bordered" id="custom_month_women">
   <thead>
     <tr>
       <th>Mã lịch sử phiếu</th>
@@ -55,8 +55,10 @@ $('form#khu_nu').on('submit', function (event){
     var tuNgay = $('form#khu_nu input[name="tuNgay"]').val();
     var denNgay = $('form#khu_nu input[name="denNgay"]').val();
     var maKhu =  $('form#khu_nu select[name="maKhu"]').val();
+    $('#grandTotal').text('');
+    $('#womenTotal').text('');
 
-
+    //datatable only   
     $('#custom_month_women').DataTable({
             columns: [
                 { data: "MaLichSuPhieu"  },
@@ -129,14 +131,14 @@ $('form#khu_nu').on('submit', function (event){
             if ( data['MaNhanVien'] === null ) 
             { 
               $(row).css({background:'rgba(242, 242, 242, 0.36)'});
-              $(row).children(":first-child").addClass( 'red' );
+              $(row).children(":first-child").addClass( 'redText' );
               $(row).children(":first-child").addClass( 'borderLessRight' );
               $(row).children(":nth-child(2)").addClass( 'borderLess' );
               $(row).children(":nth-child(3)").addClass( 'borderLess' );
               $(row).children(":nth-child(4)").addClass( 'borderLess' );
               $(row).children(":nth-child(5)").addClass( 'borderLessLeft' );
-              $(row).children(":nth-child(6)").addClass( 'red' );
-              $(row).children(":last-child").addClass( 'red' );
+              $(row).children(":nth-child(6)").addClass( 'redText' );
+              $(row).children(":last-child").addClass( 'redText' );
 
             }
             else
@@ -156,6 +158,7 @@ $('form#khu_nu').on('submit', function (event){
 
         });
 
+    //total rev women only
     var formValues= $(this).serialize();
     $.ajax({
       url:"ajax/total_rev_women.php",

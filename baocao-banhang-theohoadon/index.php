@@ -10,16 +10,31 @@ $goldenlotus = new GoldenLotus($dbCon);
 $matrungtam=$_SESSION['MaTrungTam'];
 $trungtam=$_SESSION['TenTrungTam'];
 
-
-
-
-
 ?>
 <!DOCTYPE HTML>
 <html>
 <head>
 <?php include ('../head/head-tag.php');?>
 <style>
+  .redText {
+  color: red !important;
+  font-weight: 500;
+}
+
+.borderLess{
+  border-left: none!important;
+  border-right: none!important
+}
+
+.borderLessLeft{
+  border-left: none!important;
+ 
+}
+
+.borderLessRight{
+  border-right: none!important;
+ 
+}
 </style>
 <script>
 $(document).ready(function() {

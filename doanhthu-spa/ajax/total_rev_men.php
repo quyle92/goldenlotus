@@ -12,5 +12,5 @@ $ma_khu = "(a.MaKhu = '03-NH1' or a.MaKhu = '03-NH2' or a.MaKhu = '03-NH3')";
 $output = "";
 
 $rs = $goldenlotus->getSalesSpa_Advanced_TotalRev( $ma_khu, $tuNgay, $denNgay );
-$total_rev = 'Tổng doanh thu: ' . number_format($rs,0,",",".") .' <sup>đ</sup>';	
+$total_rev = 'Tổng doanh thu: <b id="menTotal">' . number_format($rs,0,",",".") .'<sup>đ</sup></b> ';	
 echo json_encode( $total_rev  );

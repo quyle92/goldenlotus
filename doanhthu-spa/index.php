@@ -26,7 +26,7 @@ $trungtam=isset($_SESSION['TenTrungTam'])? $_SESSION['TenTrungTam']:"";
 /*table#custom_month_men tbody tr:nth-child(11), table#custom_month_women tbody tr:nth-child(11){
   display: none;
 }*/
-.red {
+.redText {
   color: red !important;
   font-weight: 500;
 }

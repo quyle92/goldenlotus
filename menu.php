@@ -24,7 +24,7 @@
                 </li>
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/tonghop-soluong-over-sokey/index.php"><i class="fas fa-apple-alt"></i>
-                    Tổng hợp số lượng quá số key</a>
+                    Tổng hợp số lượng qua số key</a>
                 </li>
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/danhsach-key/index.php"><i class="fas fa-table"></i>
@@ -39,10 +39,7 @@
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-hoadon/index.php"><i class="fas fa-file-invoice-dollar"></i>Báo cáo hóa đơn</a>
                 </li>
-                <li style="list-style-type: none;">
-                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-nhom-monan/index.php"><i class="fas fa-cloud-meatball"></i>
-                    Doanh thu nhóm món ăn</a>
-                </li>
+                
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/thongke-banhang-soluong/index.php"><i class="fas fa-folder-open"></i>
                     Thống kê bán hàng số lượng</a>
@@ -71,6 +68,10 @@
             <div class="dropdown-container">
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/baocao-gio/index.php"><i class="far fa-clock"></i>Báo cáo giờ</a>
+                </li>
+                <li style="list-style-type: none;">
+                    <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/doanhthu-nhom-monan/index.php"><i class="fas fa-cloud-meatball"></i>
+                    Doanh thu nhóm món ăn</a>
                 </li>
                 <li style="list-style-type: none;">
                     <a class="menu-level2" href="<?=( isset($_SERVER['HTTPS']) ? "https://" : "http://" )?><?=$_SERVER['SERVER_NAME']?><?=( ( $_SERVER['SERVER_NAME'] !== 'localhost' ) ? "" : "/goldenlotus" )?>/bangke-chitiet-pttt/index.php"><i class="fas fa-money-bill-alt"></i>

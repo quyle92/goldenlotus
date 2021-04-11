@@ -18,7 +18,7 @@ foreach ( $rs as $r )
 	$output.= '<tr>
       <td>' . $r['MaHangBan'] . '</td>
       <td>' . $r['TenHangBan'] . '</td>
-      <td>' . number_format($r['TongSoLuong'],0,",",".") . '</td>
+      <td style="font-weight: 600;color: red;">' . number_format($r['TongSoLuong'],0,",",".") . '</td>
     </tr>';
 }
 // var_dump($output);

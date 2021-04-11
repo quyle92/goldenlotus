@@ -65,7 +65,7 @@ foreach( $sqlRec as $r )
         $columns[0] => $r['MaLichSuPhieu'],
         $columns[1] => $r['MaNhanVien'],
         $columns[2] =>  substr($r['GioVao'],0,10),
-        $columns[3]=>  utf8_encode( $r['TenHangBan'] ),
+        $columns[3]=>  ( $r['TenHangBan'] ),
         $columns[4]=> $r['DonGia'] ? number_format($r['DonGia'],0,",",".").'<sup>đ</sup>' : '',
         $columns[5]=> number_format($r['SoLuong'],0,",","."),
         $columns[6]=>  number_format($r['ThanhTien'],0,",",".").'<sup>đ</sup>',

@@ -55,8 +55,14 @@ $('form#khu_nam').on('submit', function (event){
     var tuNgay = $('form#khu_nam input[name="tuNgay"]').val();//console.log(tuNgay);
     var denNgay = $('form#khu_nam input[name="denNgay"]').val();//console.log(denNgay);
     var maKhu =  $('form#khu_nam select[name="maKhu"]').val();//console.log(maKhu);
-   
+    $('#grandTotal').text('');
+    $('#menTotal').text('');
 
+      
+    
+    
+
+      //datatable only 
     $('#custom_month_men').DataTable({
             columns: [
                 { data: "MaLichSuPhieu"  },
@@ -163,20 +169,20 @@ $('form#khu_nam').on('submit', function (event){
             if ( data['MaNhanVien'] === null ) 
             { 
               $(row).css({background:'rgba(242, 242, 242, 0.36)'});
-              $(row).children(":first-child").addClass( 'red' );
+              $(row).children(":first-child").addClass( 'redText' );
               $(row).children(":first-child").addClass( 'borderLessRight' );
               $(row).children(":nth-child(2)").addClass( 'borderLess' );
               $(row).children(":nth-child(3)").addClass( 'borderLess' );
               $(row).children(":nth-child(4)").addClass( 'borderLess' );
               $(row).children(":nth-child(5)").addClass( 'borderLessLeft' );
-              $(row).children(":nth-child(6)").addClass( 'red' );
-              $(row).children(":last-child").addClass( 'red' );
+              $(row).children(":nth-child(6)").addClass( 'redText' );
+              $(row).children(":last-child").addClass( 'redText' );
 
             }
-            else
+            else if( this.api().search().length === 0 )
             {  
               //let index = this.api().$(row).index();console.log(dataIndex);
-
+              
               $(row).children(":first-child").text("");
 
             }
@@ -190,21 +196,22 @@ $('form#khu_nam').on('submit', function (event){
 
         });
 
-      var formValues= $(this).serialize();//console.log(formValues);
-      $.ajax({
-        url:"ajax/total_rev_men.php",
-        method:"post",
-        data:formValues,
-        dataType:"json",
-        success:function(output)
-        {
-        	//console.log(output);
-          //$(output).appendTo('h3#total_rev_men strong');
-          $("h3#total_rev_men strong").html(output);
-        }
-      });
+    //total rev men only
+    var formValues= $(this).serialize();//console.log(formValues);
+    $.ajax({
+      url:"ajax/total_rev_men.php",
+      method:"post",
+      data: formValues,
+      dataType:"json",
+      success:function(output)
+      {
+        console.log(output);
+        //$(output).appendTo('h3#total_rev_men strong');
+        $("h3#total_rev_men strong").html(output);
+      }
+    });
 
-       //total rev including men + women
+     //total rev including men + women
        $.ajax({
         url:"ajax/grand_total.php",
         method:"post",
@@ -212,11 +219,12 @@ $('form#khu_nam').on('submit', function (event){
         dataType:"json",
         success:function(output)
         {
-
+          console.log(output);
+          //$(output).appendTo('h3#total_rev_men strong');
           $("#grandTotal").html(output);
         }
       });
-
+    
   });
 
 

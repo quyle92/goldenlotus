@@ -2,11 +2,11 @@
 require('../datetimepicker-month.php');
 ?>
 <div class="container-fluid">
-			<div class="row">
-				<div class="col-md-12" >
-					<canvas id="dophu_thang" ></canvas>
-				</div>
-			</div>
+      <div class="row">
+        <div class="col-md-12" >
+          <canvas id="dophu_thang" ></canvas>
+        </div>
+      </div>
 
 </div>
 

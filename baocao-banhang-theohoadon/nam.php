@@ -3,16 +3,14 @@ require('../datetimepicker-year.php');
 ?>
 
 <div class="col-xs-12 col-sm-12">
-<table class="table table-striped table-bordered" id="year">
+<table class="table table-bordered" id="year">
     <thead>
       <tr>
+        <th>Mã hóa đơn</th>
         <th>Ngày bán</th>
         <th>PTTT</th>
-        <th>Mã hóa đơn</th>
         <th>Thu ngân</th>
-        <th>Tầng</th>
         <th>Món ăn</th>
-        <th>Ghi chú</th>
         <th>Giá bán</th>
         <th>SL</th>
         <th>Giảm giá</th>
@@ -33,20 +31,18 @@ require('../datetimepicker-year.php');
 
 <script >
 
- //$('#custom_year').DataTable();
+ //$('#year').DataTable();
     $('form#customYear').on('submit', function (event){
     event.preventDefault();
     var tuNam = $('#tuNam').val();
     var tenQuay = $('form#customYear #tenQuay').val();    
     $('#year').DataTable({
         columns: [
+            { data: "MaLichSuPhieu" },
             { data: "NgayCoBill"  },
             { data: "MaLoaiThe" },
-            { data: "MaLichSuPhieu" },
             { data: "NVTinhTienMaNV" },
-            { data: "Floor"  },
             { data: "TenHangBan" },
-            { data: "Note" },
             { data: "DonGia" },
             { data: "SoLuong"  },
             { data: "TienGiamGia" },
@@ -77,6 +73,33 @@ require('../datetimepicker-year.php');
             },
             complete: function() { $("#loadingMask").css('visibility', 'hidden'); }
         },
+        "createdRow": function( row, data, dataIndex ) 
+            {
+                if ( data['TenHangBan'] === null ) 
+                { 
+                  $(row).css({background:'rgba(242, 242, 242, 0.36)'});
+                  $(row).children(":first-child").addClass( 'redText' );
+                  $(row).children(":nth-child(2)").addClass( 'borderLessRight' );
+                  $(row).children(":nth-child(3)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(4)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(5)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(6)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(7)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(8)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(9)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(10)").addClass( 'borderLess' );
+                  $(row).children(":nth-child(11)").addClass( 'borderLessLeft' );
+                  $(row).children(":last-child").addClass( 'redText' );
+
+                }
+                else if( this.api().search().length === 0 )
+                {  
+                  //let index = this.api().$(row).index();console.log(dataIndex);
+                  
+                  $(row).children(":first-child").text("");
+
+                }
+            }
 
 
     });
