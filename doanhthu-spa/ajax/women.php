@@ -18,10 +18,12 @@ $columns = array(
     0 =>'MaLichSuPhieu',
     1 =>'MaNhanVien',
     2 =>'GioVao',
-    3 =>'TenHangBan',
-    4 =>'DonGia',
-    5 => 'SoLuong',
-    6 => 'ThanhTien'
+    3 =>'CheckIn',
+    4 =>'CheckOut',
+    5 =>'TenHangBan',
+    6 =>'DonGia',
+    7 => 'SoLuong',
+    8 => 'ThanhTien'
 );
 //var_dump($params['time']);die;
 $where = $sqlTot = $sqlRec = "";
@@ -55,20 +57,23 @@ if( $params['draw'] > 1 ) $paginating = "RowNum BETWEEN ( {$params['start']} + 1
  * @var string
  */
 $sqlRec = $goldenlotus->getSalesSpa_Advanced_Rec( $ma_khu, $tuNgay, $denNgay, $where, $paginating );
-//var_dump($sqlRec);die;
+//if($where) {var_dump($sqlRec);die;}
     
 foreach( $sqlRec as $r )
 {
     $data[] = array(
-        $columns[0] =>$r['MaLichSuPhieu'],
+        $columns[0] => $r['MaLichSuPhieu'],
         $columns[1] => $r['MaNhanVien'],
         $columns[2] =>  substr($r['GioVao'],0,10),
-        $columns[3]=>$r['TenHangBan'],
-        $columns[4]=> $r['DonGia'] ? number_format($r['DonGia'],0,",",".").'<sup>đ</sup>' : '',
-        $columns[5]=> number_format($r['SoLuong'],0,",","."),
-        $columns[6]=>  number_format($r['ThanhTien'],0,",",".").'<sup>đ</sup>',
+        $columns[3] =>  $r['CheckIn'],
+        $columns[4] =>  $r['CheckOut'],
+        $columns[5]=>  ( $r['TenHangBan'] ),
+        $columns[6]=> $r['DonGia'] ? number_format($r['DonGia'],0,",",".").'<sup>đ</sup>' : '',
+        $columns[7]=> number_format($r['SoLuong'],0,",","."),
+        $columns[8]=>  number_format($r['ThanhTien'],0,",",".").'<sup>đ</sup>',
     );
 
+  //$tong_tien  += $r['ThanhTien'];
 }
 
 if(isset($sqlRec[0]["TotalWhere"])) 
@@ -78,10 +83,12 @@ if(isset($sqlRec[0]["TotalWhere"]))
         $columns[0] => "totalFilter",
         $columns[1] =>"",
         $columns[2] => "",
-        $columns[3]=>"",
-        $columns[4]=> "",
-        $columns[5]=> "",
-        $columns[6]=>   number_format($total_rev,0,",",".")
+        $columns[3] => "",
+        $columns[4] => "",
+        $columns[5]=>"",
+        $columns[6]=> "",
+        $columns[7]=> "",
+        $columns[8]=>   number_format($total_rev,0,",",".")
     );
 }
 /**

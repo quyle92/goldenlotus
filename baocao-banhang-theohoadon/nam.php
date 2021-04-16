@@ -3,12 +3,15 @@ require('../datetimepicker-year.php');
 ?>
 
 <div class="col-xs-12 col-sm-12">
-<table class="table table-bordered" id="year">
+<h3 id="grandTotal_Year" style="color:#337AB7">Tổng doanh thu: <strong></strong></h3>
+<table class="table table-bordered" id="year" >
     <thead>
       <tr>
         <th>Mã hóa đơn</th>
         <th>Ngày bán</th>
         <th>PTTT</th>
+        <th>Check In</th>
+        <th>Check Out</th>
         <th>Thu ngân</th>
         <th>Món ăn</th>
         <th>Giá bán</th>
@@ -17,7 +20,7 @@ require('../datetimepicker-year.php');
         <th>Chiết khâu</th>
         <th>Phí dịch vụ</th>
         <th>VAT</th>
-        <th>Thành tiền</th>
+        <th>Total</th>
       </tr>
     </thead>
     <tbody>
@@ -34,13 +37,16 @@ require('../datetimepicker-year.php');
  //$('#year').DataTable();
     $('form#customYear').on('submit', function (event){
     event.preventDefault();
+    $('#year').css({'transform': 'translate(-2%, 0%)'});
     var tuNam = $('#tuNam').val();
     var tenQuay = $('form#customYear #tenQuay').val();    
     $('#year').DataTable({
         columns: [
             { data: "MaLichSuPhieu" },
             { data: "NgayCoBill"  },
-            { data: "MaLoaiThe" },
+            { data: "MaLoaiThe"  },
+            { data: "CheckIn"  },
+            { data: "CheckOut"  },
             { data: "NVTinhTienMaNV" },
             { data: "TenHangBan" },
             { data: "DonGia" },
@@ -49,7 +55,7 @@ require('../datetimepicker-year.php');
             { data: "Discount" },
             { data: "SoTienDVPhi" },
             { data: "SoTienVAT"  },
-            { data: "ThanhTien" },
+            { data: "ThanhTien",  render: $.fn.dataTable.render.number( '.', ',', 0, '','<sup>đ<//sup>' ) }//add currency postfix to figure
 
         ],
         "destroy": true, //use for reinitialize datatable
@@ -57,6 +63,19 @@ require('../datetimepicker-year.php');
         "serverSide": true,
         ajax : {
             "url": "ajax/year.php",
+            dataSrc: function ( json ) 
+            {
+                // Remove the formatting to get integer data for summation
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\đ.]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };  
+            
+               $('#grandTotal_Year strong').html(json.grandTotal);
+               return json.data;//must return like this, else error will be thrown.
+            },
             'beforeSend': function (request) {
                 $("#loadingMask").css('visibility', 'visible');
             },
@@ -99,7 +118,52 @@ require('../datetimepicker-year.php');
                   $(row).children(":first-child").text("");
 
                 }
-            }
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
+              var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\đ.]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+                //console.log(api.column(1, {search: 'applied'}).data())
+                // Total over all pages 
+                total = api.column( 13 ).data().reduce(function(a, b, idx) {
+                   if (api.column(1, {search: 'applied'}).data()[idx] !== '' ) {
+                      return  intVal(a) + intVal(b);
+                   } 
+                   else {
+                      return intVal(a);
+                   }
+                }, 0);
+
+                //render Tổng doanh thu (lọc): khi search có value, ko thì hide()
+                if( this.api().search().length !== 0 )
+                {
+                    $('#grandTotal_Year').after('<h3 style="color:#337AB7">Tổng doanh thu (lọc): <strong>' + addCommas( total ) + '<sup>đ</sup> </strong></h3>');
+                }
+                else
+                {
+                    $('#grandTotal_Year + h3').hide();
+                }
+            // Total over this page
+            pageTotal = api
+                .column( 4, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // Update footer
+            $( api.column( 13 ).footer() ).html(
+                '$'+pageTotal +' ( $'+ total +' total)'
+            );
+
+
+         }
 
 
     });

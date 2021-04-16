@@ -671,10 +671,15 @@ class GoldenLotus extends General{
 			throw new InvalidArgumentException('paginating missing');
 		}
 
-	   $sql = "DECLARE @tuNgay varchar(max)
-		 SET @tuNgay = :tuNgay
-		 WITH cte_1 AS ( SELECT a.MaLichSuPhieu, substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
-	   	   Tongtien =  DonGia * b.SoLuong
+	   $sql = "SET NOCOUNT ON;
+	   IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
+			BEGIN
+			DROP TABLE #temp_t1
+			END
+	   	DECLARE @tuNgay varchar(max)
+		SET @tuNgay = :tuNgay
+		select * into #temp_t1 FROM ( SELECT a.MaLichSuPhieu, substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
+	   	   Tongtien =  DonGia * b.SoLuong, CheckIn = substring( Convert(varchar,GioVao,126),12,5 ),  CheckOut = substring( Convert(varchar,ThoiGianDongPhieu,126),12,5 ) 
 		FROM [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b
 		ON a.MaLichSuPhieu=b.MaLichSuPhieu  
@@ -690,26 +695,27 @@ class GoldenLotus extends General{
 
 		if ( $where == '')
 	    {
-	    	$sql .= ' ) SELECT * FROM   cte_1 WHERE ' . $paginating;
-	    	$sql .= " UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,  NULL, NULL, SUM(ThanhTien) FROM cte_1 ";
+	    	$sql .= ' ) t1 SELECT * FROM   #temp_t1 WHERE ' . $paginating;
+	    	$sql .= " UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, SUM(ThanhTien), NULL, NULL FROM #temp_t1 ";
 	    	$sql .= " WHERE ". $paginating ;
-	    	 $sql .= " GROUP BY MaLichSuPhieu ORDER BY MaLichSuPhieu, TenHangBan";
+	    	$sql .= " GROUP BY MaLichSuPhieu ORDER BY MaLichSuPhieu, TenHangBan";
+	    	 $sql .= " SELECT GrandTotal = sum(Tongtien) FROM  #temp_t1
+	    	DROP TABLE #temp_t1";
 	    } 
 	    else
 	    {	
-	    	$sql .= '  ) ,
-	cte_2 as (
-		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien , Tongtien
-		FROM cte_1 
+	    	$sql .= '  ) t1
+	with cte_1 as (
+		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe],  null as Discount, ThanhTien , Tongtien, CheckIn, CheckOut
+		FROM #temp_t1 
 		WHERE ' . $where . '
 	)
 
-	SELECT * FROM   cte_2';
+	SELECT * FROM   cte_1';
 
-	    	$sql .= " WHERE " .  $paginating ;
-
-
-
+	    	 $sql .= " WHERE " .  $paginating ;
+	    	 $sql .= " SELECT GrandTotal = sum(Tongtien) FROM  #temp_t1
+	    	DROP TABLE #temp_t1";
 	    }
 	  
 		try{
@@ -718,10 +724,14 @@ class GoldenLotus extends General{
 			$stmt->bindParam('tuNgay', $tuNgay);
 			
 			$stmt->execute();
+			$rowset =  array();
+			do {
 
-			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		
-			return $rs;
+			    $rowset[] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			    
+			} while ($stmt->nextRowset());
+
+			return $rowset;
 			
 		}
 		catch ( PDOException $error ){
@@ -801,10 +811,15 @@ class GoldenLotus extends General{
 			throw new InvalidArgumentException('paginating missing');
 		}
 
-	   $sql = "DECLARE @tuThang varchar(max)
-		 SET @tuThang = :tuThang
-		 WITH cte_1 AS ( SELECT a.MaLichSuPhieu, substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
-	   	   Tongtien =  DonGia * b.SoLuong
+	   $sql = "SET NOCOUNT ON;
+	   IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
+			BEGIN
+			DROP TABLE #temp_t1
+			END
+	   	DECLARE @tuThang varchar(max)
+		SET @tuThang = :tuThang
+		select * into #temp_t1 FROM ( SELECT a.MaLichSuPhieu, substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
+	   	   Tongtien =  DonGia * b.SoLuong, CheckIn = substring( Convert(varchar,GioVao,126),12,5 ),  CheckOut = substring( Convert(varchar,ThoiGianDongPhieu,126),12,5 ) 
 		FROM [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b
 		ON a.MaLichSuPhieu=b.MaLichSuPhieu  
@@ -820,39 +835,44 @@ class GoldenLotus extends General{
 
 		if ( $where == '')
 	    {
-	    	$sql .= ' ) SELECT * FROM   cte_1 WHERE ' . $paginating;
-	    	$sql .= " UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,  NULL, NULL, SUM(ThanhTien) FROM cte_1 ";
+	    	$sql .= ' ) t1 SELECT * FROM   #temp_t1 WHERE ' . $paginating;
+	    	$sql .= " UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, SUM(ThanhTien), NULL, NULL FROM #temp_t1 ";
 	    	$sql .= " WHERE ". $paginating ;
-	    	 $sql .= " GROUP BY MaLichSuPhieu ORDER BY MaLichSuPhieu, TenHangBan";
+	    	$sql .= " GROUP BY MaLichSuPhieu ORDER BY MaLichSuPhieu, TenHangBan";
+	    	 $sql .= " SELECT GrandTotal = sum(Tongtien) FROM  #temp_t1
+	    	DROP TABLE #temp_t1";
 	    } 
 	    else
 	    {	
-	    	$sql .= '  ) ,
-	cte_2 as (
-		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien , Tongtien
-		FROM cte_1 
+	    	$sql .= '  ) t1
+	with cte_1 as (
+		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe],  null as Discount, ThanhTien , Tongtien, CheckIn, CheckOut
+		FROM #temp_t1 
 		WHERE ' . $where . '
 	)
 
-	SELECT * FROM   cte_2';
+	SELECT * FROM   cte_1';
 
-	    	$sql .= " WHERE " .  $paginating ;
-
-
-
+	    	 $sql .= " WHERE " .  $paginating ;
+	    	 $sql .= " SELECT GrandTotal = sum(Tongtien) FROM  #temp_t1
+	    	DROP TABLE #temp_t1";
 	    }
 	  
 		try{
 
-			$stmt = $this->conn->prepare($sql);
+	     	$stmt = $this->conn->prepare($sql);
 			$stmt->bindParam('tuThang', $tuThang);
 			
 			$stmt->execute();
+			$rowset =  array();
+			do {
 
-			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		
-			return $rs;
+			    $rowset[] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			    
+			} while ($stmt->nextRowset());
 
+			return $rowset;
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -932,10 +952,15 @@ class GoldenLotus extends General{
 			throw new InvalidArgumentException('paginating missing');
 		}
 
-	   $sql = "DECLARE @tuNam varchar(max)
-		 SET @tuNam = :tuNam
-		 WITH cte_1 AS ( SELECT a.MaLichSuPhieu, substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
-	   	   Tongtien =  DonGia * b.SoLuong
+	   $sql = "SET NOCOUNT ON;
+	   IF  OBJECT_ID(N'tempdb..#temp_t1')  IS NOT NULL
+			BEGIN
+			DROP TABLE #temp_t1
+			END
+	   	DECLARE @tuNam varchar(max)
+		SET @tuNam = :tuNam
+		select * into #temp_t1 FROM ( SELECT a.MaLichSuPhieu, substring( Convert(varchar,ThoiGianBan,111),0,11 ) as NgayCoBill, b.ThoiGianBan, b.TenHangBan, b.DonGia, b.SoLuong, a.TienGiamGia, a.NVTinhTienMaNV, a.SoTienDVPhi, a.SoTienVAT,  c.[MaLoaiThe], null as Discount, ThanhTien = DonGia * b.SoLuong - TienGiamGia -SoTienDVPhi - SoTienVAT, RowNum = row_number() over (order by a.MaLichSuPhieu),
+	   	   Tongtien =  DonGia * b.SoLuong, CheckIn = substring( Convert(varchar,GioVao,126),12,5 ),  CheckOut = substring( Convert(varchar,ThoiGianDongPhieu,126),12,5 ) 
 		FROM [tblLichSuPhieu] a 
 		JOIN [tblLSPhieu_HangBan] b
 		ON a.MaLichSuPhieu=b.MaLichSuPhieu  
@@ -951,39 +976,44 @@ class GoldenLotus extends General{
 
 		if ( $where == '')
 	    {
-	    	$sql .= ' ) SELECT * FROM   cte_1 WHERE ' . $paginating;
-	    	$sql .= " UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,  NULL, NULL, SUM(ThanhTien) FROM cte_1 ";
+	    	$sql .= ' ) t1 SELECT * FROM   #temp_t1 WHERE ' . $paginating;
+	    	$sql .= " UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, SUM(ThanhTien), NULL, NULL FROM #temp_t1 ";
 	    	$sql .= " WHERE ". $paginating ;
-	    	 $sql .= " GROUP BY MaLichSuPhieu ORDER BY MaLichSuPhieu, TenHangBan";
+	    	$sql .= " GROUP BY MaLichSuPhieu ORDER BY MaLichSuPhieu, TenHangBan";
+	    	 $sql .= " SELECT GrandTotal = sum(Tongtien) FROM  #temp_t1
+	    	DROP TABLE #temp_t1";
 	    } 
 	    else
 	    {	
-	    	$sql .= '  ) ,
-	cte_2 as (
-		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe], null AS Floor, null AS Note, null as Discount, ThanhTien , Tongtien
-		FROM cte_1 
+	    	$sql .= '  ) t1
+	with cte_1 as (
+		SELECT  RowNum = row_number() over (order by MaLichSuPhieu), NgayCoBill, ThoiGianBan, MaLichSuPhieu, TenHangBan, DonGia, SoLuong, TienGiamGia, NVTinhTienMaNV, SoTienDVPhi, SoTienVAT,  [MaLoaiThe],  null as Discount, ThanhTien , Tongtien, CheckIn, CheckOut
+		FROM #temp_t1 
 		WHERE ' . $where . '
 	)
 
-	SELECT * FROM   cte_2';
+	SELECT * FROM   cte_1';
 
-	    	$sql .= " WHERE " .  $paginating ;
-
-
-
+	    	 $sql .= " WHERE " .  $paginating ;
+	    	 $sql .= " SELECT GrandTotal = sum(Tongtien) FROM  #temp_t1
+	    	DROP TABLE #temp_t1";
 	    }
 	  
 		try{
 
-			$stmt = $this->conn->prepare($sql);
+	     	$stmt = $this->conn->prepare($sql);
 			$stmt->bindParam('tuNam', $tuNam);
 			
 			$stmt->execute();
+			$rowset =  array();
+			do {
 
-			$rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		
-			return $rs;
+			    $rowset[] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			    
+			} while ($stmt->nextRowset());
 
+			return $rowset;
+			
 		}
 		catch ( PDOException $error ){
 			echo $error->getMessage();
@@ -1144,7 +1174,7 @@ class GoldenLotus extends General{
     $sql .= "DECLARE @tuNgay varchar(max)
 		 SET @tuNgay = :tuNgay
     With cte_1 as 
-	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,11 ) = @tuNgay 
+	( SELECT distinct b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,11 ) = @tuNgay 
 	  ";
 
     if( ! empty($tenQuay) )
@@ -1154,7 +1184,10 @@ class GoldenLotus extends General{
 
     if ( $where == '')
     {	
-    	$sql .= ' ) SELECT * FROM   cte_1';
+    	$sql .= ' ) SELECT  * from 
+(
+	SELECT RowNum = row_number() over (order by MaLichSuPhieu), * FROM cte_1 
+) t1';
     	 $sql .= " WHERE " . $paginating ;
     } 
     else
@@ -1262,9 +1295,9 @@ class GoldenLotus extends General{
 	  	$sql = "";
 	    $sql .= "DECLARE @tuThang varchar(max)
 		 SET @tuThang = :tuThang
-		 With cte_1 as 
-		( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,8 ) = @tuThang
-		 ";
+		With cte_1 as 
+	( SELECT distinct b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,8 ) = @tuThang 
+	  ";
 
 	    if( ! empty($tenQuay) )
 		{
@@ -1273,7 +1306,10 @@ class GoldenLotus extends General{
 
 	    if ( $where == '')
 	    {	
-	    	$sql .= ') SELECT * FROM   cte_1';
+	    	$sql .= ' ) SELECT  * from 
+	(
+		SELECT RowNum = row_number() over (order by MaLichSuPhieu), * FROM cte_1 
+	) t1';
 	    	 $sql .= " WHERE " . $paginating ;
 	    } 
 	    else
@@ -1324,7 +1360,7 @@ class GoldenLotus extends General{
     $sql .= "DECLARE @tuThang varchar(max)
 		 SET @tuThang = :tuThang
 		 With cte as 
-	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu WHERE substring( Convert(varchar,GioVao,126),0,8 ) = @tuThang
+	( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu WHERE substring( Convert(varchar,GioVao,126),0,5 ) = @tuThang
 	";
 
 	if( ! empty($tenQuay) )
@@ -1382,9 +1418,9 @@ class GoldenLotus extends General{
 	  	$sql = "";
 	    $sql .= "DECLARE @tuNam varchar(max)
 		 SET @tuNam = :tuNam
-		 With cte_1 as 
-		( SELECT RowNum = row_number() over (order by b.MaLichSuPhieu), b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,5 ) = @tuNam 
-		 ";
+		With cte_1 as 
+		( SELECT distinct b.MaLichSuPhieu, MaKhachHang , TongTien , MaKhu,  MaBan, TienGiamGia , b.SoTienDVPhi , b. SoTienVAT , b.GioVao, b.ThoiGianDongPhieu, b.TienThucTra, c.[MaLoaiThe] FROM  [tblLichSuPhieu] b   JOIN [tblLSPhieu_CTThanhToan] c ON b.MaLichSuPhieu=c.MaLichSuPhieu JOIN [tblLSPhieu_HangBan] d ON b.MaLichSuPhieu = d.MaLichSuPhieu  WHERE substring( Convert(varchar,GioVao,126),0,5 ) = @tuNam 
+		  ";
 
 	    if( ! empty($tenQuay) )
 		{
@@ -1393,7 +1429,10 @@ class GoldenLotus extends General{
 
 	    if ( $where == '')
 	    {	
-	    	$sql .= ') SELECT * FROM   cte_1';
+	    	$sql .= ' ) SELECT  * from 
+		(
+			SELECT RowNum = row_number() over (order by MaLichSuPhieu), * FROM cte_1 
+		) t1';
 	    	 $sql .= " WHERE " . $paginating ;
 	    } 
 	    else
@@ -2177,7 +2216,7 @@ ON b.[MaNhomHangBan] = c.[Ma] WHERE substring( Convert(varchar,ThoiGianBan,111),
 		$sql = "SET NOCOUNT ON;
 		DECLARE @tuNgay varchar(max)
 		SET @tuNgay = :tuNgay
-		select 
+	select 
 T8h_9h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T08:00' AND @tuNgay + 'T09:00'  then a.MaLichSuPhieu end) ),
 T9h_10h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T09:00' AND @tuNgay + 'T10:00'  then a.MaLichSuPhieu end) ),
 T10h_11h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T10:00' AND @tuNgay + 'T11:00'  then a.MaLichSuPhieu end) ),
@@ -2193,9 +2232,27 @@ T19h_20h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,1
 from tblLichSuPhieu a left join tblLSPhieu_HangBan b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 where 
  MaBan Like '%M%'
-AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )
+AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] where  TenHangBan  not like '%Child%' or  TenHangBan not like '%Baby%' or  TenHangBan not like '%tre em%')
 
-		select 
+	select 
+T8h_9h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T08:00' AND @tuNgay + 'T09:00'  then a.MaLichSuPhieu end) ),
+T9h_10h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T09:00' AND @tuNgay + 'T10:00'  then a.MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T10:00' AND @tuNgay + 'T11:00'  then a.MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T11:00' AND @tuNgay + 'T12:00'  then a.MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T12:00' AND @tuNgay + 'T13:00'  then a.MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T13:00' AND @tuNgay + 'T14:00'  then a.MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T14:00' AND @tuNgay + 'T15:00'  then a.MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T15:00' AND @tuNgay + 'T16:00'  then a.MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T16:00' AND @tuNgay + 'T17:00'  then a.MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T17:00' AND @tuNgay + 'T18:00'  then a.MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T18:00' AND @tuNgay + 'T19:00'  then a.MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T19:00' AND @tuNgay + 'T20:00'  then a.MaLichSuPhieu end) )
+from tblLichSuPhieu a left join tblLSPhieu_HangBan b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+where 
+ MaBan Like '%M%'
+AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] where  TenHangBan   like '%Child%' or  TenHangBan  like '%Baby%' or  TenHangBan  like '%tre em%')
+
+	select 
 T8h_9h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T08:00' AND @tuNgay + 'T09:00'  then a.MaLichSuPhieu end) ),
 T9h_10h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T09:00' AND @tuNgay + 'T10:00'  then a.MaLichSuPhieu end) ),
 T10h_11h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T10:00' AND @tuNgay + 'T11:00'  then a.MaLichSuPhieu end) ),
@@ -2211,7 +2268,26 @@ T19h_20h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,1
 from tblLichSuPhieu a left join tblLSPhieu_HangBan b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 where 
  MaBan Like '%W%'
-AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )";
+AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] where  TenHangBan  not like '%Child%' or  TenHangBan not like '%Baby%' or  TenHangBan not like '%tre em%')
+
+	select 
+T8h_9h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T08:00' AND @tuNgay + 'T09:00'  then a.MaLichSuPhieu end) ),
+T9h_10h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T09:00' AND @tuNgay + 'T10:00'  then a.MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T10:00' AND @tuNgay + 'T11:00'  then a.MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T11:00' AND @tuNgay + 'T12:00'  then a.MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T12:00' AND @tuNgay + 'T13:00'  then a.MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T13:00' AND @tuNgay + 'T14:00'  then a.MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T14:00' AND @tuNgay + 'T15:00'  then a.MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T15:00' AND @tuNgay + 'T16:00'  then a.MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T16:00' AND @tuNgay + 'T17:00'  then a.MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T17:00' AND @tuNgay + 'T18:00'  then a.MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T18:00' AND @tuNgay + 'T19:00'  then a.MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when  substring(Convert(varchar,GioVao,126),0,17) BETWEEN @tuNgay + 'T19:00' AND @tuNgay + 'T20:00'  then a.MaLichSuPhieu end) )
+from tblLichSuPhieu a left join tblLSPhieu_HangBan b ON a.MaLichSuPhieu = b.MaLichSuPhieu
+where 
+ MaBan Like '%W%'
+AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] where  TenHangBan   like '%Child%' or  TenHangBan  like '%Baby%' or  TenHangBan  like '%tre em%')
+";
 
 		try{
 				$stmt = $this->conn->prepare($sql);
@@ -2258,19 +2334,6 @@ select  a.MaLichSuPhieu, GioVao, MaBan, TenHangBan,
 from tblLichSuPhieu a left join tblLSPhieu_HangBan b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )  
 ) t1
-select T8h_9h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
-T9h_10h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
-T10h_11h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
-T11_12h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
-T12h_13h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
-T13h_14h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
-T14h_15h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
-T15h_16h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
-T16h_17h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
-T17h_18h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
-T18h_19h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
-T19h_20h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
-from #temp_t1 where  MaBan Like '%M%'
 
 select T8h_9h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
 T9h_10h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
@@ -2284,7 +2347,51 @@ T16h_17h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio be
 T17h_18h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
 T18h_19h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
 T19h_20h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
-from #temp_t1 where  MaBan Like '%W%'";
+from #temp_t1 where  MaBan Like '%M%' and  TenHangBan  not like '%Child%' or  TenHangBan not like '%Baby%' or  TenHangBan  not like '%tre em%'
+
+select T8h_9h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
+T9h_10h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
+from #temp_t1 where  MaBan Like '%M%' and  TenHangBan   like '%Child%' or  TenHangBan  like '%Baby%' or  TenHangBan  like '%tre em%'
+
+select T8h_9h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
+T9h_10h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
+from #temp_t1 where  MaBan Like '%W%' and  TenHangBan  not like '%Child%' or  TenHangBan not like '%Baby%' or  TenHangBan  not like '%tre em%'
+
+select T8h_9h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
+T9h_10h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when substring(Ngay,0,8) = @tuThang AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
+from #temp_t1 where  MaBan Like '%W%' and  TenHangBan   like '%Child%' or  TenHangBan  like '%Baby%' or  TenHangBan   like '%tre em%'
+
+";
 		try{
 				$stmt = $this->conn->prepare($sql);
 				$stmt->bindParam('tuThang', $tuThang);
@@ -2330,19 +2437,6 @@ select  a.MaLichSuPhieu, GioVao, MaBan, TenHangBan,
 from tblLichSuPhieu a left join tblLSPhieu_HangBan b ON a.MaLichSuPhieu = b.MaLichSuPhieu
 AND TenHangBan IN ( SELECT * FROM [SPA_ALLView] )  
 ) t1
-select T8h_9h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
-T9h_10h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
-T10h_11h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
-T11_12h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
-T12h_13h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
-T13h_14h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
-T14h_15h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
-T15h_16h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
-T16h_17h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
-T17h_18h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
-T18h_19h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
-T19h_20h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
-from #temp_t1 where  MaBan Like '%M%'
 
 select T8h_9h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
 T9h_10h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
@@ -2356,7 +2450,50 @@ T16h_17h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio betw
 T17h_18h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
 T18h_19h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
 T19h_20h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
-from #temp_t1 where  MaBan Like '%W%'";
+from #temp_t1 where  MaBan Like '%M%' and  TenHangBan not like '%Child%' or  TenHangBan not like '%Baby%' or  TenHangBan  not like '%tre em%'
+
+select T8h_9h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
+T9h_10h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
+from #temp_t1 where  MaBan Like '%M%' and  TenHangBan   like '%Child%' or  TenHangBan  like '%Baby%' or  TenHangBan   like '%tre em%'
+
+select T8h_9h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
+T9h_10h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
+from #temp_t1 where  MaBan Like '%W%' and  TenHangBan not like '%Child%' or  TenHangBan not like '%Baby%' or  TenHangBan  not like '%tre em%'
+
+select T8h_9h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '08:00') and CONVERT( TIME,'09:00' ) then MaLichSuPhieu end) ), 
+T9h_10h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '09:00') and CONVERT( TIME,'10:00' ) then MaLichSuPhieu end) ),
+T10h_11h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '10:00') and CONVERT( TIME,'11:00' ) then MaLichSuPhieu end) ),
+T11_12h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '11:00') and CONVERT( TIME,'12:00' ) then MaLichSuPhieu end) ),
+T12h_13h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '12:00') and CONVERT( TIME,'13:00' ) then MaLichSuPhieu end) ),
+T13h_14h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '13:00') and CONVERT( TIME,'14:00' ) then MaLichSuPhieu end) ),
+T14h_15h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '14:00') and CONVERT( TIME,'15:00' ) then MaLichSuPhieu end) ),
+T15h_16h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '15:00') and CONVERT( TIME,'16:00' ) then MaLichSuPhieu end) ),
+T16h_17h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '16:00') and CONVERT( TIME,'17:00' ) then MaLichSuPhieu end) ),
+T17h_18h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '17:00') and CONVERT( TIME,'18:00' ) then MaLichSuPhieu end) ),
+T18h_19h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '18:00') and CONVERT( TIME,'19:00' ) then MaLichSuPhieu end) ),
+T19h_20h =  count(distinct (case when substring(Ngay,0,5) = @tuNam AND  Gio between  CONVERT( TIME, '19:00') and CONVERT( TIME,'20:00' ) then MaLichSuPhieu end) )
+from #temp_t1 where  MaBan Like '%W%' and  TenHangBan  like '%Child%' or  TenHangBan  like '%Baby%' or  TenHangBan   like '%tre em%'
+";
 		try{
 				$stmt = $this->conn->prepare($sql);
 				$stmt->bindParam('tuNam', $tuNam);
@@ -4271,7 +4408,8 @@ from #temp_t1 where  MaBan Like '%W%'";
 			GioVao, ThoiGianDongPhieu, TenHangBan ,DonGia , SoLuong = sum( SoLuong ) 
 			OVER(PARTITION BY a.MaLichSuPhieu, TenHangBan) , 
 			ThanhTien = sum( SoLuong ) 	OVER(PARTITION BY a.MaLichSuPhieu, TenHangBan) * DonGia , 
-			TongDoanhThu = sum( ThanhTien ) OVER(PARTITION BY a.MaKhu) ,MaNhanVien 
+			TongDoanhThu = sum( ThanhTien ) OVER(PARTITION BY a.MaKhu) ,MaNhanVien ,
+			CheckIn = substring( Convert(varchar,GioVao,126),12,5 ),  CheckOut = substring( Convert(varchar,ThoiGianDongPhieu,126),12,5 ) 
 			FROM [tblLichSuPhieu] a 
 			left JOIN [tblLSPhieu_HangBan] b 
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
@@ -4282,7 +4420,7 @@ from #temp_t1 where  MaBan Like '%W%'";
 			 t1 
  
 			 ; WITH cte_1 AS ( SELECT MaKhu, case when i.rnk=1 then MaLichSuPhieu else MaLichSuPhieu END as 
-			 MaLichSuPhieu, TenHangBan, GioVao, DonGia , SoLuong , ThanhTien , MaNhanVien 
+			 MaLichSuPhieu, TenHangBan, GioVao, CheckIn, CheckOut, DonGia , SoLuong , ThanhTien , MaNhanVien 
 			 ,TongDoanhThu, RowNum = row_number() over (order by MaLichSuPhieu) 
 			 FROM ( SELECT *, row_number() 
 			 over(partition by MaLichSuPhieu order by MaLichSuPhieu ) as rnk from #temp_t1 ) i )
@@ -4290,16 +4428,16 @@ from #temp_t1 where  MaBan Like '%W%'";
 
 		if ( $where == "" )
 		{
-			$sql .= 'SELECT MaLichSuPhieu, MaNhanVien, GioVao, TenHangBan, DonGia, SoLuong, ThanhTien FROM   cte_1';
+			$sql .= 'SELECT MaLichSuPhieu, MaNhanVien, GioVao,  TenHangBan, DonGia, SoLuong, ThanhTien, CheckIn, CheckOut FROM   cte_1';
 	    	$sql .= " WHERE ". $paginating ;
-	    	$sql .= "UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL,  SUM (SoLuong), SUM (ThanhTien) FROM cte_1 WHERE  $paginating   GROUP BY MaLichSuPhieu
+	    	$sql .= "UNION ALL SELECT MaLichSuPhieu, NULL, NULL, NULL, NULL,  SUM (SoLuong), SUM (ThanhTien), NULL, NULL FROM cte_1 WHERE  $paginating   GROUP BY MaLichSuPhieu
  				ORDER BY MaLichSuPhieu, TenHangBan";
 		}
 		else
 		{
 			$sql .= ' ,
 				cte_2 as (
-					SELECT  RowNum = row_number() over (order by MaKhu), MaKhu, MaLichSuPhieu, TenHangBan, GioVao, DonGia , SoLuong , ThanhTien , MaNhanVien ,  TotalWhere = sum(ThanhTien)OVER(PARTITION BY MaKhu ) , TongDoanhThu
+					SELECT  RowNum = row_number() over (order by MaKhu), MaKhu, MaLichSuPhieu, TenHangBan, GioVao, DonGia , SoLuong , ThanhTien , MaNhanVien ,  TotalWhere = sum(ThanhTien)OVER(PARTITION BY MaKhu ) , TongDoanhThu, CheckIn, CheckOut
 					FROM cte_1 
 				WHERE ' . $where . '	
 				)
@@ -4367,7 +4505,7 @@ from #temp_t1 where  MaBan Like '%W%'";
 			GioVao, ThoiGianDongPhieu, TenHangBan ,DonGia , SoLuong = sum( SoLuong ) 
 			OVER(PARTITION BY a.MaLichSuPhieu, TenHangBan) , 
 			ThanhTien = sum( SoLuong ) 	OVER(PARTITION BY a.MaLichSuPhieu, TenHangBan) * DonGia , 
-			TongDoanhThu = sum( ThanhTien ) OVER(PARTITION BY a.MaKhu) ,MaNhanVien  
+			TongDoanhThu = sum( ThanhTien ) OVER(PARTITION BY a.MaKhu) ,MaNhanVien , CheckIn = substring( Convert(varchar,GioVao,126),12,5 ),  CheckOut = substring( Convert(varchar,ThoiGianDongPhieu,126),12,5 ) 
 			FROM [tblLichSuPhieu] a 
 			left JOIN [tblLSPhieu_HangBan] b 
 			on a.[MaLichSuPhieu] = b.[MaLichSuPhieu] 
@@ -4407,8 +4545,33 @@ from #temp_t1 where  MaBan Like '%W%'";
 	}
 
 	public function getSalesSpa_Advanced_TotalRev(  $ma_khu = null, $tuNgay, $denNgay )
-	{
-		 $sql ="DECLARE @tuNgay varchar(max)
+	{	
+		if( empty($tuNgay) ) 
+		{
+			throw new InvalidArgumentException('date missing');
+		}
+
+		if( empty($denNgay) ) 
+		{
+			throw new InvalidArgumentException('date missing');
+		}
+
+		if ($ma_khu !== null)
+		{
+			switch( $ma_khu ) 
+			{
+				case 'nam':
+					$ma_khu = $this->khu_nam;
+					break;
+				case 'nu':
+					$ma_khu = $this->khu_nu;
+					break;
+				default:
+					throw new InvalidArgumentException('Your input was not valid!');
+			}
+		}
+
+		$sql ="DECLARE @tuNgay varchar(max)
 		DECLARE @denNgay varchar(max)
 		SET @tuNgay = :tuNgay
 		SET @denNgay = :denNgay

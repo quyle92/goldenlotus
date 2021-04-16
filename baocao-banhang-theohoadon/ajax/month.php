@@ -9,7 +9,7 @@ $goldenlotus = new GoldenLotus($dbCon);
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 
-$tuThang = $params['tuThang'];
+$tuThang = ($params['tuThang']);
 $tuThang = isset( $tuThang ) ?  date_format( date_create( $tuThang ) , 'Y-m' ) : "";
 $tenQuay = isset( $params['tenQuay'] ) ? $params['tenQuay'] : "";
 
@@ -24,15 +24,17 @@ $columns = array(
     0 =>'MaLichSuPhieu',
     1 =>'NgayCoBill',
     2 =>'MaLoaiThe',
-    3 =>'NVTinhTienMaNV',
-    4 =>'TenHangBan',
-    5 =>'DonGia',
-    6 =>'SoLuong',
-    7 =>'TienGiamGia',
-    8 =>'Discount',
-    9 =>'SoTienDVPhi',
-    10 => 'SoTienVAT',
-    11 => 'ThanhTien'
+    3 =>'CheckIn',
+    4 =>'CheckOut',
+    5 =>'NVTinhTienMaNV',
+    6 =>'TenHangBan',
+    7 =>'DonGia',
+    8 =>'SoLuong',
+    9 =>'TienGiamGia',
+    10 =>'Discount',
+    11 =>'SoTienDVPhi',
+    12 => 'SoTienVAT',
+    13 => 'ThanhTien'
 );
 //var_dump($params['time']);die;
 $where = $sqlTot = $sqlRec = "";
@@ -56,20 +58,25 @@ if( !empty($params['search']['value']) ) {
 
 $paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$params['length']} )";
 //$orderBy = " ORDER BY {$columns[$params['order'][0]['column']]} {$params['order'][0]['dir']}";
+
 /**
  * [$sqlRec description]
  * @var string
  */
 
-$sqlRec = $goldenlotus->getBillDetails_Rec_Month( $tenQuay, $tuThang, $where , $paginating ); 
-//var_dump($sqlRec);die;
+$result = $goldenlotus->getBillDetails_Rec_Month( $tenQuay, $tuThang, $where , $paginating ) ; 
+$sqlRec = $result[0];
+// var_dump($goldenlotus->getBillDetails_Rec_Month( $tenQuay, $tuThang, $where , $paginating ));die;
 
-$tong_tien = 0;
+$grandTotal = $result[1][0]['GrandTotal'];
+
 foreach( $sqlRec as $r )
 {
     $data[] = array(
         'NgayCoBill' => substr($r['NgayCoBill'],0,10),
         'MaLoaiThe' =>  isset($r['TenHangBan']) ?  (   isset($r['MaLoaiThe'])  ? $r['MaLoaiThe']  : "Tiền Mặt" ) : '',
+        'CheckIn' => $r['CheckIn'],
+        'CheckOut' => $r['CheckOut'],
         'MaLichSuPhieu' => $r['MaLichSuPhieu'],
         'NVTinhTienMaNV' =>$r['NVTinhTienMaNV'],
         'TenHangBan' => $r['TenHangBan'],
@@ -79,10 +86,9 @@ foreach( $sqlRec as $r )
         'Discount' => $r['Discount'],
         'SoTienDVPhi' => $r['SoTienDVPhi'],
         'SoTienVAT' => $r['SoTienVAT'],
-        'ThanhTien' => number_format($r['Tongtien'],0,",",".") . '<sup>đ</sup>'
+        'ThanhTien' => $r['Tongtien']
     );
 
-  //$tong_tien  += $r['TienThucTra'];
 }
 
 // $data[] = array(
@@ -103,7 +109,8 @@ $json_data = array(
         "draw"            => intval( $params['draw'] ),
         "recordsTotal"    => intval( $nRows ),
         "recordsFiltered" => intval($nRows),
-        "data"            => $data   // total data array
+        "data"            => $data,
+        'grandTotal' => number_format( $grandTotal,0,",",".") . '<sup>đ</sup>'
         );
 
 echo json_encode($json_data);  // send data as json format

@@ -7,7 +7,7 @@ $goldenlotus = new GoldenLotus($dbCon);
 
 $tuNgay = date('Y-m-d', strtotime( $_POST['tuNgay']) );
 $denNgay = date('Y-m-d', strtotime( $_POST['denNgay']) );
-$ma_khu = "(a.MaKhu = '03-NH4' or a.MaKhu = '03-NH5' or a.MaKhu = '03-NH6')";
+$ma_khu = "nu";
 
 $output = "";
 

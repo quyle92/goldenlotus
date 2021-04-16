@@ -26,7 +26,7 @@ $trungtam=$_SESSION['TenTrungTam'];
       <div id="page-wrapper" >
 
         <div class="col-xs-12 col-sm-12 col-md-12 graphs">
-            <h3 class="title">Bảng kê sửa hóa đơn</h3>
+            <h3 class="title"> Doanh thu các quầy (Tháng)</h3>
 
             <div class="panel with-nav-tabs panel-primary ">
                 <div class="panel-heading">

@@ -37,6 +37,8 @@
       <th>Mã lịch sử phiếu</th>
       <th>Nhân viên</th>
       <th>Ngày vào</th>
+      <th>Check in</th>
+      <th>Check out</th>
       <th>Tên hàng bán</th>
       <th>Đơn giá</th>
       <th>Số lượng</th>
@@ -58,12 +60,15 @@ $('form#khu_nu').on('submit', function (event){
     $('#grandTotal').text('');
     $('#womenTotal').text('');
 
-    //datatable only   
+    //datatable only 
+  let promise_lady = new Promise(function(resolve, reject) {  
     $('#custom_month_women').DataTable({
             columns: [
                 { data: "MaLichSuPhieu"  },
                 { data: "MaNhanVien" },
                 { data: "GioVao" },
+                { data: "CheckIn" },
+                { data: "CheckOut" },
                 { data: "TenHangBan" },
                 { data: "DonGia" },
                 { data: "SoLuong" },
@@ -96,7 +101,7 @@ $('form#khu_nu').on('submit', function (event){
            * call a function in success of datatable ajax call
            * ref: https://stackoverflow.com/questions/15786572/call-a-function-in-success-of-datatable-ajax-call
            */
-         "drawCallback":function( settings, json){
+         "drawCallback":function( settings, json){console.log(settings);
           var api = this.api();
           var data =  JSON.parse(JSON.stringify( api.rows( {page:'current'} ).data() ));//console.log( data  );//ref: https://stackoverflow.com/questions/17546953/cant-access-object-property-even-though-it-shows-up-in-a-console-log
           var dataArr = Object.values(data);//convert obj to array
@@ -141,51 +146,62 @@ $('form#khu_nu').on('submit', function (event){
               $(row).children(":last-child").addClass( 'redText' );
 
             }
-            else
+            else  if( this.api().search().length === 0 )
             {  
               //let index = this.api().$(row).index();console.log(dataIndex);
 
               $(row).children(":first-child").text("");
 
             }
+            //promise is fulfilled only when the data set is returned from server
+            resolve("done");
         },
         // Note: this only fires once (first ajax cal only), not fire on every next ajax call
         "initcomplete ":function( settings, json){
             console.log(json);
         }
 
-
-
         });
 
-    //total rev women only
-    var formValues= $(this).serialize();
-    $.ajax({
-      url:"ajax/total_rev_women.php",
-      method:"post",
-      data: formValues,
-      dataType:"json",
-      success:function(output)
-      {
-        console.log(output);
-        //$(output).appendTo('h3#total_rev_men strong');
-        $("h3#total_rev_women strong").html(output);
-      }
+      
     });
 
-     //total rev including men + women
-       $.ajax({
-        url:"ajax/grand_total.php",
-        method:"post",
-        data:formValues,
-        dataType:"json",
-        success:function(output)
-        {
-          console.log(output);
-          //$(output).appendTo('h3#total_rev_men strong');
-          $("#grandTotal").html(output);
-        }
-      });
+    //total rev men + grand total (total_rev_men.php get called first, then grand_total.php comes second")
+    var formValues= $(this).serialize();//console.log(formValues);
+    promise_lady.then(
+        function(result) {console.log(result)
+
+           //total rev men
+            $.ajax({
+              url:"ajax/total_rev_women.php",
+              method:"post",
+              data: formValues,
+              dataType:"json",
+              success:function(output)
+              {
+
+                $("h3#total_rev_women strong").html(output);
+
+              },
+
+            }).then(function(data) { 
+                //grand total including men + women
+               $.ajax({
+                url:"ajax/grand_total.php",
+                method:"post",
+                data:formValues,
+                dataType:"json",
+                success:function(output)
+                {console.log('grand_total_2');
+                  //console.log(output);
+                  //$(output).appendTo('h3#total_rev_men strong');
+                  $("#grandTotal").html(output);
+                }
+              });
+
+            });
+        
+    });
     
   });
 

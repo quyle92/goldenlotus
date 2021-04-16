@@ -23,15 +23,17 @@ $columns = array(
     0 =>'MaLichSuPhieu',
     1 =>'NgayCoBill',
     2 =>'MaLoaiThe',
-    3 =>'NVTinhTienMaNV',
-    4 =>'TenHangBan',
-    5 =>'DonGia',
-    6 =>'SoLuong',
-    7 =>'TienGiamGia',
-    8 =>'Discount',
-    9 =>'SoTienDVPhi',
-    10 => 'SoTienVAT',
-    11 => 'ThanhTien'
+    3 =>'CheckIn',
+    4 =>'CheckOut',
+    5 =>'NVTinhTienMaNV',
+    6 =>'TenHangBan',
+    7 =>'DonGia',
+    8 =>'SoLuong',
+    9 =>'TienGiamGia',
+    10 =>'Discount',
+    11 =>'SoTienDVPhi',
+    12 => 'SoTienVAT',
+    13 => 'ThanhTien'
 );
 //var_dump($params['time']);die;
 $where = $sqlTot = $sqlRec = "";
@@ -61,8 +63,11 @@ $paginating = "RowNum BETWEEN {$params['start']}  AND  ( {$params['start']} + {$
  * @var string
  */
 
-$sqlRec = $goldenlotus->getBillDetails_Rec_Year( $tenQuay, $tuNam, $where , $paginating ); 
-//var_dump($sqlRec);die;
+$result = $goldenlotus->getBillDetails_Rec_Year( $tenQuay, $tuNam, $where , $paginating ) ; 
+$sqlRec = $result[0];
+// var_dump($goldenlotus->getBillDetails_Rec_Month( $tenQuay, $tuNam, $where , $paginating ));die;
+
+$grandTotal = $result[1][0]['GrandTotal'];
 
 $tong_tien = 0;
 foreach( $sqlRec as $r )
@@ -70,6 +75,8 @@ foreach( $sqlRec as $r )
 	$data[] = array(
         'NgayCoBill' => substr($r['NgayCoBill'],0,10),
         'MaLoaiThe' =>  isset($r['TenHangBan']) ?  (   isset($r['MaLoaiThe'])  ? $r['MaLoaiThe']  : "Tiền Mặt" ) : '',
+        'CheckIn' => $r['CheckIn'],
+        'CheckOut' => $r['CheckOut'],
         'MaLichSuPhieu' => $r['MaLichSuPhieu'],
         'NVTinhTienMaNV' =>$r['NVTinhTienMaNV'],
         'TenHangBan' => $r['TenHangBan'],
@@ -79,7 +86,7 @@ foreach( $sqlRec as $r )
         'Discount' => $r['Discount'],
         'SoTienDVPhi' => $r['SoTienDVPhi'],
         'SoTienVAT' => $r['SoTienVAT'],
-        'ThanhTien' => number_format($r['Tongtien'],0,",",".") . '<sup>đ</sup>'
+        'ThanhTien' => $r['Tongtien']
     );
 
   //$tong_tien  += $r['TienThucTra'];
@@ -103,7 +110,8 @@ $json_data = array(
         "draw"            => intval( $params['draw'] ),
         "recordsTotal"    => intval( $nRows ),
         "recordsFiltered" => intval($nRows),
-        "data"            => $data   // total data array
+        "data"            => $data ,
+        'grandTotal' => number_format( $grandTotal,0,",",".") . '<sup>đ</sup>'
         );
 
 echo json_encode($json_data);  // send data as json format

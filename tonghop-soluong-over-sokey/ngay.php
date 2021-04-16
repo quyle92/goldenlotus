@@ -24,7 +24,7 @@ $('form#customDate').on('submit', function (event){
       success:function(response)
       { 
         //console.log(response);
-        let [men, women] = response;
+        let [men, boy, women, girl] = response;
 
         var menQty = [];
         for (x in men)
@@ -32,10 +32,22 @@ $('form#customDate').on('submit', function (event){
           menQty.push( men[x] );
         }
 
+        var boyQty = [];
+        for (x in boy)
+        {
+          boyQty.push( boy[x] );
+        }
+
         var womenQty = [];
         for (x in women)
         {
           womenQty.push( women[x] );
+        }
+
+        var girlQty = [];
+        for (x in girl)
+        {
+          girlQty.push( girl[x] );
         }
 
         let timeRange = ["8h-9h",  "9h-10h", "10h-11h", "11h-12h", "12h-13h","13h-14h","14h-15h","15h-16h","16h-17h","17h-18h","18h-19h","19h-20h"];
@@ -48,13 +60,27 @@ $('form#customDate').on('submit', function (event){
           labels: timeRange,
           datasets: [{
               label: "Men",
+              stack: 'Stack 0',
               data:  menQty, 
+              backgroundColor: "#ec78f5"
+            },
+            {
+              label: "Boy",
+              stack: 'Stack 0',
+              data:  boyQty, 
               backgroundColor: "#FF7693"
             },
             {
               label: "Women",
+              stack: 'Stack 1',
               data: womenQty, 
-              backgroundColor: "#90CBF4"
+              backgroundColor: "#4BC0C0"
+            },
+            {
+              label: "Girl",
+              stack: 'Stack 1',
+              data: girlQty, 
+              backgroundColor: "#1489d9"
             }
           ]
         };
@@ -83,12 +109,9 @@ $('form#customDate').on('submit', function (event){
           plugins: {
                 datalabels: false
           },
-          legendCallback: function(chart) {
-             var backgroundColor = chart.data.datasets[0].backgroundColor;console.log(backgroundColor)
-             var value = chart.data.datasets[0].data;console.log(value)
-          },
           scales: {
             yAxes: [{
+                stacked: true,
                 ticks: {
                     beginAtZero: true,
                     callback: function(value, index, values) {
@@ -105,11 +128,12 @@ $('form#customDate').on('submit', function (event){
                
             }]},
           xAxes: [{
-
+                stacked: true,
                 gridbars:{
                    
                     offsetGridbars: true
-                }
+                },
+
               }],
            title: {
             display:true,

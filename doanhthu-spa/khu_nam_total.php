@@ -36,6 +36,8 @@
 	    <th>Mã lịch sử phiếu</th>
 	    <th>Nhân viên</th>
 	    <th>Ngày vào</th>
+      <th>Check in</th>
+      <th>Check out</th>
 	    <th>Tên hàng bán</th>
 	    <th>Đơn giá</th>
 	    <th>Số lượng</th>
@@ -58,44 +60,20 @@ $('form#khu_nam').on('submit', function (event){
     $('#grandTotal').text('');
     $('#menTotal').text('');
 
-      
-    
-    
-
       //datatable only 
-    $('#custom_month_men').DataTable({
+    let promise = new Promise(function(resolve, reject) {
+      $('#custom_month_men').DataTable({
             columns: [
                 { data: "MaLichSuPhieu"  },
                 { data: "MaNhanVien" },
                 { data: "GioVao" },
+                { data: "CheckIn" },
+                { data: "CheckOut" },
                 { data: "TenHangBan" },
                 { data: "DonGia" },
                 { data: "SoLuong" },
                 { data: "ThanhTien" }	
             ],
-             // "columnDefs": [
-             //  {
-             //    "targets": "MaLichSuPhieu",
-             //  },
-             //  {
-             //    "targets": 1,
-             //  },
-             //  {
-             //    "targets": 2,
-             //  },
-             //  {
-             //    "targets": 3,
-             //  },
-             //  {
-             //    "targets": 4,
-             //  },
-             //  {
-             //    "targets": 5,
-             //  },
-             //  {
-             //    "targets": 6,
-             //  },
-             //  ],
             "order": [[ 0, "desc" ]],
             "destroy": true, //use for reinitialize datatable
             "processing": true,
@@ -164,6 +142,9 @@ $('form#khu_nam').on('submit', function (event){
             $('h3#total_rev_men + h4').html("");
           }
 
+          //promise is fulfilled only when the data set is returned from server
+          if(data.length > 0) resolve("done");
+
         },
          "createdRow": function( row, data, dataIndex ) {
             if ( data['MaNhanVien'] === null ) 
@@ -196,34 +177,46 @@ $('form#khu_nam').on('submit', function (event){
 
         });
 
-    //total rev men only
-    var formValues= $(this).serialize();//console.log(formValues);
-    $.ajax({
-      url:"ajax/total_rev_men.php",
-      method:"post",
-      data: formValues,
-      dataType:"json",
-      success:function(output)
-      {
-        console.log(output);
-        //$(output).appendTo('h3#total_rev_men strong');
-        $("h3#total_rev_men strong").html(output);
-      }
-    });
+        
+     }); 
 
-     //total rev including men + women
-       $.ajax({
-        url:"ajax/grand_total.php",
-        method:"post",
-        data:formValues,
-        dataType:"json",
-        success:function(output)
-        {
-          console.log(output);
-          //$(output).appendTo('h3#total_rev_men strong');
-          $("#grandTotal").html(output);
-        }
-      });
+    //total rev men + grand total (total_rev_men.php get called first, then grand_total.php comes second")
+    var formValues= $(this).serialize();//console.log(formValues);
+    promise.then(
+        function(result) {
+
+           //total rev men
+            $.ajax({
+              url:"ajax/total_rev_men.php",
+              method:"post",
+              data: formValues,
+              dataType:"json",
+              success:function(output)
+              {
+
+                $("h3#total_rev_men strong").html(output);
+
+              },
+
+            }).then(function(data) { 
+                //grand total including men + women
+               $.ajax({
+                url:"ajax/grand_total.php",
+                method:"post",
+                data:formValues,
+                dataType:"json",
+                success:function(output)
+                {console.log('grand_total_2');
+                  //console.log(output);
+                  //$(output).appendTo('h3#total_rev_men strong');
+                  $("#grandTotal").html(output);
+                }
+              });
+
+            });
+        
+    });
+    
     
   });
 

@@ -37,6 +37,7 @@ require('../datetimepicker-day.php');
                 { data: "MaLichSuPhieu" },
                 { data: "TienThucTra" }
             ],
+             "dom": '<"top"l<"clear">>rtp<"bottom"i<"clear">>',
             "destroy": true, //use for reinitialize datatable
             "processing": true,
             "serverSide": true,

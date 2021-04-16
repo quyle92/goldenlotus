@@ -50,6 +50,7 @@ $(function () {
       //useCurrent: false,
       format: 'DD-MM-YYYY',
       //defaultDate:dateNow
+      keepOpen: false
    });
 });
 
